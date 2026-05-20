@@ -22,7 +22,7 @@ class PromotionFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'id_card_number' => $this->faker->unique()->numerify('ID-#######'),
         ];
     }
 }

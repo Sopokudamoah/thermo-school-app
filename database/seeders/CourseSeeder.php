@@ -17,7 +17,13 @@ class CourseSeeder extends Seeder
         $semesters = \App\Models\Semester::where('session_id', $session->id)->get();
         $classes = \App\Models\SchoolClass::where('session_id', $session->id)->get();
 
-        $courseNames = ['Mathematics', 'English', 'Science', 'History', 'Geography', 'Art', 'Music', 'Physical Education'];
+        $courseNames = [
+            'Mathematics', 'English Language', 'Integrated Science', 'Social Studies',
+            'Information and Communication Technology (ICT)', 'Religious and Moral Education (RME)',
+            'Creative Arts and Design', 'Career Technology', 'Our World Our People',
+            'Ghanaian Language (Twi)', 'Ghanaian Language (Ga)', 'French',
+            'Physical Education'
+        ];
 
         foreach ($classes as $class) {
             foreach ($semesters as $semester) {

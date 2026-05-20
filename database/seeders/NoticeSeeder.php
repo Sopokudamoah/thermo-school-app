@@ -13,6 +13,6 @@ class NoticeSeeder extends Seeder
      */
     public function run()
     {
-        //
+        \App\Models\Notice::factory()->count(15)->create();
     }
 }

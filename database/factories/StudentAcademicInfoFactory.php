@@ -22,7 +22,7 @@ class StudentAcademicInfoFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'board_reg_no' => $this->faker->unique()->numerify('BRN#######'),
         ];
     }
 }

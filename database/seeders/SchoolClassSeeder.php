@@ -15,7 +15,11 @@ class SchoolClassSeeder extends Seeder
     {
         $session = \App\Models\SchoolSession::first() ?? \App\Models\SchoolSession::factory()->create();
 
-        $classes = ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5'];
+        $classes = [
+            'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6',
+            'JHS 1', 'JHS 2', 'JHS 3',
+            'SHS 1', 'SHS 2', 'SHS 3'
+        ];
 
         foreach ($classes as $class) {
             \App\Models\SchoolClass::factory()->create([
