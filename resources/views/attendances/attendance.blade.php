@@ -1,59 +1,54 @@
 @extends('layouts.app')
+@section('page-title', 'View Attendance')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/fullcalendar5.9.0.min.css') }}">
-<script src="{{ asset('js/fullcalendar5.9.0.main.min.js') }}"></script>
-<div class="container">
-    <div class="row justify-content-start">
-        @include('layouts.left-menu')
-        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-10 col-xl-10 col-xxl-10">
-            <div class="row pt-2">
-                <div class="col ps-4">
-                    <h1 class="display-6 mb-3">
-                        <i class="bi bi-calendar2-week"></i> View Attendance
-                    </h1>
-
-                    <h5><i class="bi bi-person"></i> Student Name: {{$student->first_name}} {{$student->last_name}}</h5>
-                    <div class="row mt-3">
-                        <div class="col bg-white p-3 border shadow-sm">
-                            <div id="attendanceCalendar"></div>
-                        </div>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col bg-white border shadow-sm p-3">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Context</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($attendances as $attendance)
-                                        <tr>
-                                            <td>
-                                                @if ($attendance->status == "on")
-                                                    <span class="badge bg-success">PRESENT</span>
-                                                @else
-                                                    <span class="badge bg-danger">ABSENT</span>
-                                                @endif
-                                                
-                                            </td>
-                                            <td>{{$attendance->created_at}}</td>
-                                            <td>{{($attendance->section == null)?$attendance->course->course_name:$attendance->section->section_name}}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @include('layouts.footer')
-        </div>
-    </div>
+<div class="mb-6">
+    <h1 class="font-heading text-xl font-bold text-gray-900"><i data-lucide="calendar-check" class="inline w-5 h-5 mr-2"></i> View Attendance</h1>
+    <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+        <a href="{{route('home')}}" class="hover:text-indigo-600">Home</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span>View Attendance</span>
+    </nav>
 </div>
+
+<div class="mb-4">
+    <h5 class="text-base font-semibold text-gray-800">
+        <i data-lucide="users" class="inline w-4 h-4 mr-1"></i> Student Name: {{$student->first_name}} {{$student->last_name}}
+    </h5>
+</div>
+
+<div class="bg-white rounded-card shadow-card border border-gray-200 p-4 mb-5">
+    <div id="attendanceCalendar"></div>
+</div>
+
+<div class="bg-white rounded-card shadow-card border border-gray-200">
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="bg-gray-50 border-b border-gray-200">
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Context</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+            @foreach ($attendances as $attendance)
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3">
+                        @if ($attendance->status == "on")
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">PRESENT</span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">ABSENT</span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3 text-gray-600">{{$attendance->created_at}}</td>
+                    <td class="px-4 py-3 text-gray-600">{{($attendance->section == null)?$attendance->course->course_name:$attendance->section->section_name}}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+@endsection
+
 @php
 $events = array();
 if(count($attendances) > 0){
@@ -66,11 +61,15 @@ if(count($attendances) > 0){
     }
 }
 @endphp
+
+@push('scripts')
+<link rel="stylesheet" href="{{ asset('css/fullcalendar5.9.0.min.css') }}">
+<script src="{{ asset('js/fullcalendar5.9.0.main.min.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('attendanceCalendar');
     var attEvents = @json($events);
-                            
+
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         height: 350,
@@ -79,4 +78,4 @@ document.addEventListener('DOMContentLoaded', function() {
     calendar.render();
 });
 </script>
-@endsection
+@endpush

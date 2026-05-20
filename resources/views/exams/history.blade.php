@@ -1,136 +1,57 @@
 @extends('layouts.app')
+@section('page-title', 'Exam History')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-start">
-        @include('layouts.left-menu')
-        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-10 col-xl-10 col-xxl-10">
-            <div class="row pt-2">
-                <div class="col ps-4">
-                    <h1 class="display-6 mb-3"><i class="bi bi-distribute-vertical"></i> Exam History</h1>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card border-dark my-3">
-                                <div class="card-header bg-transparent border-dark">
-                                    <i class="bi bi-diagram-2"></i> Class 1
-                                </div>
-                                <div class="card-body text-dark">
-                                    <div class="accordion" id="accordionExample">
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header" id="headingOne">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                                    Section #1
-                                                </button>
-                                            </h2>
-                                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                                <div class="accordion-body">
-                                                    <div class="mb-4">
-                                                        <!-- timeline item 1 -->
-                                                        <div class="row">
-                                                            <!-- timeline item 1 left dot -->
-                                                            <div class="col-auto text-center flex-column d-none d-sm-flex">
-                                                                <div class="row h-50">
-                                                                    <div class="col">&nbsp;</div>
-                                                                    <div class="col">&nbsp;</div>
-                                                                </div>
-                                                                <h5 class="m-2">
-                                                                    <span class="badge rounded-pill bg-light border">&nbsp;</span>
-                                                                </h5>
-                                                                <div class="row h-50">
-                                                                    <div class="col border-end">&nbsp;</div>
-                                                                    <div class="col">&nbsp;</div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- timeline item 1 event content -->
-                                                            <div class="col py-2">
-                                                            <div class="card">
-                                                                <div class="card-body">
-                                                                    <div class="row">
-                                                                        <div class="col fs-4">Quiz 1</div>
-                                                                        <div class="col text-end">Jan 9th 2021 9:00 AM</div>
-                                                                    </div>
-                                                                    <div class="row text-muted">
-                                                                        <div class="col">Belongs to: First Semester</div>
-                                                                        <div class="col text-end">Starts: Jan 9th 2021 - Ends: Jan 15th 2021</div>
-                                                                    </div>
-                                                                
-                                                                <p class="card-text">
-                                                                    <span class="badge bg-secondary">Course: Math</span>
-                                                                    <span class="badge bg-dark">Marks: 100</span>
-                                                                    <span class="badge bg-primary">Category: Quiz</span>
-                                                                </p>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                        </div>
-                                                        <!--/row-->
-                                                        <!-- timeline item 2 -->
-                                                        <div class="row">
-                                                            <div class="col-auto text-center flex-column d-none d-sm-flex">
-                                                            <div class="row h-50">
-                                                                <div class="col border-end">&nbsp;</div>
-                                                                <div class="col">&nbsp;</div>
-                                                            </div>
-                                                            <h5 class="m-2">
-                                                                <span class="badge rounded-pill bg-light border">&nbsp;</span>
-                                                            </h5>
-                                                            <div class="row h-50">
-                                                                <div class="col border-end">&nbsp;</div>
-                                                                <div class="col">&nbsp;</div>
-                                                            </div>
-                                                            </div>
-                                                            <div class="col py-2">
-                                                            <div class="card">
-                                                                <div class="card-body">
-                                                                <div class="float-right">Tue, Jan 10th 2019 8:30 AM</div>
-                                                                <h4 class="card-title">Day 2 Sessions</h4>
-                                                                <p class="card-text">Sign-up for the lessons and speakers that coincide with your course syllabus. Meet and greet with instructors.</p>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                        </div>
-                                                        <!--/row-->
-                                                        <!-- timeline item 3 -->
-                                                        <div class="row">
-                                                            <!-- timeline item 1 left dot -->
-                                                            <div class="col-auto text-center flex-column d-none d-sm-flex">
-                                                                <div class="row h-50">
-                                                                    <div class="col border-end">&nbsp;</div>
-                                                                    <div class="col">&nbsp;</div>
-                                                                </div>
-                                                                <h5 class="m-2">
-                                                                    <span class="badge rounded-pill bg-light border">&nbsp;</span>
-                                                                </h5>
-                                                                <div class="row h-50">
-                                                                    <div class="col border-end">&nbsp;</div>
-                                                                    <div class="col">&nbsp;</div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- timeline item 1 event content -->
-                                                            <div class="col py-2">
-                                                            <div class="card">
-                                                                <div class="card-body">
-                                                                <div class="float-right text-muted">Mon, Jan 9th 2019 7:00 AM</div>
-                                                                <h4 class="card-title">Day 1 Orientation</h4>
-                                                                <p class="card-text">Welcome to the campus, introduction and get started with the tour.</p>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                        </div>
-                                                        <!--/row-->
-                                                    </div>
-                                                    <!--container-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+<div class="mb-6">
+    <h1 class="font-heading text-xl font-bold text-gray-900"><i data-lucide="file-text" class="inline w-5 h-5 mr-2"></i> Exam History</h1>
+</div>
+
+<div class="space-y-4">
+    <div class="bg-white rounded-card shadow-card border border-gray-200">
+        <div class="px-4 py-3 border-b border-gray-200 font-semibold text-gray-700 text-sm">
+            Class 1
+        </div>
+        <div class="p-4">
+            <div class="space-y-2">
+                <div x-data="{ open: false }" class="border border-gray-200 rounded-lg">
+                    <button @click="open = !open" type="button"
+                        class="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                        <span>Section #1</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 transition-transform" :class="open ? 'rotate-90' : ''"></i>
+                    </button>
+                    <div x-show="open" x-cloak class="border-t border-gray-200 p-4 space-y-3">
+                        <div class="bg-white border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-start justify-between mb-1">
+                                <span class="text-base font-semibold text-gray-800">Quiz 1</span>
+                                <span class="text-sm text-gray-500">Jan 9th 2021 9:00 AM</span>
                             </div>
+                            <div class="flex items-center justify-between text-sm text-gray-500 mb-2">
+                                <span>Belongs to: First Semester</span>
+                                <span>Starts: Jan 9th 2021 - Ends: Jan 15th 2021</span>
+                            </div>
+                            <div class="flex gap-2 flex-wrap">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">Course: Math</span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-800 text-white">Marks: 100</span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">Category: Quiz</span>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-start justify-between mb-1">
+                                <span class="text-base font-semibold text-gray-800">Day 2 Sessions</span>
+                                <span class="text-sm text-gray-500">Tue, Jan 10th 2019 8:30 AM</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Sign-up for the lessons and speakers that coincide with your course syllabus. Meet and greet with instructors.</p>
+                        </div>
+                        <div class="bg-white border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-start justify-between mb-1">
+                                <span class="text-base font-semibold text-gray-800">Day 1 Orientation</span>
+                                <span class="text-sm text-gray-500">Mon, Jan 9th 2019 7:00 AM</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Welcome to the campus, introduction and get started with the tour.</p>
                         </div>
                     </div>
                 </div>
             </div>
-            @include('layouts.footer')
         </div>
     </div>
 </div>

@@ -1,82 +1,90 @@
 @extends('layouts.app')
+@section('page-title', 'Edit Teacher')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-start">
-        @include('layouts.left-menu')
-        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-10 col-xl-10 col-xxl-10">
-            <div class="row pt-2">
-                <div class="col ps-4">
-                    <h1 class="display-6 mb-3">
-                        <i class="bi bi-person-lines-fill"></i> Edit Teacher
-                    </h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{url()->previous()}}">Teacher List</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Edit Teacher</li>
-                        </ol>
-                    </nav>
+<div class="mb-6">
+    <h1 class="font-heading text-xl font-bold text-gray-900">
+        <i data-lucide="users" class="inline w-5 h-5 mr-1"></i> Edit Teacher
+    </h1>
+    <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+        <a href="{{route('home')}}" class="hover:text-indigo-600">Home</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="{{url()->previous()}}" class="hover:text-indigo-600">Teacher List</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span class="text-gray-900">Edit Teacher</span>
+    </nav>
+</div>
 
-                    @include('session-messages')
+@include('session-messages')
 
-                    <div class="mb-4">
-                        <form class="row g-3" action="{{route('school.teacher.update')}}" method="POST">
-                            @csrf
-                            <input type="hidden" name="teacher_id" value="{{$teacher->id}}">
-                            <div class="col-3">
-                                <label for="inputFirstName" class="form-label">First Name<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                <input type="text" class="form-control" id="inputFirstName" name="first_name" placeholder="First Name" required value="{{$teacher->first_name}}">
-                            </div>
-                            <div class="col-3">
-                                <label for="inputLastName" class="form-label">Last Name<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                <input type="text" class="form-control" id="inputLastName" name="last_name" placeholder="Last Name" required value="{{$teacher->last_name}}">
-                            </div>
-                            <div class="col-3">
-                                <label for="inputEmail" class="form-label">Email<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                <input type="email" class="form-control" id="inputEmail" name="email" required value="{{$teacher->email}}">
-                            </div>
-                            <div class="col-4">
-                                <label for="inputAddress" class="form-label">Address<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                <input type="text" class="form-control" id="inputAddress" name="address" placeholder="634 Main St" required value="{{$teacher->address}}">
-                            </div>
-                            <div class="col-3">
-                                <label for="inputAddress2" class="form-label">Address 2</label>
-                                <input type="text" class="form-control" id="inputAddress2" name="address2" placeholder="Apartment, studio, or floor" value="{{$teacher->address2}}">
-                            </div>
-                            <div class="col-2">
-                                <label for="inputCity" class="form-label">City<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                <input type="text" class="form-control" id="inputCity" name="city" placeholder="Dhaka..." required value="{{$teacher->city}}">
-                            </div>
-                            <div class="col-2">
-                                <label for="inputZip" class="form-label">Zip<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                <input type="text" class="form-control" id="inputZip" name="zip" required value="{{$teacher->zip}}">
-                            </div>
-                            <div class="col-3">
-                                <label for="inputPhone" class="form-label">Phone<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                <input type="text" class="form-control" id="inputPhone" name="phone" placeholder="+880 01......" required value="{{$teacher->phone}}">
-                            </div>
-                            <div class="col-2">
-                                <label for="inputState" class="form-label">Gender<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                <select id="inputState" class="form-select" name="gender" required>
-                                    <option value="Male" {{($teacher->gender == 'Male')?'selected':null}}>Male</option>
-                                    <option value="Female" {{($teacher->gender == 'Female')?'selected':null}}>Female</option>
-                                </select>
-                            </div>
-                            <div class="col-3">
-                                <label for="inputNationality" class="form-label">Nationality<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                <input type="text" class="form-control" id="inputNationality" name="nationality" placeholder="e.g. Bangladeshi, German, ..." required value="{{$teacher->nationality}}">
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-person-check"></i> Update</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+<div class="bg-white rounded-card shadow-card border border-gray-200 p-6">
+    <form action="{{route('school.teacher.update')}}" method="POST">
+        @csrf
+        <input type="hidden" name="teacher_id" value="{{$teacher->id}}">
+
+        <h3 class="font-heading text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">Teacher Information</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div>
+                <label for="inputFirstName" class="block text-sm font-medium text-gray-700 mb-1.5">First Name <sup class="text-indigo-500">*</sup></label>
+                <input type="text" id="inputFirstName" name="first_name" placeholder="First Name" required value="{{$teacher->first_name}}"
+                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors">
             </div>
-            @include('layouts.footer')
+            <div>
+                <label for="inputLastName" class="block text-sm font-medium text-gray-700 mb-1.5">Last Name <sup class="text-indigo-500">*</sup></label>
+                <input type="text" id="inputLastName" name="last_name" placeholder="Last Name" required value="{{$teacher->last_name}}"
+                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors">
+            </div>
+            <div>
+                <label for="inputEmail" class="block text-sm font-medium text-gray-700 mb-1.5">Email <sup class="text-indigo-500">*</sup></label>
+                <input type="email" id="inputEmail" name="email" required value="{{$teacher->email}}"
+                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors">
+            </div>
+            <div class="lg:col-span-2">
+                <label for="inputAddress" class="block text-sm font-medium text-gray-700 mb-1.5">Address <sup class="text-indigo-500">*</sup></label>
+                <input type="text" id="inputAddress" name="address" placeholder="634 Main St" required value="{{$teacher->address}}"
+                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors">
+            </div>
+            <div>
+                <label for="inputAddress2" class="block text-sm font-medium text-gray-700 mb-1.5">Address 2</label>
+                <input type="text" id="inputAddress2" name="address2" placeholder="Apartment, studio, or floor" value="{{$teacher->address2}}"
+                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors">
+            </div>
+            <div>
+                <label for="inputCity" class="block text-sm font-medium text-gray-700 mb-1.5">City <sup class="text-indigo-500">*</sup></label>
+                <input type="text" id="inputCity" name="city" placeholder="Dhaka..." required value="{{$teacher->city}}"
+                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors">
+            </div>
+            <div>
+                <label for="inputZip" class="block text-sm font-medium text-gray-700 mb-1.5">Zip <sup class="text-indigo-500">*</sup></label>
+                <input type="text" id="inputZip" name="zip" required value="{{$teacher->zip}}"
+                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors">
+            </div>
+            <div>
+                <label for="inputPhone" class="block text-sm font-medium text-gray-700 mb-1.5">Phone <sup class="text-indigo-500">*</sup></label>
+                <input type="text" id="inputPhone" name="phone" placeholder="+880 01......" required value="{{$teacher->phone}}"
+                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors">
+            </div>
+            <div>
+                <label for="inputState" class="block text-sm font-medium text-gray-700 mb-1.5">Gender <sup class="text-indigo-500">*</sup></label>
+                <select id="inputState" name="gender" required
+                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                    <option value="Male" {{($teacher->gender == 'Male')?'selected':null}}>Male</option>
+                    <option value="Female" {{($teacher->gender == 'Female')?'selected':null}}>Female</option>
+                </select>
+            </div>
+            <div>
+                <label for="inputNationality" class="block text-sm font-medium text-gray-700 mb-1.5">Nationality <sup class="text-indigo-500">*</sup></label>
+                <input type="text" id="inputNationality" name="nationality" placeholder="e.g. Bangladeshi, German, ..." required value="{{$teacher->nationality}}"
+                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors">
+            </div>
         </div>
-    </div>
+
+        <div>
+            <button type="submit" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-5 py-2.5 rounded-lg transition-colors">
+                <i data-lucide="check" class="w-4 h-4"></i> Update
+            </button>
+        </div>
+    </form>
 </div>
 
 @include('components.photos.photo-input')

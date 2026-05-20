@@ -1,0 +1,155 @@
+/* ============================================================
+   Therco Base — Custom CSS
+   Supplements Tailwind Play CDN for third-party components
+   ============================================================ */
+
+/* --- Lucide icon baseline sizing --- */
+[data-lucide] {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.75;
+  flex-shrink: 0;
+}
+
+/* --- Sidebar active link --- */
+.sidebar-link-active {
+  background-color: #EEF2FF;
+  color: #4F46E5 !important;
+  border-left: 3px solid #4F46E5;
+  font-weight: 500;
+}
+
+.sidebar-link-active [data-lucide] {
+  color: #4F46E5;
+  stroke: #4F46E5;
+}
+
+.sidebar-submenu {
+  padding-left: 1.75rem;
+}
+
+/* --- FullCalendar v3 theming --- */
+.fc-toolbar.fc-header-toolbar {
+  background: transparent;
+}
+
+.fc-button,
+.fc-button-primary {
+  background-color: #4F46E5 !important;
+  border-color: #4338CA !important;
+  color: #fff !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  font-size: 13px !important;
+}
+
+.fc-button:hover,
+.fc-button-primary:hover {
+  background-color: #4338CA !important;
+  border-color: #3730A3 !important;
+}
+
+.fc-button:focus,
+.fc-button-primary:focus {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25) !important;
+}
+
+.fc-event {
+  background-color: #4F46E5 !important;
+  border-color: #4338CA !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+}
+
+.fc-day-grid-event {
+  padding: 1px 4px;
+}
+
+.fc-today {
+  background-color: #EEF2FF !important;
+}
+
+.fc-toolbar h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* --- CKEditor 5 toolbar normalization --- */
+.ck.ck-toolbar {
+  border-radius: 6px 6px 0 0 !important;
+  background: #f9fafb !important;
+  border-color: #e5e7eb !important;
+}
+
+.ck.ck-editor__main .ck-editor__editable {
+  border-color: #e5e7eb !important;
+  border-radius: 0 0 6px 6px !important;
+  min-height: 200px;
+}
+
+.ck.ck-editor__editable:focus {
+  border-color: #4F46E5 !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
+  outline: none;
+}
+
+/* --- Toastr notification theming --- */
+#toast-container > div {
+  border-radius: 10px !important;
+  opacity: 1 !important;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
+
+#toast-container > .toast-success {
+  background-color: #10B981;
+}
+
+#toast-container > .toast-error {
+  background-color: #EF4444;
+}
+
+#toast-container > .toast-warning {
+  background-color: #F59E0B;
+}
+
+#toast-container > .toast-info {
+  background-color: #0EA5E9;
+}
+
+/* --- Table utilities --- */
+.data-table th,
+.data-table td {
+  white-space: nowrap;
+}
+
+/* --- Masonry grid (used in academics/settings) --- */
+[data-masonry] {
+  column-gap: 1.25rem;
+}
+
+/* --- Scrollbar styling (Webkit) --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* --- Print override: hide sidebar/topbar --- */
+@media print {
+  aside, header { display: none !important; }
+  main { margin-left: 0 !important; padding: 0 !important; }
+}

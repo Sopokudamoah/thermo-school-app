@@ -1,12 +1,13 @@
+@push('head-scripts')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-
-<div id='full_calendar_events'></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+@endpush
+
+<div id='full_calendar_events' class="w-full"></div>
+
 <script>
     // A modified version of codes from
     // https://www.positronx.io/create-events-in-laravel-using-fullcalendar-and-jquery-ajax/
@@ -30,7 +31,7 @@
             groupByResource: true,
             defaultView: 'month',
             editable: {{$editable}},
-            eventLimit: true, // when too many events in a day, show the popover
+            eventLimit: true,
             events: SITEURL + '/calendar-event',
             displayEventTime: true,
             selectable: {{$selectable}},
@@ -51,7 +52,6 @@
                         type: "POST",
                         success: function (data) {
                             displayMessage("Event created.");
-
                             calendar.fullCalendar('renderEvent', {
                                 id: data.id,
                                 title: event_name,
@@ -66,7 +66,6 @@
             eventResize: function (event, delta) {
                 var event_start = $.fullCalendar.formatDate(event.start, "Y-MM-DD");
                 var event_end = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
-
                 $.ajax({
                     url: SITEURL + '/calendar-crud-ajax',
                     data: {
@@ -105,7 +104,6 @@
     });
 
     function displayMessage(message) {
-        toastr.success(message, 'Event');            
+        toastr.success(message, 'Event');
     }
-
 </script>

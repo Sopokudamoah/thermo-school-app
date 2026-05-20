@@ -1,48 +1,39 @@
 @extends('layouts.app')
+@section('page-title', 'Edit Exam Rule')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-start">
-        @include('layouts.left-menu')
-        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-10 col-xl-10 col-xxl-10">
-            <div class="row pt-2">
-                <div class="col ps-4">
-                    <h1 class="display-6 mb-3"><i class="bi bi-file-plus"></i> Edit Exam Rule</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{url()->previous()}}">Exams Rules</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Edit Exam Rule</li>
-                        </ol>
-                    </nav>
-                    @include('session-messages')
-                    <div class="row">
-                        <div class="col-5 mb-4">
-                            <div class="p-3 border bg-light shadow-sm">
-                                <form action="{{route('exam.rule.update')}}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="exam_rule_id" value="{{$exam_rule_id}}">
-                                    <div class="mt-2">
-                                        <label for="inputTotalMarks" class="form-label">Total Marks<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                        <input type="number" class="form-control" id="inputTotalMarks" value="{{$exam_rule->total_marks}}" name="total_marks" step="0.01">
-                                    </div>
-                                    <div class="mt-2">
-                                        <label for="inputPassMarks" class="form-label">Pass Marks<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                        <input type="number" class="form-control" id="inputPassMarks" value="{{$exam_rule->pass_marks}}" name="pass_marks" step="0.01">
-                                    </div>
-                                    <div class="mt-2">
-                                        <label for="inputMarksDistributionNote" class="form-label">Marks Distribution Note<sup><i class="bi bi-asterisk text-primary"></i></sup></label>
-                                        <textarea class="form-control" id="inputMarksDistributionNote" rows="3" name="marks_distribution_note">{{$exam_rule->marks_distribution_note}}</textarea>
-                                    </div>
-                                    <button type="submit" class="mt-3 btn btn-sm btn-outline-primary"><i class="bi bi-check"></i> Save</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @include('layouts.footer')
+<div class="mb-6">
+    <h1 class="font-heading text-xl font-bold text-gray-900"><i data-lucide="file-plus" class="inline w-5 h-5 mr-2"></i> Edit Exam Rule</h1>
+    <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+        <a href="{{route('home')}}" class="hover:text-indigo-600">Home</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="{{url()->previous()}}" class="hover:text-indigo-600">Exams Rules</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span>Edit Exam Rule</span>
+    </nav>
+</div>
+
+@include('session-messages')
+
+<div class="bg-white rounded-card shadow-card border border-gray-200 p-6 max-w-lg">
+    <form action="{{route('exam.rule.update')}}" method="POST">
+        @csrf
+        <input type="hidden" name="exam_rule_id" value="{{$exam_rule_id}}">
+        <div class="mb-4">
+            <label for="inputTotalMarks" class="block text-sm font-medium text-gray-700 mb-1.5">Total Marks <sup class="text-indigo-500">*</sup></label>
+            <input type="number" class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" id="inputTotalMarks" value="{{$exam_rule->total_marks}}" name="total_marks" step="0.01">
         </div>
-    </div>
+        <div class="mb-4">
+            <label for="inputPassMarks" class="block text-sm font-medium text-gray-700 mb-1.5">Pass Marks <sup class="text-indigo-500">*</sup></label>
+            <input type="number" class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" id="inputPassMarks" value="{{$exam_rule->pass_marks}}" name="pass_marks" step="0.01">
+        </div>
+        <div class="mb-6">
+            <label for="inputMarksDistributionNote" class="block text-sm font-medium text-gray-700 mb-1.5">Marks Distribution Note <sup class="text-indigo-500">*</sup></label>
+            <textarea class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" id="inputMarksDistributionNote" rows="3" name="marks_distribution_note">{{$exam_rule->marks_distribution_note}}</textarea>
+        </div>
+        <button type="submit" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors">
+            <i data-lucide="check" class="w-4 h-4"></i> Save
+        </button>
+    </form>
 </div>
 @endsection

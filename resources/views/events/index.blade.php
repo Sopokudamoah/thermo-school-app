@@ -1,20 +1,12 @@
 @extends('layouts.app')
+@section('page-title', 'Create Events')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-start">
-        @include('layouts.left-menu')
-        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-10 col-xl-10 col-xxl-10">
-            <div class="row pt-2">
-                <div class="col ps-4">
-                    <h1 class="display-6 mb-3"><i class="bi bi-calendar-event"></i> Create Events</h1>
-                    <div class="row bg-white p-4 shadow-sm">
-                        @include('components.events.event-calendar', ['editable' => 'true', 'selectable' => 'true'])
-                    </div>
-                </div>
-            </div>
-            @include('layouts.footer')
-        </div>
-    </div>
+<div class="mb-6">
+    <h1 class="font-heading text-xl font-bold text-gray-900"><i data-lucide="calendar-days" class="inline w-5 h-5 mr-2"></i> Create Events</h1>
+</div>
+
+<div class="bg-white rounded-card shadow-card border border-gray-200 p-6">
+    @include('components.events.event-calendar', ['editable' => 'true', 'selectable' => 'true'])
 </div>
 @endsection

@@ -1,55 +1,42 @@
 @extends('layouts.app')
+@section('page-title', 'Exam Rules')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-start">
-        @include('layouts.left-menu')
-        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-10 col-xl-10 col-xxl-10">
-            <div class="row pt-2">
-                <div class="col ps-4">
-                    <h1 class="display-6 mb-3">
-                        <i class="bi bi-file-text"></i> Exam Rules
-                    </h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{url()->previous()}}">Exams</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Exam Rules</li>
-                        </ol>
-                    </nav>
-                    <div class="mb-4 bg-white border shadow-sm p-3">
-                        <table class="table table-responsive">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Total Marks</th>
-                                    <th scope="col">Pass Marks</th>
-                                    <th scope="col">Marks Distribution Note</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($exam_rules as $exam_rule)
-                                <tr>
-                                    <td>{{$exam_rule->total_marks}}</td>
-                                    <td>{{$exam_rule->pass_marks}}</td>
-                                    <td>{{$exam_rule->marks_distribution_note}}</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a type="button" href="{{route('exam.rule.edit', [
-                                                'exam_rule_id' => $exam_rule->id
-                                            ])}}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pen"></i> Edit</a>
-                                            {{-- <button type="button" class="btn btn-sm btn-primary"><i class="bi bi-trash2"></i> Delete</button> --}}
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            @include('layouts.footer')
-        </div>
-    </div>
+<div class="mb-6">
+    <h1 class="font-heading text-xl font-bold text-gray-900"><i data-lucide="file-text" class="inline w-5 h-5 mr-2"></i> Exam Rules</h1>
+    <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+        <a href="{{route('home')}}" class="hover:text-indigo-600">Home</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="{{url()->previous()}}" class="hover:text-indigo-600">Exams</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span>Exam Rules</span>
+    </nav>
+</div>
+
+<div class="bg-white rounded-card shadow-card border border-gray-200">
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="bg-gray-50 border-b border-gray-200">
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Marks</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Pass Marks</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Marks Distribution Note</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+            @foreach ($exam_rules as $exam_rule)
+            <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3 text-gray-600">{{$exam_rule->total_marks}}</td>
+                <td class="px-4 py-3 text-gray-600">{{$exam_rule->pass_marks}}</td>
+                <td class="px-4 py-3 text-gray-600">{{$exam_rule->marks_distribution_note}}</td>
+                <td class="px-4 py-3">
+                    <a href="{{route('exam.rule.edit', ['exam_rule_id' => $exam_rule->id])}}" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border border-gray-200">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
+                    </a>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 </div>
 @endsection

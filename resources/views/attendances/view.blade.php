@@ -1,64 +1,52 @@
 @extends('layouts.app')
+@section('page-title', 'View Attendance')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-start">
-        @include('layouts.left-menu')
-        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-10 col-xl-10 col-xxl-10">
-            <div class="row pt-2">
-                <div class="col ps-4">
-                    <h1 class="display-6 mb-3">
-                        <i class="bi bi-calendar2-week-fill"></i> View Attendance
-                    </h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{url()->previous()}}">Courses</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">View Attendance</li>
-                        </ol>
-                    </nav>
-                    @if(request()->query('course_name'))
-                        <h3><i class="bi bi-compass"></i> Course: {{request()->query('course_name')}} </h3>
-                    @elseif(request()->query('section_name'))
-                        <h3><i class="bi bi-diagram-2"></i> Section: {{request()->query('section_name')}} </h3>
-                    @endif
-                    <div class="mt-4">Current Date and Time: {{ date('Y-m-d H:i:s') }}</div>
-                    <div class="row mt-4">
-                        <div class="col bg-white border shadow-sm pt-2">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Student Name</th>
-                                        <th scope="col">Today's Status</th>
-                                        <th scope="col">Total Attended</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($attendances as $attendance)
-                                        @php
-                                            $total_attended = \App\Models\Attendance::where('student_id', $attendance->student_id)->where('session_id', $attendance->session_id)->count();
-                                        @endphp
-                                        <tr>
-                                            <td>{{$attendance->student->first_name}} {{$attendance->student->last_name}}</td>
-                                            <td>
-                                                @if ($attendance->status == "on")
-                                                    <span class="badge bg-success">PRESENT</span>
-                                                @else
-                                                    <span class="badge bg-danger">ABSENT</span>
-                                                @endif
-                                                
-                                            </td>
-                                            <td>{{$total_attended}}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @include('layouts.footer')
-        </div>
-    </div>
+<div class="mb-6">
+    <h1 class="font-heading text-xl font-bold text-gray-900"><i data-lucide="calendar-check" class="inline w-5 h-5 mr-2"></i> View Attendance</h1>
+    <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+        <a href="{{route('home')}}" class="hover:text-indigo-600">Home</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="{{url()->previous()}}" class="hover:text-indigo-600">Courses</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span>View Attendance</span>
+    </nav>
+</div>
+
+@if(request()->query('course_name'))
+    <h3 class="text-base font-semibold text-gray-800 mb-1">Course: {{request()->query('course_name')}}</h3>
+@elseif(request()->query('section_name'))
+    <h3 class="text-base font-semibold text-gray-800 mb-1">Section: {{request()->query('section_name')}}</h3>
+@endif
+<p class="text-sm text-gray-500 mb-4">Current Date and Time: {{ date('Y-m-d H:i:s') }}</p>
+
+<div class="bg-white rounded-card shadow-card border border-gray-200">
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="bg-gray-50 border-b border-gray-200">
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Student Name</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Today's Status</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Attended</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+            @foreach ($attendances as $attendance)
+                @php
+                    $total_attended = \App\Models\Attendance::where('student_id', $attendance->student_id)->where('session_id', $attendance->session_id)->count();
+                @endphp
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 text-gray-600">{{$attendance->student->first_name}} {{$attendance->student->last_name}}</td>
+                    <td class="px-4 py-3">
+                        @if ($attendance->status == "on")
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">PRESENT</span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">ABSENT</span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3 text-gray-600">{{$total_attended}}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 </div>
 @endsection

@@ -1,53 +1,44 @@
 @extends('layouts.app')
+@section('page-title', 'Create Grading System')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-start">
-        @include('layouts.left-menu')
-        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-10 col-xl-10 col-xxl-10">
-            <div class="row pt-2">
-                <div class="col ps-4">
-                    <h1 class="display-6 mb-3"><i class="bi bi-file-plus"></i> Create Grading System</h1>
-                    @include('session-messages')
-                    <div class="row">
-                        <div class="col-5 mb-4">
-                            <div class="p-3 border shadow-sm bg-light">
-                                <form action="{{route('exam.grade.system.store')}}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="session_id" value="{{$current_school_session_id}}">
-                                    <div>
-                                        <p class="mt-2">Select class:<sup><i class="bi bi-asterisk text-primary"></i></sup></p>
-                                        <select class="form-select" name="class_id" required>
-                                            @isset($school_classes)
-                                                @foreach ($school_classes as $school_class)
-                                                <option value="{{$school_class->id}}">{{$school_class->class_name}}</option>
-                                                @endforeach
-                                            @endisset
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <p class="mt-2">Select semester:<sup><i class="bi bi-asterisk text-primary"></i></sup></p>
-                                        <select class="form-select" aria-label=".form-select-sm" name="semester_id" required>
-                                            @isset($semesters)
-                                                @foreach ($semesters as $semester)
-                                                <option value="{{$semester->id}}" {{($semester->id === request()->query('semester_id'))?'selected':''}}>{{$semester->semester_name}}</option>
-                                                @endforeach
-                                            @endisset
-                                        </select>
-                                    </div>
-                                    <div class="mt-2">
-                                        <p>Grading System name<sup><i class="bi bi-asterisk text-primary"></i></sup></p>
-                                        <input type="text" class="form-control" placeholder="Grading System 1" aria-label="Grading System 1" name="system_name" required>
-                                    </div>
-                                    <button type="submit" class="mt-3 btn btn-sm btn-outline-primary"><i class="bi bi-check2"></i> Create</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @include('layouts.footer')
+<div class="mb-6">
+    <h1 class="font-heading text-xl font-bold text-gray-900"><i data-lucide="file-plus" class="inline w-5 h-5 mr-2"></i> Create Grading System</h1>
+</div>
+
+@include('session-messages')
+
+<div class="bg-white rounded-card shadow-card border border-gray-200 p-6 max-w-lg">
+    <form action="{{route('exam.grade.system.store')}}" method="POST">
+        @csrf
+        <input type="hidden" name="session_id" value="{{$current_school_session_id}}">
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Select class <sup class="text-indigo-500">*</sup></label>
+            <select class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 bg-white" name="class_id" required>
+                @isset($school_classes)
+                    @foreach ($school_classes as $school_class)
+                    <option value="{{$school_class->id}}">{{$school_class->class_name}}</option>
+                    @endforeach
+                @endisset
+            </select>
         </div>
-    </div>
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Select semester <sup class="text-indigo-500">*</sup></label>
+            <select class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 bg-white" name="semester_id" required>
+                @isset($semesters)
+                    @foreach ($semesters as $semester)
+                    <option value="{{$semester->id}}" {{($semester->id === request()->query('semester_id'))?'selected':''}}>{{$semester->semester_name}}</option>
+                    @endforeach
+                @endisset
+            </select>
+        </div>
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Grading System name <sup class="text-indigo-500">*</sup></label>
+            <input type="text" class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" placeholder="Grading System 1" name="system_name" required>
+        </div>
+        <button type="submit" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors">
+            <i data-lucide="check" class="w-4 h-4"></i> Create
+        </button>
+    </form>
 </div>
 @endsection

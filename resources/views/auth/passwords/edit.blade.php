@@ -1,42 +1,50 @@
 @extends('layouts.app')
 
+@section('page-title', 'Change Password')
+
 @section('content')
-<div class="container">
-    <div class="row justify-content-start">
-        @include('layouts.left-menu')
-        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-10 col-xl-10 col-xxl-10">
-            <div class="row pt-2">
-                <div class="col ps-4">
-                    <h1 class="display-6 mb-3"><i class="bi bi-journal-medical"></i> Change Password</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Change Password</li>
-                        </ol>
-                    </nav>
-                    @include('session-messages')
-                    <div class="col-6 border p-3 shadow-sm">
-                        <form action="{{route('password.update')}}" method="POST">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="old-password" class="form-label">Old Password</label>
-                                <input class="form-control" id="old-password" name="old_password" type="password" placeholder="Old password">
-                            </div>
-                            <div class="mb-3">
-                                <label for="new-password" class="form-label">New Password</label>
-                                <input class="form-control" id="new-password" name="new_password" type="password" placeholder="New password">
-                            </div>
-                            <div class="mb-3">
-                                <label for="new-password" class="form-label">Confirm new Password</label>
-                                <input class="form-control" id="new-password" name="new_password_confirmation" type="password" placeholder="Confirm new password">
-                            </div>
-                            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-check2"></i> Save</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            @include('layouts.footer')
-        </div>
-    </div>
+
+<div class="mb-6">
+    <h1 class="font-heading text-xl font-bold text-gray-900">Change Password</h1>
+    <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+        <a href="{{ route('home') }}" class="hover:text-indigo-600 transition-colors">Home</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span class="text-gray-900">Change Password</span>
+    </nav>
 </div>
+
+@include('session-messages')
+
+<div class="bg-white rounded-card shadow-card border border-gray-200 p-6 max-w-lg">
+    <form action="{{ route('password.update') }}" method="POST" class="space-y-4">
+        @csrf
+
+        <div>
+            <label for="old-password" class="block text-sm font-medium text-gray-700 mb-1.5">Old Password</label>
+            <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 transition-colors focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                   id="old-password" name="old_password" type="password" placeholder="Current password">
+        </div>
+
+        <div>
+            <label for="new-password" class="block text-sm font-medium text-gray-700 mb-1.5">New Password</label>
+            <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 transition-colors focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                   id="new-password" name="new_password" type="password" placeholder="New password">
+        </div>
+
+        <div>
+            <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1.5">Confirm New Password</label>
+            <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 transition-colors focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                   id="confirm-password" name="new_password_confirmation" type="password" placeholder="Confirm new password">
+        </div>
+
+        <div class="pt-2">
+            <button type="submit"
+                    class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-5 py-2.5 rounded-lg transition-colors">
+                <i data-lucide="check" class="w-4 h-4"></i>
+                Save Password
+            </button>
+        </div>
+    </form>
+</div>
+
 @endsection

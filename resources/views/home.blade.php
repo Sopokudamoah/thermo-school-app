@@ -1,148 +1,126 @@
 @extends('layouts.app')
 
+@section('page-title', 'Dashboard')
+
 @section('content')
-<div class="container">
-    <div class="row justify-content-start">
-        @include('layouts.left-menu')
-        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-10 col-xl-10 col-xxl-10">
-            <div class="row pt-3">
-                <div class="col ps-4">
-                    <!-- <h1 class="display-6 mb-3"><i class="ms-auto bi bi-grid"></i> {{ __('Dashboard') }}</h1> -->
-                    <div class="row dashboard">
-                        <div class="col">
-                            <div class="card rounded-pill">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="ms-2 me-auto">
-                                            <div class="fw-bold"><i class="bi bi-person-lines-fill me-3"></i> Total Students</div>
-                                        </div>
-                                        <span class="badge bg-dark rounded-pill">{{$studentCount}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card rounded-pill">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="ms-2 me-auto">
-                                            <div class="fw-bold"><i class="bi bi-person-lines-fill me-3"></i> Total Teachers</div>
-                                        </div>
-                                        <span class="badge bg-dark rounded-pill">{{$teacherCount}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card rounded-pill">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="ms-2 me-auto">
-                                            <div class="fw-bold"><i class="bi bi-diagram-3 me-3"></i> Total Classes</div>
-                                        </div>
-                                        <span class="badge bg-dark rounded-pill">{{ $classCount }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {{-- <div class="col">
-                            <div class="card rounded-pill">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="ms-2 me-auto">
-                                            <div class="fw-bold">Total Books</div>
-                                        </div>
-                                        <span class="badge bg-dark rounded-pill">800</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
-                    </div>
-                    @if($studentCount > 0)
-                    <div class="mt-3 d-flex align-items-center">
-                        {{-- <div class="col-9 d-flex flex-row" style="height: 10px;">
-                            <div class="bg-dark border text-white" style="border-top-left-radius: 5px; border-bottom-left-radius: 5px; width: {{($maleStudentsBySession/$studentCount) * 100}}%"> </div>
-                            <div class="bg-white border text-dark" style="border-top-right-radius: 5px; border-bottom-right-radius: 5px; width: {{(($studentCount - $maleStudentsBySession)/$studentCount) * 100}}%"> </div>
-                        </div> --}}
-                        <div class="col-3">
-                            <span class="ps-2 me-2">Students %</span>
-                            <span class="badge rounded-pill border" style="background-color: #0678c8;">Male</span>
-                            <span class="badge rounded-pill border" style="background-color: #49a4fe;">Female</span>
-                        </div>
-                        <div class="col-9 progress">
-                            <div class="progress-bar progress-bar-striped" role="progressbar" style="background-color: #0678c8; width: {{round(($maleStudentsBySession/$studentCount), 2) * 100}}%" aria-valuenow="{{round(($maleStudentsBySession/$studentCount), 2) * 100}}" aria-valuemin="0" aria-valuemax="100">{{round(($maleStudentsBySession/$studentCount), 2) * 100}}%</div>
-                            <div class="progress-bar progress-bar-striped" role="progressbar" style="background-color: #49a4fe; width: {{round((($studentCount - $maleStudentsBySession)/$studentCount), 2) * 100}}%" aria-valuenow="{{round((($studentCount - $maleStudentsBySession)/$studentCount), 2) * 100}}" aria-valuemin="0" aria-valuemax="100">{{round((($studentCount - $maleStudentsBySession)/$studentCount), 2) * 100}}%</div>
-                          </div>
-                    </div>
-                    @endif
-                    <div class="row align-items-md-stretch mt-4">
-                        <div class="col">
-                            <div class="p-3 text-white bg-dark rounded-3">
-                                <h3>Welcome to Unifiedtransform!</h3>
-                                <p><i class="bi bi-emoji-heart-eyes"></i> Thanks for your love and support.</p>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="p-3 bg-white border rounded-3" style="height: 100%;">
-                                <h3>Manage school better</h3>
-                                <p class="text-end">with <i class="bi bi-lightning"></i> <a href="https://github.com/changeweb/Unifiedtransform" target="_blank" style="text-decoration: none;">Unifiedtransform</a> <i class="bi bi-lightning"></i>.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row row-cols-2 mt-4">
-                    <div class="col">
-                            <div class="card mb-3">
-                                <div class="card-header bg-transparent"><i class="bi bi-calendar-event me-2"></i> Events</div>
-                                <div class="card-body text-dark">
-                                    @include('components.events.event-calendar', ['editable' => 'false', 'selectable' => 'false'])
-                                    {{-- <div class="overflow-auto" style="height: 250px;">
-                                        <div class="list-group">
-                                            <a href="#" class="list-group-item list-group-item-action">
-                                                <div class="d-flex w-100 justify-content-between">
-                                                <h5 class="mb-1">List group item heading</h5>
-                                                <small>3 days ago</small>
-                                                </div>
-                                                <p class="mb-1">Some placeholder content in a paragraph.</p>
-                                                <small>And some small print.</small>
-                                            </a>
-                                        </div>
-                                    </div> --}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card mb-3">
-                                <div class="card-header bg-transparent d-flex justify-content-between"><span><i class="bi bi-megaphone me-2"></i> Notices</span> {{ $notices->links() }}</div>
-                                <div class="card-body p-0 text-dark">
-                                    <div>
-                                        @isset($notices)
-                                        <div class="accordion accordion-flush" id="noticeAccordion">
-                                            @foreach ($notices as $notice)
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="flush-heading{{$notice->id}}">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{$notice->id}}" aria-expanded={{($loop->first)?"true":"false"}} aria-controls="flush-collapse{{$notice->id}}">
-                                                        Published at: {{$notice->created_at}}
-                                                    </button>
-                                                </h2>
-                                                <div id="flush-collapse{{$notice->id}}" class="accordion-collapse collapse {{($loop->first)?"show":"hide"}}" aria-labelledby="flush-heading{{$notice->id}}" data-bs-parent="#noticeAccordion">
-                                                    <div class="accordion-body overflow-auto">{!!Purify::clean($notice->notice)!!}</div>
-                                                </div>
-                                            </div>
-                                            @endforeach
-                                            @endisset
-                                            @if(count($notices) < 1)
-                                                <div class="p-3">No notices</div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @include('layouts.footer')
+
+{{-- Stat cards --}}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+
+    {{-- Students --}}
+    <div class="bg-white rounded-card shadow-card border border-gray-200 p-5 flex items-start justify-between">
+        <div>
+            <p class="text-sm text-gray-500 mb-1">Total Students</p>
+            <p class="text-3xl font-heading font-bold text-gray-900">{{ $studentCount }}</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+            <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i>
         </div>
     </div>
+
+    {{-- Teachers --}}
+    <div class="bg-white rounded-card shadow-card border border-gray-200 p-5 flex items-start justify-between">
+        <div>
+            <p class="text-sm text-gray-500 mb-1">Total Teachers</p>
+            <p class="text-3xl font-heading font-bold text-gray-900">{{ $teacherCount }}</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+            <i data-lucide="user-check" class="w-5 h-5 text-emerald-600"></i>
+        </div>
+    </div>
+
+    {{-- Classes --}}
+    <div class="bg-white rounded-card shadow-card border border-gray-200 p-5 flex items-start justify-between">
+        <div>
+            <p class="text-sm text-gray-500 mb-1">Total Classes</p>
+            <p class="text-3xl font-heading font-bold text-gray-900">{{ $classCount }}</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+            <i data-lucide="git-branch" class="w-5 h-5 text-amber-600"></i>
+        </div>
+    </div>
+
 </div>
+
+{{-- Gender distribution bar --}}
+@if($studentCount > 0)
+<div class="bg-white rounded-card shadow-card border border-gray-200 p-5 mb-6">
+    <div class="flex items-center justify-between mb-3">
+        <p class="text-sm font-medium text-gray-700">Student Gender Distribution</p>
+        <div class="flex items-center gap-3 text-xs text-gray-500">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-700 inline-block"></span> Male</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-400 inline-block"></span> Female</span>
+        </div>
+    </div>
+    <div class="flex rounded-full overflow-hidden h-3 w-full">
+        <div class="bg-blue-700 transition-all"
+             style="width: {{ round(($maleStudentsBySession/$studentCount), 2) * 100 }}%"
+             title="Male: {{ round(($maleStudentsBySession/$studentCount), 2) * 100 }}%"></div>
+        <div class="bg-blue-400 transition-all"
+             style="width: {{ round((($studentCount - $maleStudentsBySession)/$studentCount), 2) * 100 }}%"
+             title="Female: {{ round((($studentCount - $maleStudentsBySession)/$studentCount), 2) * 100 }}%"></div>
+    </div>
+    <div class="flex justify-between mt-2 text-xs text-gray-500">
+        <span>Male: {{ round(($maleStudentsBySession/$studentCount), 2) * 100 }}%</span>
+        <span>Female: {{ round((($studentCount - $maleStudentsBySession)/$studentCount), 2) * 100 }}%</span>
+    </div>
+</div>
+@endif
+
+{{-- Events + Notices two-column --}}
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    {{-- Events calendar --}}
+    <div class="bg-white rounded-card shadow-card border border-gray-200 overflow-hidden">
+        <div class="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
+            <i data-lucide="calendar-days" class="w-4 h-4 text-indigo-600"></i>
+            <h3 class="text-sm font-semibold text-gray-900">Events</h3>
+        </div>
+        <div class="p-4">
+            @include('components.events.event-calendar', ['editable' => 'false', 'selectable' => 'false'])
+        </div>
+    </div>
+
+    {{-- Notices accordion --}}
+    <div class="bg-white rounded-card shadow-card border border-gray-200 overflow-hidden">
+        <div class="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i data-lucide="megaphone" class="w-4 h-4 text-indigo-600"></i>
+                <h3 class="text-sm font-semibold text-gray-900">Notices</h3>
+            </div>
+            <div class="text-xs">{{ $notices->links() }}</div>
+        </div>
+
+        @isset($notices)
+        @if(count($notices) > 0)
+        <div x-data="{ openItem: {{ $notices->first()?->id ?? 'null' }} }">
+            @foreach ($notices as $notice)
+            <div class="border-b border-gray-100 last:border-0">
+                <button @click="openItem = openItem === {{ $notice->id }} ? null : {{ $notice->id }}"
+                        class="w-full flex items-center justify-between px-5 py-3 text-left text-sm text-gray-800 hover:bg-gray-50 transition-colors">
+                    <span class="font-medium">Published {{ $notice->created_at->diffForHumans() }}</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 shrink-0 transition-transform duration-200"
+                       :class="openItem === {{ $notice->id }} ? 'rotate-180' : ''"></i>
+                </button>
+                <div x-show="openItem === {{ $notice->id }}"
+                     x-transition:enter="transition ease-out duration-150"
+                     x-transition:enter-start="opacity-0 -translate-y-1"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     class="px-5 pb-4 text-sm text-gray-700 prose prose-sm max-w-none overflow-auto max-h-48">
+                    {!! Purify::clean($notice->notice) !!}
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @else
+        <div class="flex flex-col items-center justify-center py-10 text-center">
+            <i data-lucide="bell-off" class="w-8 h-8 text-gray-300 mb-2"></i>
+            <p class="text-sm text-gray-500">No notices yet.</p>
+        </div>
+        @endif
+        @endisset
+    </div>
+
+</div>
+
 @endsection

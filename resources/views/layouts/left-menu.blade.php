@@ -1,154 +1,255 @@
-<div class="col-xs-1 col-sm-1 col-md-1 col-lg-2 col-xl-2 col-xxl-2 border-rt-e6 px-0">
-    <div class="d-flex flex-column align-items-center align-items-sm-start min-vh-100">
-                <ul class="nav flex-column pt-2 w-100">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('home')? 'active' : '' }}" href="{{url('home')}}"><i class="ms-auto bi bi-grid"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">{{ __('Dashboard') }}</span></a>
-                    </li>
-                    {{-- @if (Auth::user()->role == "teacher")
-                    <li class="nav-item">
-                        <a type="button" href="{{url('attendances')}}" class="d-flex nav-link {{ request()->is('attendances*')? 'active' : '' }}"><i class="bi bi-calendar2-week"></i> <span class="ms-2 d-inline d-sm-none d-md-none d-xl-inline">Attendance</span></a>
-                    </li>
-                    @endif --}}
-                    @can('view classes')
-                    <li class="nav-item">
-                        @php
-                            if (session()->has('browse_session_id')){
-                                $classCount = \App\Models\SchoolClass::where('session_id', session('browse_session_id'))->count();
-                            } else {
-                                $latest_session = \App\Models\SchoolSession::latest()->first();
-                                if($latest_session) {
-                                    $classCount = \App\Models\SchoolClass::where('session_id', $latest_session->id)->count();
-                                } else {
-                                    $classCount = 0;
-                                }
-                            }
-                        @endphp
-                        <a class="nav-link d-flex {{ request()->is('classes')? 'active' : '' }}" href="{{url('classes')}}"><i class="bi bi-diagram-3"></i> <span class="ms-2 d-inline d-sm-none d-md-none d-xl-inline">Classes</span> <span class="ms-auto d-inline d-sm-none d-md-none d-xl-inline">{{ $classCount }}</span></a>
-                    </li>
-                    @endcan
-                    @if(Auth::user()->role != "student")
-                    <li class="nav-item">
-                        <a type="button" href="#student-submenu" data-bs-toggle="collapse" class="d-flex nav-link {{ request()->is('students*')? 'active' : '' }}"><i class="bi bi-person-lines-fill"></i> <span class="ms-2 d-inline d-sm-none d-md-none d-xl-inline">Students</span>
-                            <i class="ms-auto d-inline d-sm-none d-md-none d-xl-inline bi bi-chevron-down"></i>
-                        </a>
-                        <ul class="nav collapse {{ request()->is('students*')? 'show' : 'hide' }} bg-white" id="student-submenu">
-                            <li class="nav-item w-100" style="{{ request()->routeIs('student.list.show')? 'font-weight:bold;' : '' }}"><a class="nav-link" href="{{route('student.list.show')}}"><i class="bi bi-person-video2 me-2"></i> View Students</a></li>
-                            @if (!session()->has('browse_session_id') && Auth::user()->role == "admin")
-                            <li class="nav-item w-100" style="{{ request()->routeIs('student.create.show')? 'font-weight:bold;' : '' }}"><a class="nav-link" href="{{route('student.create.show')}}"><i class="bi bi-person-plus me-2"></i> Add Student</a></li>
-                            @endif
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a type="button" href="#teacher-submenu" data-bs-toggle="collapse" class="d-flex nav-link {{ request()->is('teachers*')? 'active' : '' }}"><i class="bi bi-person-lines-fill"></i> <span class="ms-2 d-inline d-sm-none d-md-none d-xl-inline">Teachers</span>
-                            <i class="ms-auto d-inline d-sm-none d-md-none d-xl-inline bi bi-chevron-down"></i>
-                        </a>
-                        <ul class="nav collapse {{ request()->is('teachers*')? 'show' : 'hide' }} bg-white" id="teacher-submenu">
-                            <li class="nav-item w-100" style="{{ request()->routeIs('teacher.list.show')? 'font-weight:bold;' : '' }}"><a class="nav-link" href="{{route('teacher.list.show')}}"><i class="bi bi-person-video2 me-2"></i> View Teachers</a></li>
-                            @if (!session()->has('browse_session_id') && Auth::user()->role == "admin")
-                            <li class="nav-item w-100" style="{{ request()->routeIs('teacher.create.show')? 'font-weight:bold;' : '' }}"><a class="nav-link" href="{{route('teacher.create.show')}}"><i class="bi bi-person-plus me-2"></i> Add Teacher</a></li>
-                            @endif
-                        </ul>
-                    </li>
-                    @endif
-                    @if(Auth::user()->role == "teacher")
-                    <li class="nav-item">
-                        <a class="nav-link {{ (request()->is('courses/teacher*') || request()->is('courses/assignments*'))? 'active' : '' }}" href="{{route('course.teacher.list.show', ['teacher_id' => Auth::user()->id])}}"><i class="bi bi-journal-medical"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">My Courses</span></a>
-                    </li>
-                    @endif
-                    @if(Auth::user()->role == "student")
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('student.attendance.show')? 'active' : '' }}" href="{{route('student.attendance.show', ['id' => Auth::user()->id])}}"><i class="bi bi-calendar2-week"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Attendance</span></a>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('course.student.list.show')? 'active' : '' }}" href="{{route('course.student.list.show', ['student_id' => Auth::user()->id])}}"><i class="bi bi-journal-medical"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Courses</span></a>
-                    </li>
-                    {{-- <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-file-post"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Assignments</span></a>
-                    </li><li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-cloud-sun"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Marks</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-journal-text"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Syllabus</span></a>
-                    </li> --}}
-                    <li class="nav-item border-bottom">
-                        @php
-                            if (session()->has('browse_session_id')){
-                                $class_info = \App\Models\Promotion::where('session_id', session('browse_session_id'))->where('student_id', Auth::user()->id)->first();
-                            } else {
-                                $latest_session = \App\Models\SchoolSession::latest()->first();
-                                if($latest_session) {
-                                    $class_info = \App\Models\Promotion::where('session_id', $latest_session->id)->where('student_id', Auth::user()->id)->first();
-                                } else {
-                                    $class_info = [];
-                                }
-                            }
-                        @endphp
-                        <a class="nav-link" href="{{route('section.routine.show', [
-                            'class_id'  => $class_info->class_id,
-                            'section_id'=> $class_info->section_id
-                        ])}}"><i class="bi bi-calendar4-range"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Routine</span></a>
-                    </li>
-                    @endif
-                    @if(Auth::user()->role != "student")
-                    <li class="nav-item border-bottom">
-                        <a type="button" href="#exam-grade-submenu" data-bs-toggle="collapse" class="d-flex nav-link {{ request()->is('exams*')? 'active' : '' }}"><i class="bi bi-file-text"></i> <span class="ms-2 d-inline d-sm-none d-md-none d-xl-inline">Exams / Grades</span>
-                            <i class="ms-auto d-inline d-sm-none d-md-none d-xl-inline bi bi-chevron-down"></i>
-                        </a>
-                        <ul class="nav collapse {{ request()->is('exams*')? 'show' : 'hide' }} bg-white" id="exam-grade-submenu">
-                            <li class="nav-item w-100" style="{{ request()->routeIs('exam.list.show')? 'font-weight:bold;' : '' }}"><a class="nav-link" href="{{route('exam.list.show')}}"><i class="bi bi-file-text me-2"></i> View Exams</a></li>
-                            @if (Auth::user()->role == "admin" || Auth::user()->role == "teacher")
-                            <li class="nav-item w-100" style="{{ request()->routeIs('exam.create.show')? 'font-weight:bold;' : '' }}"><a class="nav-link" href="{{route('exam.create.show')}}"><i class="bi bi-file-plus me-2"></i> Create Exams</a></li>
-                            @endif
-                            @if (Auth::user()->role == "admin")
-                            <li class="nav-item w-100" style="{{ request()->routeIs('exam.grade.system.create')? 'font-weight:bold;' : '' }}"><a class="nav-link" href="{{route('exam.grade.system.create')}}"><i class="bi bi-file-plus me-2"></i> Add Grade Systems</a></li>
-                            @endif
-                            <li class="nav-item w-100" style="{{ request()->routeIs('exam.grade.system.index')? 'font-weight:bold;' : '' }}"><a class="nav-link" href="{{route('exam.grade.system.index')}}"><i class="bi bi-file-ruled me-2"></i> View Grade Systems</a></li>
-                        </ul>
-                    </li>
-                    {{-- <li class="nav-item border-bottom">
-                        <a type="button" href="#" class="d-flex nav-link {{ request()->is('marks*')? 'active' : '' }} dropdown-toggle caret-off" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-cloud-sun"></i> <span class="ms-2 d-inline d-sm-none d-md-none d-xl-inline">Marks / Results</span>
-                            <i class="ms-auto d-inline d-sm-none d-md-none d-xl-inline bi bi-chevron-down"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{url('marks/view')}}">View Marks</a></li>
-                            <li><a class="dropdown-item" href="{{url('marks/results')}}">View Results</a></li>
-                        </ul>
-                    </li> --}}
-                    @endif
-                    @if (Auth::user()->role == "admin")
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('notice*')? 'active' : '' }}" href="{{route('notice.create')}}"><i class="bi bi-megaphone"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Notice</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('calendar-event*')? 'active' : '' }}" href="{{route('events.show')}}"><i class="bi bi-calendar-event"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Event</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('syllabus*')? 'active' : '' }}" href="{{route('class.syllabus.create')}}"><i class="bi bi-journal-text"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Syllabus</span></a>
-                    </li>
-                    <li class="nav-item border-bottom">
-                        <a class="nav-link {{ request()->is('routine*')? 'active' : '' }}" href="{{route('section.routine.create')}}"><i class="bi bi-calendar4-range"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Routine</span></a>
-                    </li>
-                    @endif
-                    @if (Auth::user()->role == "admin")
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('academics*')? 'active' : '' }}" href="{{url('academics/settings')}}"><i class="bi bi-tools"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Academic</span></a>
-                    </li>
-                    @endif
-                    @if (!session()->has('browse_session_id') && Auth::user()->role == "admin")
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('promotions*')? 'active' : '' }}" href="{{url('promotions/index')}}"><i class="bi bi-sort-numeric-up-alt"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Promotion</span></a>
-                    </li>
-                    @endif
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#" aria-disabled="true"><i class="bi bi-currency-exchange"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Payment</span></a>
-                    </li>
-                    @if (Auth::user()->role == "admin")
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#" aria-disabled="true"><i class="bi bi-person-lines-fill"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Staff</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#" aria-disabled="true"><i class="bi bi-journals"></i> <span class="ms-1 d-inline d-sm-none d-md-none d-xl-inline">Library</span></a>
-                    </li>
-                    @endif
-                </ul>
+<aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+       class="fixed left-0 top-0 h-full w-[260px] bg-white border-r border-gray-200 z-50 flex flex-col transition-transform duration-300 overflow-y-auto">
+
+    {{-- Logo --}}
+    <div class="h-16 flex items-center px-5 border-b border-gray-200 shrink-0">
+        <a href="{{ url('/') }}" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+            <img src="{{ asset('imgs/logo.png') }}" alt="{{ config('app.name', 'Unifiedtransform') }}" class="h-8 w-auto object-contain">
+            <span class="font-heading font-semibold text-base text-indigo-600 truncate">{{ config('app.name', 'Unifiedtransform') }}</span>
+        </a>
+    </div>
+
+    {{-- User identity --}}
+    <div class="px-4 py-3 border-b border-gray-100 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 text-indigo-600 font-semibold text-sm">
+                {{ strtoupper(substr(Auth::user()->first_name, 0, 1)) }}
+            </div>
+            <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-900 truncate">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</p>
+                <span class="inline-block text-xs font-medium text-indigo-600 bg-indigo-50 rounded-full px-2 py-0.5 capitalize mt-0.5">{{ Auth::user()->role }}</span>
             </div>
         </div>
+    </div>
+
+    {{-- Navigation --}}
+    <nav class="flex-1 px-3 py-3 space-y-0.5 text-sm">
+
+        {{-- Dashboard --}}
+        <a href="{{ url('home') }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('home') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0 {{ request()->is('home') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+            <span>{{ __('Dashboard') }}</span>
+        </a>
+
+        {{-- ACADEMIC group label --}}
+        <p class="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Academic</p>
+
+        {{-- Classes --}}
+        @can('view classes')
+        @php
+            if (session()->has('browse_session_id')) {
+                $classCount = \App\Models\SchoolClass::where('session_id', session('browse_session_id'))->count();
+            } else {
+                $latest_session = \App\Models\SchoolSession::latest()->first();
+                $classCount = $latest_session ? \App\Models\SchoolClass::where('session_id', $latest_session->id)->count() : 0;
+            }
+        @endphp
+        <a href="{{ url('classes') }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('classes') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i data-lucide="git-branch" class="w-4 h-4 shrink-0 {{ request()->is('classes') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+            <span class="flex-1">Classes</span>
+            <span class="text-xs font-medium text-gray-400 bg-gray-100 rounded-full px-1.5 py-0.5">{{ $classCount }}</span>
+        </a>
+        @endcan
+
+        {{-- Students submenu (admin/teacher only) --}}
+        @if(Auth::user()->role != "student")
+        <div x-data="{ open: {{ request()->is('students*') ? 'true' : 'false' }} }">
+            <button @click="open = !open"
+                    class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('students*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+                <i data-lucide="users" class="w-4 h-4 shrink-0 {{ request()->is('students*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+                <span class="flex-1 text-left">Students</span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
+            </button>
+            <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="sidebar-submenu mt-0.5 space-y-0.5">
+                <a href="{{ route('student.list.show') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('student.list.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <i data-lucide="user-search" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                    View Students
+                </a>
+                @if (!session()->has('browse_session_id') && Auth::user()->role == "admin")
+                <a href="{{ route('student.create.show') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('student.create.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <i data-lucide="user-plus" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                    Add Student
+                </a>
+                @endif
+            </div>
+        </div>
+
+        {{-- Teachers submenu --}}
+        <div x-data="{ open: {{ request()->is('teachers*') ? 'true' : 'false' }} }">
+            <button @click="open = !open"
+                    class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('teachers*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+                <i data-lucide="user-check" class="w-4 h-4 shrink-0 {{ request()->is('teachers*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+                <span class="flex-1 text-left">Teachers</span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
+            </button>
+            <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="sidebar-submenu mt-0.5 space-y-0.5">
+                <a href="{{ route('teacher.list.show') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('teacher.list.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <i data-lucide="user-search" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                    View Teachers
+                </a>
+                @if (!session()->has('browse_session_id') && Auth::user()->role == "admin")
+                <a href="{{ route('teacher.create.show') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('teacher.create.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <i data-lucide="user-plus" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                    Add Teacher
+                </a>
+                @endif
+            </div>
+        </div>
+        @endif
+
+        {{-- My Courses (teacher only) --}}
+        @if(Auth::user()->role == "teacher")
+        <a href="{{ route('course.teacher.list.show', ['teacher_id' => Auth::user()->id]) }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ (request()->is('courses/teacher*') || request()->is('courses/assignments*')) ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i data-lucide="book-open" class="w-4 h-4 shrink-0{{ (request()->is('courses/teacher*') || request()->is('courses/assignments*')) ? ' text-indigo-600' : ' text-gray-400' }}"></i>
+            <span>My Courses</span>
+        </a>
+        @endif
+
+        {{-- Student-only nav items --}}
+        @if(Auth::user()->role == "student")
+        <a href="{{ route('student.attendance.show', ['id' => Auth::user()->id]) }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('student.attendance.show') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i data-lucide="calendar-check" class="w-4 h-4 shrink-0 {{ request()->routeIs('student.attendance.show') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+            <span>Attendance</span>
+        </a>
+        <a href="{{ route('course.student.list.show', ['student_id' => Auth::user()->id]) }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('course.student.list.show') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i data-lucide="book-open" class="w-4 h-4 shrink-0 {{ request()->routeIs('course.student.list.show') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+            <span>Courses</span>
+        </a>
+        @php
+            if (session()->has('browse_session_id')) {
+                $class_info = \App\Models\Promotion::where('session_id', session('browse_session_id'))->where('student_id', Auth::user()->id)->first();
+            } else {
+                $latest_session = \App\Models\SchoolSession::latest()->first();
+                $class_info = $latest_session ? \App\Models\Promotion::where('session_id', $latest_session->id)->where('student_id', Auth::user()->id)->first() : null;
+            }
+        @endphp
+        @if($class_info)
+        <a href="{{ route('section.routine.show', ['class_id' => $class_info->class_id, 'section_id' => $class_info->section_id]) }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-gray-700 hover:bg-gray-50">
+            <i data-lucide="clock" class="w-4 h-4 shrink-0 text-gray-400"></i>
+            <span>Routine</span>
+        </a>
+        @endif
+        @endif
+
+        {{-- Exams / Grades submenu (non-student) --}}
+        @if(Auth::user()->role != "student")
+        <div x-data="{ open: {{ request()->is('exams*') ? 'true' : 'false' }} }">
+            <button @click="open = !open"
+                    class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('exams*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+                <i data-lucide="file-text" class="w-4 h-4 shrink-0 {{ request()->is('exams*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+                <span class="flex-1 text-left">Exams / Grades</span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
+            </button>
+            <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="sidebar-submenu mt-0.5 space-y-0.5">
+                <a href="{{ route('exam.list.show') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('exam.list.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <i data-lucide="list" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                    View Exams
+                </a>
+                @if (Auth::user()->role == "admin" || Auth::user()->role == "teacher")
+                <a href="{{ route('exam.create.show') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('exam.create.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <i data-lucide="file-plus" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                    Create Exam
+                </a>
+                @endif
+                @if (Auth::user()->role == "admin")
+                <a href="{{ route('exam.grade.system.create') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('exam.grade.system.create') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <i data-lucide="plus-circle" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                    Add Grade System
+                </a>
+                @endif
+                <a href="{{ route('exam.grade.system.index') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('exam.grade.system.index') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <i data-lucide="table" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                    Grade Systems
+                </a>
+            </div>
+        </div>
+        @endif
+
+        {{-- CONTENT group label (admin only) --}}
+        @if (Auth::user()->role == "admin")
+        <p class="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Content</p>
+
+        <a href="{{ route('notice.create') }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('notice*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i data-lucide="megaphone" class="w-4 h-4 shrink-0 {{ request()->is('notice*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+            <span>Notice</span>
+        </a>
+
+        <a href="{{ route('events.show') }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('calendar-event*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i data-lucide="calendar-days" class="w-4 h-4 shrink-0 {{ request()->is('calendar-event*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+            <span>Events</span>
+        </a>
+
+        <a href="{{ route('class.syllabus.create') }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('syllabus*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i data-lucide="book-marked" class="w-4 h-4 shrink-0 {{ request()->is('syllabus*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+            <span>Syllabus</span>
+        </a>
+
+        <a href="{{ route('section.routine.create') }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('routine*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i data-lucide="clock-4" class="w-4 h-4 shrink-0 {{ request()->is('routine*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+            <span>Routine</span>
+        </a>
+
+        {{-- SYSTEM group label (admin only) --}}
+        <p class="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">System</p>
+
+        <a href="{{ url('academics/settings') }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('academics*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i data-lucide="settings" class="w-4 h-4 shrink-0 {{ request()->is('academics*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+            <span>Academic Settings</span>
+        </a>
+
+        @if (!session()->has('browse_session_id'))
+        <a href="{{ url('promotions/index') }}"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('promotions*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i data-lucide="arrow-up-circle" class="w-4 h-4 shrink-0 {{ request()->is('promotions*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+            <span>Promotions</span>
+        </a>
+        @endif
+
+        {{-- FINANCE group label --}}
+        <p class="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Finance</p>
+
+        <span class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed select-none">
+            <i data-lucide="credit-card" class="w-4 h-4 shrink-0"></i>
+            <span>Payment <span class="text-xs ml-1 bg-gray-100 text-gray-400 rounded px-1">Soon</span></span>
+        </span>
+
+        <span class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed select-none">
+            <i data-lucide="users-2" class="w-4 h-4 shrink-0"></i>
+            <span>Staff <span class="text-xs ml-1 bg-gray-100 text-gray-400 rounded px-1">Soon</span></span>
+        </span>
+
+        <span class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed select-none">
+            <i data-lucide="library" class="w-4 h-4 shrink-0"></i>
+            <span>Library <span class="text-xs ml-1 bg-gray-100 text-gray-400 rounded px-1">Soon</span></span>
+        </span>
+        @endif
+
+        {{-- Payment (non-admin) --}}
+        @if (Auth::user()->role != "admin")
+        <span class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed select-none">
+            <i data-lucide="credit-card" class="w-4 h-4 shrink-0"></i>
+            <span>Payment <span class="text-xs ml-1 bg-gray-100 text-gray-400 rounded px-1">Soon</span></span>
+        </span>
+        @endif
+
+    </nav>
+</aside>
