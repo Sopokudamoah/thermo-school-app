@@ -99,22 +99,6 @@
                 <i data-lucide="arrow-right"
                    class="w-4 h-4 text-gray-300 group-hover:text-emerald-500 transition-colors"></i>
             </button>
-
-            <button @click="fillLogin('student@ut.com', 'password')"
-                    class="flex items-center justify-between px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-indigo-50 hover:border-indigo-200 transition-all group">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                        <i data-lucide="user" class="w-4 h-4"></i>
-                    </div>
-                    <div class="text-left">
-                        <p class="text-sm font-semibold text-gray-700">Student</p>
-                        <p class="text-[10px] text-gray-400">student@ut.com</p>
-                    </div>
-                </div>
-                <i data-lucide="arrow-right"
-                   class="w-4 h-4 text-gray-300 group-hover:text-amber-500 transition-colors"></i>
-            </button>
         </div>
     </div>
 @endif
