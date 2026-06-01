@@ -16,7 +16,7 @@
 @include('session-messages')
 
 <div class="bg-white rounded-card shadow-card border border-gray-200 p-6 max-w-lg">
-    <form action="{{ route('password.update') }}" method="POST" class="space-y-4">
+    <form action="{{ route('password.change.update') }}" method="POST" class="space-y-4">
         @csrf
 
         <div>

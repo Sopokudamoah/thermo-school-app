@@ -152,7 +152,7 @@
                             <p class="text-xs text-gray-500 capitalize mt-0.5">{{ Auth::user()->role }}</p>
                         </div>
 
-                        <a href="{{ route('password.edit') }}"
+                        <a href="{{ route('password.change.edit') }}"
                            class="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                             <i data-lucide="key" class="w-4 h-4 text-gray-400"></i>
                             Change Password
