@@ -90,10 +90,10 @@ class PromotionRepository {
     }
 
     public function getSections($session_id, $class_id) {
-        return Promotion::with('section')->select('section_id')
+        return Promotion::with('section')->select('section_id', \DB::raw('MIN(student_id) as student_id'))
                     ->where('session_id', $session_id)
                     ->where('class_id', $class_id)
-                    ->distinct('section_id')
+            ->groupBy('section_id')
                     ->get();
     }
 

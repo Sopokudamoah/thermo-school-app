@@ -71,18 +71,18 @@ class UserRepository implements UserInterface {
                 $student = Student::create([
                     'first_name'    => $request['first_name'],
                     'last_name'     => $request['last_name'],
-                    'email'         => $request['email'],
+                    'email' => $request['email'] ?? null,
                     'gender'        => $request['gender'],
-                    'nationality'   => $request['nationality'],
-                    'phone_number' => $request['phone'],
-                    'address'       => $request['address'],
-                    'address2'      => $request['address2'],
-                    'city'          => $request['city'],
-                    'zip'           => $request['zip'],
+                    'nationality' => $request['nationality'] ?? null,
+                    'phone_number' => $request['phone'] ?? null,
+                    'address' => $request['address'] ?? null,
+                    'address2' => $request['address2'] ?? null,
+                    'city' => $request['city'] ?? null,
+                    'zip' => $request['zip'] ?? null,
                     'photo'         => (!empty($request['photo']))?$this->convert($request['photo']):null,
-                    'birthday'      => $request['birthday'],
-                    'religion'      => $request['religion'],
-                    'blood_type'    => $request['blood_type'],
+                    'birthday' => $request['birthday'] ?? null,
+                    'religion' => $request['religion'] ?? null,
+                    'blood_type' => $request['blood_type'] ?? null,
                 ]);
 
                 // Store Parents' information

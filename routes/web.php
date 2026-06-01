@@ -17,6 +17,7 @@ use App\Http\Controllers\MarkImportController;
 use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\RoutineController;
+use App\Http\Controllers\RoutineImportController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SchoolSessionController;
 use App\Http\Controllers\SectionController;
@@ -53,6 +54,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('final-marks-submission-status/update', [AcademicSettingController::class, 'updateFinalMarksSubmissionStatus'])->name('final.marks.submission.status.update');
         Route::post('active-semester/update', [AcademicSettingController::class, 'updateActiveSemester'])->name(
             'active.semester.update'
+        );
+        Route::post('active-session/update', [AcademicSettingController::class, 'updateActiveSession'])->name(
+            'active.session.update'
         );
 
         Route::post('attendance/type/update', [AcademicSettingController::class, 'updateAttendanceType'])->name('attendance.type.update');
@@ -105,6 +109,10 @@ Route::middleware(['auth'])->group(function () {
 
     //Students
     Route::get('/students/add', [UserController::class, 'createStudent'])->name('student.create.show');
+    Route::get('/students/import/template', [StudentImportController::class, 'downloadTemplate'])->name(
+        'student.import.template'
+    );
+    Route::post('/students/import', [StudentImportController::class, 'import'])->name('student.import');
     Route::get('/students/edit/{id}', [UserController::class, 'editStudent'])->name('student.edit.show');
     Route::get('/students/view/list', [UserController::class, 'getStudentList'])->name('student.list.show');
     Route::get('/students/view/profile/{id}', [UserController::class, 'showStudentProfile'])->name('student.profile.show');
@@ -157,6 +165,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('calendar-crud-ajax', [EventController::class, 'calendarEvents'])->name('events.crud');
 
     // Routines
+    Route::get('/routine/import/template', [RoutineImportController::class, 'downloadTemplate'])->name(
+        'routine.import.template'
+    );
+    Route::post('/routine/import', [RoutineImportController::class, 'import'])->name('routine.import');
     Route::get('/routine', [RoutineController::class, 'index'])->name('routine.index');
     Route::get('/routine/create', [RoutineController::class, 'create'])->name('section.routine.create');
     Route::get('/routine/view', [RoutineController::class, 'show'])->name('section.routine.show');

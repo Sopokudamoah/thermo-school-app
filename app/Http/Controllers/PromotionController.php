@@ -2,28 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Promotion;
-use Illuminate\Http\Request;
-use App\Traits\SchoolSession;
-use App\Interfaces\UserInterface;
-use App\Interfaces\SectionInterface;
 use App\Interfaces\SchoolClassInterface;
-use App\Repositories\PromotionRepository;
 use App\Interfaces\SchoolSessionInterface;
+use App\Interfaces\SectionInterface;
+use App\Interfaces\UserInterface;
+use App\Models\Promotion;
+use App\Repositories\PromotionRepository;
+use App\Traits\SchoolSession;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class PromotionController extends Controller
 {
     use SchoolSession;
 
-    protected $schoolSessionRepository;
-    protected $userRepository;
-    protected $schoolClassRepository;
-    protected $schoolSectionRepository;
+    protected SchoolSessionInterface $schoolSessionRepository;
+    protected UserInterface $userRepository;
+    protected SchoolClassInterface $schoolClassRepository;
+    protected SectionInterface $schoolSectionRepository;
 
     /**
     * Create a new Controller instance
-    * 
+     *
     * @param SchoolSessionInterface $schoolSessionRepository
     * @return void
     */
@@ -41,8 +44,8 @@ class PromotionController extends Controller
     /**
      * Display a listing of the resource.
      * @param  \Illuminate\Http\Request  $request
-     * 
-     * @return \Illuminate\Http\Response
+     *
+     * @return Factory|View|Application|Response|\Illuminate\View\View|object
      */
     public function index(Request $request)
     {
@@ -70,6 +73,7 @@ class PromotionController extends Controller
             'previousSessionSections'       => $previousSessionSections,
             'currentSessionSectionsCounts'  => $currentSessionSectionsCounts,
             'previousSessionId'             => $previousSession['id'],
+            'current_school_session_id' => $current_school_session_id,
         ];
 
         return view('promotions.index', $data);
@@ -78,8 +82,8 @@ class PromotionController extends Controller
     /**
      * Show the form for creating a new resource.
      * @param  \Illuminate\Http\Request  $request
-     * 
-     * @return \Illuminate\Http\Response
+     *
+     * @return Factory|View|Application|Response|\Illuminate\View\View|object
      */
     public function create(Request $request)
     {
@@ -119,7 +123,7 @@ class PromotionController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|Response
      */
     public function store(Request $request)
     {
@@ -153,8 +157,8 @@ class PromotionController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Promotion  $promotion
-     * @return \Illuminate\Http\Response
+     * @param Promotion $promotion
+     * @return Response
      */
     public function show(Promotion $promotion)
     {
@@ -164,8 +168,8 @@ class PromotionController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Promotion  $promotion
-     * @return \Illuminate\Http\Response
+     * @param Promotion $promotion
+     * @return Response
      */
     public function edit(Promotion $promotion)
     {
@@ -176,8 +180,8 @@ class PromotionController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Promotion  $promotion
-     * @return \Illuminate\Http\Response
+     * @param Promotion $promotion
+     * @return Response
      */
     public function update(Request $request, Promotion $promotion)
     {
@@ -187,8 +191,8 @@ class PromotionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Promotion  $promotion
-     * @return \Illuminate\Http\Response
+     * @param Promotion $promotion
+     * @return Response
      */
     public function destroy(Promotion $promotion)
     {

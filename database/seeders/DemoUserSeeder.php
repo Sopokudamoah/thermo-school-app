@@ -21,6 +21,10 @@ class DemoUserSeeder extends Seeder
      */
     public function run()
     {
+        if (!config('app.demo_mode')) {
+            return;
+        }
+
         $sessions = SchoolSession::all();
         if ($sessions->isEmpty()) {
             $sessions = collect([SchoolSession::factory()->create(['session_name' => '2024-2025'])]);
@@ -64,21 +68,28 @@ class DemoUserSeeder extends Seeder
                             ]);
                         }
                     }
+                } else {
+                    // If no previous session, still need to be in AT LEAST one session to show up in lists
+                    // But for the sake of "Promote" demo, they should be in the previous session if we want to promote them to latest.
+                    // The seeder currently creates multiple sessions in SchoolSessionSeeder, so $previousSession should exist.
                 }
 
                 // Promote to latest session
-                $classes = SchoolClass::where('session_id', $latestSession->id)->get();
-                if ($classes->isNotEmpty()) {
-                    $class = $classes->random();
-                    $sections = Section::where('class_id', $class->id)->get();
-                    if ($sections->isNotEmpty()) {
-                        $section = $sections->random();
-                        Promotion::factory()->create([
-                            'student_id' => $student->id,
-                            'class_id'   => $class->id,
-                            'section_id' => $section->id,
-                            'session_id' => $latestSession->id,
-                        ]);
+                $shouldPromote = rand(1, 10) <= 7; // 70% chance to be promoted to latest session
+                if ($shouldPromote) {
+                    $classes = SchoolClass::where('session_id', $latestSession->id)->get();
+                    if ($classes->isNotEmpty()) {
+                        $class = $classes->random();
+                        $sections = Section::where('class_id', $class->id)->get();
+                        if ($sections->isNotEmpty()) {
+                            $section = $sections->random();
+                            Promotion::factory()->create([
+                                'student_id' => $student->id,
+                                'class_id' => $class->id,
+                                'section_id' => $section->id,
+                                'session_id' => $latestSession->id,
+                            ]);
+                        }
                     }
                 }
             }
@@ -147,11 +158,30 @@ class DemoUserSeeder extends Seeder
 
         // 4. Create Demo Student
         if (!Student::where('email', 'student@ut.com')->exists()) {
-            Student::factory()->create([
+            $demoStudent = Student::factory()->create([
                 'first_name' => 'Jane',
                 'last_name' => 'Student',
                 'email' => 'student@ut.com',
             ]);
+
+            StudentParentInfo::factory()->create(['student_id' => $demoStudent->id]);
+            StudentAcademicInfo::factory()->create(['student_id' => $demoStudent->id]);
+
+            // Promote demo student to latest session
+            $classes = SchoolClass::where('session_id', $latestSession->id)->get();
+            if ($classes->isNotEmpty()) {
+                $class = $classes->random();
+                $sections = Section::where('class_id', $class->id)->get();
+                if ($sections->isNotEmpty()) {
+                    $section = $sections->random();
+                    Promotion::factory()->create([
+                        'student_id' => $demoStudent->id,
+                        'class_id' => $class->id,
+                        'section_id' => $section->id,
+                        'session_id' => $latestSession->id,
+                    ]);
+                }
+            }
         }
     }
 }

@@ -9,5 +9,14 @@ class AcademicSetting extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['attendance_type', 'marks_submission_status', 'active_semester_id'];
+    protected $fillable = [
+        'attendance_type',
+        'marks_submission_status',
+        'active_semester_id',
+        'active_session_id',
+        'school_name',
+        'school_address',
+        'school_phone',
+        'school_email'
+    ];
 }

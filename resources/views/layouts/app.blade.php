@@ -73,10 +73,15 @@
 
             {{-- Top bar --}}
             @php
-                $latest_school_session = \App\Models\SchoolSession::latest()->first();
-                $current_school_session_name = $latest_school_session?->session_name;
-
                 $academic_setting = \App\Models\AcademicSetting::first();
+                $current_school_session = null;
+                if ($academic_setting?->active_session_id) {
+                    $current_school_session = \App\Models\SchoolSession::find($academic_setting->active_session_id);
+                } else {
+                    $current_school_session = \App\Models\SchoolSession::latest()->first();
+                }
+                $current_school_session_name = $current_school_session?->session_name;
+
                 $active_semester = $academic_setting?->active_semester_id ? \App\Models\Semester::find($academic_setting->active_semester_id) : null;
             @endphp
             <header class="h-16 sticky top-0 z-30 bg-white border-b border-gray-200 flex items-center px-4 lg:px-6 gap-3 shrink-0">
@@ -97,12 +102,7 @@
 
                 {{-- Academic session banner --}}
                 <div class="hidden md:flex items-center gap-2">
-                    @if (session()->has('browse_session_name') && session('browse_session_name') !== $current_school_session_name)
-                        <span class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-3 py-1">
-                            <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
-                            Browsing: {{ session('browse_session_name') }}
-                        </span>
-                    @elseif($current_school_session_name)
+                    @if($current_school_session_name)
                         <span class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 bg-gray-100 rounded-full px-3 py-1">
                             <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
                             {{ $current_school_session_name }}

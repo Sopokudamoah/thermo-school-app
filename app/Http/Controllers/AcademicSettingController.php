@@ -121,4 +121,15 @@ class AcademicSettingController extends Controller
             return back()->withError($e->getMessage());
         }
     }
+
+    public function updateActiveSession(Request $request)
+    {
+        try {
+            $this->academicSettingRepository->updateActiveSession($request);
+
+            return back()->with('status', 'Active session update was successful!');
+        } catch (\Exception $e) {
+            return back()->withError($e->getMessage());
+        }
+    }
 }

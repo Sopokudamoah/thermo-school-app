@@ -41,8 +41,14 @@
             if (session()->has('browse_session_id')) {
                 $classCount = \App\Models\SchoolClass::where('session_id', session('browse_session_id'))->count();
             } else {
-                $latest_session = \App\Models\SchoolSession::latest()->first();
-                $classCount = $latest_session ? \App\Models\SchoolClass::where('session_id', $latest_session->id)->count() : 0;
+                $academic_setting = \App\Models\AcademicSetting::first();
+                $active_session_id = $academic_setting?->active_session_id;
+                if ($active_session_id) {
+                    $classCount = \App\Models\SchoolClass::where('session_id', $active_session_id)->count();
+                } else {
+                    $latest_session = \App\Models\SchoolSession::latest()->first();
+                    $classCount = $latest_session ? \App\Models\SchoolClass::where('session_id', $latest_session->id)->count() : 0;
+                }
             }
         @endphp
         <a href="{{ url('classes') }}"
@@ -128,8 +134,14 @@
             if (session()->has('browse_session_id')) {
                 $class_info = \App\Models\Promotion::where('session_id', session('browse_session_id'))->where('student_id', Auth::user()->id)->first();
             } else {
-                $latest_session = \App\Models\SchoolSession::latest()->first();
-                $class_info = $latest_session ? \App\Models\Promotion::where('session_id', $latest_session->id)->where('student_id', Auth::user()->id)->first() : null;
+                $academic_setting = \App\Models\AcademicSetting::first();
+                $active_session_id = $academic_setting?->active_session_id;
+                if ($active_session_id) {
+                    $class_info = \App\Models\Promotion::where('session_id', $active_session_id)->where('student_id', Auth::user()->id)->first();
+                } else {
+                    $latest_session = \App\Models\SchoolSession::latest()->first();
+                    $class_info = $latest_session ? \App\Models\Promotion::where('session_id', $latest_session->id)->where('student_id', Auth::user()->id)->first() : null;
+                }
             }
         @endphp
         @if($class_info)

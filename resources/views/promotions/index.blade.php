@@ -44,14 +44,33 @@
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="px-4 py-3 text-gray-600">{{$previousSessionSection->section->section_name}}</td>
                     <td class="px-4 py-3">
-                        @if ($currentSessionSectionsCounts > 0)
+                        @php
+                            $totalStudentsInSection = \App\Models\Promotion::where('session_id', $previousSessionId)
+                                ->where('section_id', $previousSessionSection->section_id)
+                                ->count();
+
+                            $promotedStudentsInSection = \App\Models\Promotion::where('session_id', $previousSessionId)
+                                ->where('section_id', $previousSessionSection->section_id)
+                                ->whereIn('student_id', function($query) use ($current_school_session_id) {
+                                    $query->select('student_id')
+                                        ->from('promotions')
+                                        ->where('session_id', $current_school_session_id);
+                                })
+                                ->count();
+
+                            $isFullyPromoted = ($totalStudentsInSection > 0 && $totalStudentsInSection === $promotedStudentsInSection);
+                        @endphp
+                        @if ($isFullyPromoted)
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Promoted</span>
+                        @elseif ($promotedStudentsInSection > 0)
+                            <span
+                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Partially Promoted ({{ $promotedStudentsInSection }}/{{ $totalStudentsInSection }})</span>
                         @else
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">Not Promoted</span>
                         @endif
                     </td>
                     <td class="px-4 py-3">
-                        @if ($currentSessionSectionsCounts > 0)
+                        @if ($isFullyPromoted)
                             <span class="text-sm text-gray-400">No action needed</span>
                         @else
                             <a href="{{route('promotions.create', ['previousSessionId' => $previousSessionId,'previous_section_id' => $previousSessionSection->section->id, 'previous_class_id' => $class_id])}}" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border border-gray-200">

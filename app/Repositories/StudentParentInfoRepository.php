@@ -9,11 +9,11 @@ class StudentParentInfoRepository {
         try {
             StudentParentInfo::create([
                 'student_id'    => $student_id,
-                'father_name'   => $request['father_name'],
-                'father_phone'  => $request['father_phone'],
-                'mother_name'   => $request['mother_name'],
-                'mother_phone'  => $request['mother_phone'],
-                'parent_address'=> $request['parent_address'],
+                'father_name' => $request['father_name'] ?? null,
+                'father_phone' => $request['father_phone'] ?? null,
+                'mother_name' => $request['mother_name'] ?? null,
+                'mother_phone' => $request['mother_phone'] ?? null,
+                'parent_address' => $request['parent_address'] ?? null,
             ]);
         } catch (\Exception $e) {
             throw new \Exception('Failed to create Student Parent information. '.$e->getMessage());

@@ -11,5 +11,7 @@ interface AcademicSettingInterface {
 
     public function updateActiveSemester($request);
 
+    public function updateActiveSession($request);
+
     public function findFirst();
 }

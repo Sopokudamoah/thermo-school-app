@@ -16,20 +16,22 @@ class SemesterSeeder extends Seeder
         $sessions = \App\Models\SchoolSession::all();
 
         foreach ($sessions as $session) {
-            $year = explode('-', $session->session_name)[0];
+            $year = (int)explode('-', $session->session_name)[0];
 
-            \App\Models\Semester::factory()->create([
-                'semester_name' => 'First Semester',
+            \App\Models\Semester::updateOrCreate([
+                'semester_name' => 'First Term',
                 'session_id' => $session->id,
+            ], [
                 'start_date' => "$year-09-01",
                 'end_date' => ($year + 1) . "-01-31",
             ]);
 
-            \App\Models\Semester::factory()->create([
-                'semester_name' => 'Second Semester',
+            \App\Models\Semester::updateOrCreate([
+                'semester_name' => 'Second Term',
                 'session_id' => $session->id,
+            ], [
                 'start_date' => ($year + 1) . "-02-01",
-                'end_date' => ($year + 1) . "-06-30",
+                'end_date' => ($year + 1) . "-07-31",
             ]);
         }
     }

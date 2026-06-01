@@ -39,6 +39,15 @@ class AcademicSettingRepository implements AcademicSettingInterface {
         }
     }
 
+    public function updateActiveSession($request)
+    {
+        try {
+            AcademicSetting::where('id', 1)->update(['active_session_id' => $request['active_session_id']]);
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to update active session. ' . $e->getMessage());
+        }
+    }
+
     public function findFirst()
     {
         return AcademicSetting::first();

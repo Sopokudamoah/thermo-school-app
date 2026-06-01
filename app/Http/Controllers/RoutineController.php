@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\RoutineStoreRequest;
-use App\Models\Routine;
-use Illuminate\Http\Request;
-use App\Traits\SchoolSession;
-use App\Repositories\RoutineRepository;
 use App\Interfaces\SchoolClassInterface;
 use App\Interfaces\SchoolSessionInterface;
+use App\Models\Routine;
+use App\Repositories\RoutineRepository;
+use App\Traits\SchoolSession;
+use Illuminate\Http\Request;
 
 class RoutineController extends Controller
 {
@@ -22,7 +21,7 @@ class RoutineController extends Controller
         $this->schoolSessionRepository = $schoolSessionRepository;
         $this->schoolClassRepository = $schoolClassRepository;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -90,7 +89,10 @@ class RoutineController extends Controller
             $routineRepository = new RoutineRepository();
             $routineRepository->saveRoutine($request->validated());
 
-            return back()->with('status', 'Routine save was successful!');
+            return redirect()->route('section.routine.show', [
+                'class_id' => $request->class_id,
+                'section_id' => $request->section_id
+            ])->with('status', 'Routine save was successful!');
         } catch (\Exception $e) {
             return back()->withError($e->getMessage());
         }
@@ -104,15 +106,25 @@ class RoutineController extends Controller
      */
     public function show(Request $request)
     {
-        $class_id = $request->query('class_id', 0);
-        $section_id = $request->query('section_id', 0);
+        $class_id = (int)$request->query('class_id', 0);
+        $section_id = (int)$request->query('section_id', 0);
         $current_school_session_id = $this->getSchoolCurrentSession();
-        $routineRepository = new RoutineRepository();
-        $routines = $routineRepository->getAll($class_id, $section_id, $current_school_session_id);
-        $routines = $routines->sortBy('weekday')->groupBy('weekday');
+
+        $classes = $this->schoolClassRepository->getAllBySession($current_school_session_id);
+
+        $routines = collect();
+        if ($class_id && $section_id) {
+            $routineRepository = new RoutineRepository();
+            $routines = $routineRepository->getAll($class_id, $section_id, $current_school_session_id);
+            $routines = $routines->sortBy('weekday')->groupBy('weekday');
+        }
 
         $data = [
-            'routines' => $routines
+            'current_school_session_id' => $current_school_session_id,
+            'classes' => $classes,
+            'routines' => $routines,
+            'selected_class_id' => $class_id,
+            'selected_section_id' => $section_id,
         ];
 
         return view('routines.show', $data);

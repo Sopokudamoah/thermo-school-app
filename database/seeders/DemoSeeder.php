@@ -13,6 +13,10 @@ class DemoSeeder extends Seeder
      */
     public function run()
     {
+        if (!config('app.demo_mode')) {
+            return;
+        }
+
         $this->call([
             NoticeSeeder::class,
             EventSeeder::class,
@@ -20,6 +24,10 @@ class DemoSeeder extends Seeder
             GradeRuleSeeder::class,
             ExamSeeder::class,
             DemoUserSeeder::class,
+            MarkSeeder::class,
+            FinalMarkSeeder::class,
+            AssignedTeacherSeeder::class,
+            RoutineSeeder::class,
         ]);
     }
 }

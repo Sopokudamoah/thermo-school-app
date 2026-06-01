@@ -5,7 +5,7 @@ namespace App\Traits;
 trait SchoolSession {
     /**
      * @param string $request
-     * 
+     *
      * @return string
     */
     public function getSchoolCurrentSession() {

@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Models\SchoolSession;
 use App\Interfaces\SchoolSessionInterface;
+use App\Models\SchoolSession;
 
 class SchoolSessionRepository implements SchoolSessionInterface {
     public function getLatestSession() {

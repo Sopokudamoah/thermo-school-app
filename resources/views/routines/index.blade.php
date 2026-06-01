@@ -1,38 +1,45 @@
 @extends('layouts.app')
-@section('page-title', 'Timetable')
+@section('page-title', 'Routine')
 
 @section('content')
 
 {{-- Page header --}}
 <div class="mb-6 flex items-start justify-between gap-4">
     <div>
-        <h1 class="font-heading text-xl font-bold text-gray-900">Timetable</h1>
+        <h1 class="font-heading text-xl font-bold text-gray-900">Routine</h1>
         <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
             <a href="{{ route('home') }}" class="hover:text-indigo-600 transition-colors">Home</a>
             <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-            <span class="text-gray-900">Timetable</span>
+            <span class="text-gray-900">Routine</span>
         </nav>
     </div>
-    @can('create routines')
-    <a href="{{ route('section.routine.create') }}"
-       class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors shrink-0">
-        <i data-lucide="plus" class="w-4 h-4"></i>
-        Add to Timetable
-    </a>
-    @endcan
+    <div class="flex items-center gap-3">
+        @can('create routines')
+            <button @click="$dispatch('open-modal', 'import-routine')"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors border border-indigo-200 shadow-sm">
+                <i data-lucide="upload" class="w-4 h-4"></i> Import Routine
+            </button>
+        @endcan
+        @can('create routines')
+            <a href="{{ route('section.routine.create') }}"
+               class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors shrink-0">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Add to Routine
+            </a>
+        @endcan
+    </div>
 </div>
 
 @include('session-messages')
 
 {{-- Filter card --}}
-<div class="bg-white rounded-card shadow-card border border-gray-200 p-5 mb-5">
-    <h2 class="font-heading text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Select Class & Section</h2>
-    <form method="GET" action="{{ route('routine.index') }}" class="flex flex-wrap items-end gap-3">
-        {{-- Class --}}
-        <div class="flex-1 min-w-[180px]">
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Class</label>
+<div class="bg-white rounded-card shadow-card border border-gray-200 p-4 mb-5">
+    <form method="GET" action="{{ route('routine.index') }}" class="flex flex-wrap items-center gap-4">
+        <div class="flex items-center gap-2">
+            <label class="whitespace-nowrap text-sm font-medium text-gray-700">Class:</label>
             <select id="class-select" name="class_id" onchange="fetchSections(this)"
-                    class="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors" required>
+                    class="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors min-w-[150px]"
+                    required>
                 <option value="">— Select class —</option>
                 @foreach($classes as $class)
                     <option value="{{ $class->id }}" {{ $selected_class_id == $class->id ? 'selected' : '' }}>
@@ -42,24 +49,24 @@
             </select>
         </div>
 
-        {{-- Section --}}
-        <div class="flex-1 min-w-[180px]">
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Section</label>
+        <div class="flex items-center gap-2">
+            <label class="whitespace-nowrap text-sm font-medium text-gray-700">Section:</label>
             <select id="section-select" name="section_id"
-                    class="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors" required>
+                    class="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors min-w-[150px]"
+                    required>
                 <option value="">— Select section —</option>
             </select>
         </div>
 
         <button type="submit"
-                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-5 py-2.5 rounded-lg transition-colors">
+                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors ml-auto md:ml-0">
             <i data-lucide="eye" class="w-4 h-4"></i>
-            View Timetable
+            View Routine
         </button>
     </form>
 </div>
 
-{{-- Timetable --}}
+{{-- Routine --}}
 @if($selected_class_id && $selected_section_id)
 @php
     $dayNames = [
@@ -103,11 +110,11 @@
 
 <div class="bg-white rounded-card shadow-card border border-gray-200 overflow-hidden">
 
-    {{-- Timetable toolbar --}}
+    {{-- Routine toolbar --}}
     <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
         <div>
             <p class="font-heading font-bold text-gray-900 text-base leading-tight">{{ $className }} &mdash; {{ $sectionName }}</p>
-            <p class="text-xs text-gray-500 mt-0.5">Weekly timetable</p>
+            <p class="text-xs text-gray-500 mt-0.5">Weekly routine</p>
         </div>
         <div class="flex items-center gap-2">
             <button onclick="exportPNG()"
@@ -122,7 +129,7 @@
     </div>
 
     {{-- Exportable region --}}
-    <div id="timetable-export-area" style="background:#ffffff; padding: 24px;">
+    <div id="routine-export-area" style="background:#ffffff; padding: 24px;">
 
         {{-- Header shown inside the export --}}
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:16px; border-bottom:2px solid #E4F7FB;">
@@ -130,7 +137,8 @@
                 <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:18px; font-weight:700; color:#001B39; margin:0;">
                     {{ $className }} &mdash; {{ $sectionName }}
                 </p>
-                <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; color:#6d797e; margin:4px 0 0;">Weekly Timetable</p>
+                <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; color:#6d797e; margin:4px 0 0;">
+                    Weekly Routine</p>
             </div>
             <div style="background:#001B39; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:600; padding:6px 14px; border-radius:20px; letter-spacing:0.04em;">
                 {{ config('app.name') }}
@@ -180,16 +188,101 @@
 {{-- Submitted but no results --}}
 <div class="bg-white rounded-card shadow-card border border-gray-200 flex flex-col items-center py-14 text-center">
     <i data-lucide="clock-off" class="w-9 h-9 text-gray-300 mb-3"></i>
-    <p class="font-heading font-semibold text-gray-700 mb-1">No timetable found</p>
+    <p class="font-heading font-semibold text-gray-700 mb-1">No routine found</p>
     <p class="text-sm text-gray-500">No periods have been added for this class and section yet.</p>
     @can('create routines')
-    <a href="{{ route('section.routine.create') }}"
-       class="mt-4 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors">
-        <i data-lucide="plus" class="w-4 h-4"></i> Add periods
-    </a>
+        <div class="mt-4 flex items-center gap-3">
+            <button @click="$dispatch('open-modal', 'import-routine')"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors border border-indigo-200 shadow-sm">
+                <i data-lucide="upload" class="w-4 h-4"></i> Import Routine
+            </button>
+            <a href="{{ route('section.routine.create') }}"
+               class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add periods
+            </a>
+        </div>
     @endcan
 </div>
 @endif
+
+@push('modals')
+    @can('create routines')
+        <div x-show="activeModal === 'import-routine'"
+             class="fixed inset-0 overflow-y-auto" style="display: none;">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                <div x-show="activeModal === 'import-routine'"
+                     x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeModal()"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div x-show="activeModal === 'import-routine'"
+                     x-transition:enter="ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave="ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-900">Import Routine</h3>
+                        <button @click="closeModal()" class="text-gray-400 hover:text-gray-500">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+
+                    <div class="mb-4">
+                        <a href="{{ route('routine.import.template') }}"
+                           class="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-700">
+                            <i data-lucide="download" class="w-4 h-4"></i> Download Template CSV
+                        </a>
+                    </div>
+
+                    <form action="{{ route('routine.import') }}" method="POST" enctype="multipart/form-data"
+                          class="space-y-4">
+                        @csrf
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Select Class <sup
+                                    class="text-indigo-500">*</sup></label>
+                            <select name="class_id" required onchange="getSectionsModal(this)"
+                                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 bg-white">
+                                <option value="">Select Class</option>
+                                @foreach($classes as $class)
+                                    <option value="{{ $class->id }}">{{ $class->class_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Select Section <sup
+                                    class="text-indigo-500">*</sup></label>
+                            <select name="section_id" id="modal_section_id" required
+                                    class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 bg-white">
+                                <option value="">Select Section</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">CSV File <sup
+                                    class="text-indigo-500">*</sup></label>
+                            <input type="file" name="routine_file" required
+                                   class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 border border-gray-300 rounded-lg">
+                        </div>
+                        <div class="mt-6 flex flex-col sm:flex-row-reverse gap-3">
+                            <button type="submit"
+                                    class="inline-flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors">
+                                <i data-lucide="check" class="w-4 h-4"></i> Import
+                            </button>
+                            <button type="button" @click="closeModal()"
+                                    class="inline-flex justify-center items-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endcan
+@endpush
 
 @endsection
 
@@ -232,13 +325,32 @@
         }
     });
 
+    function getSectionsModal(obj) {
+        var class_id = obj.options[obj.selectedIndex].value;
+        if (!class_id) return;
+        var url = "{{route('get.sections.courses.by.classId')}}?class_id=" + class_id
+        fetch(url)
+            .then((resp) => resp.json())
+            .then(function (data) {
+                var sectionSelect = document.getElementById('modal_section_id');
+                sectionSelect.options.length = 0;
+                sectionSelect.add(new Option('Select Section', ''));
+                data.sections.forEach(function (section) {
+                    sectionSelect.add(new Option(section.section_name, section.id));
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     // PDF export — landscape A4
     function exportPDF() {
         const btn = event.currentTarget;
         btn.textContent = 'Generating…';
         btn.disabled = true;
 
-        const el = document.getElementById('timetable-export-area');
+        const el = document.getElementById('routine-export-area');
         html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false })
             .then(canvas => {
                 const { jsPDF } = window.jspdf;
@@ -246,7 +358,7 @@
                 const pw  = pdf.internal.pageSize.getWidth();
                 const ph  = (canvas.height * pw) / canvas.width;
                 pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pw, ph);
-                pdf.save(`timetable-{{ $selected_class?->class_name ?? 'export' }}-{{ $selected_section?->section_name ?? '' }}.pdf`);
+                pdf.save(`routine-{{ $selected_class?->class_name ?? 'export' }}-{{ $selected_section?->section_name ?? '' }}.pdf`);
             })
             .finally(() => {
                 btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;margin-right:4px;vertical-align:-2px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg> Export PDF';
@@ -260,11 +372,11 @@
         btn.textContent = 'Generating…';
         btn.disabled = true;
 
-        const el = document.getElementById('timetable-export-area');
+        const el = document.getElementById('routine-export-area');
         html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false })
             .then(canvas => {
                 const link = document.createElement('a');
-                link.download = `timetable-{{ $selected_class?->class_name ?? 'export' }}-{{ $selected_section?->section_name ?? '' }}.png`;
+                link.download = `routine-{{ $selected_class?->class_name ?? 'export' }}-{{ $selected_section?->section_name ?? '' }}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             })
