@@ -229,7 +229,7 @@
         </a>
         @endif
 
-            {{--        --}}{{-- FINANCE group label --}}
+            {{-- FINANCE group label --}}
             {{--        <p class="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Finance</p>--}}
 
             {{--        <span class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed select-none">--}}
@@ -246,15 +246,15 @@
             {{--            <i data-lucide="library" class="w-4 h-4 shrink-0"></i>--}}
             {{--            <span>Library <span class="text-xs ml-1 bg-gray-100 text-gray-400 rounded px-1">Soon</span></span>--}}
             {{--        </span>--}}
-            {{--        @endif--}}
+        @endif
 
-            {{--        --}}{{-- Payment (non-admin) --}}
-            {{--        @if (Auth::user()->role != "admin")--}}
-            {{--        <span class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed select-none">--}}
-            {{--            <i data-lucide="credit-card" class="w-4 h-4 shrink-0"></i>--}}
-            {{--            <span>Payment <span class="text-xs ml-1 bg-gray-100 text-gray-400 rounded px-1">Soon</span></span>--}}
-            {{--        </span>--}}
-            {{--        @endif--}}
+        {{-- Payment (non-admin) --}}
+        {{--        @if (Auth::user()->role != "admin")--}}
+        {{--        <span class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed select-none">--}}
+        {{--            <i data-lucide="credit-card" class="w-4 h-4 shrink-0"></i>--}}
+        {{--            <span>Payment <span class="text-xs ml-1 bg-gray-100 text-gray-400 rounded px-1">Soon</span></span>--}}
+        {{--        </span>--}}
+        {{--        @endif--}}
 
     </nav>
 </aside>
