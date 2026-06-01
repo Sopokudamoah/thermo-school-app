@@ -22,6 +22,7 @@ use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SchoolSessionController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SemesterController;
+use App\Http\Controllers\StudentImportController;
 use App\Http\Controllers\SyllabusController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
