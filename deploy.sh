@@ -1,3 +1,5 @@
+git pull
+
 composer install
 composer dump-autoload
 
