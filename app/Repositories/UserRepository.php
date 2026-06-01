@@ -183,7 +183,7 @@ class UserRepository implements UserInterface {
                 $class_id = $schoolClass->id;
                 $section_id = $section->id;
             }
-            
+
         }
         try {
             $promotionRepository = new PromotionRepository();
@@ -213,14 +213,23 @@ class UserRepository implements UserInterface {
 
     public function findTeacher($id) {
         try {
-            return User::where('id', $id)->where('role', 'teacher')->first();
+            return User::where('id', $id)->where('role', 'teacher')
+                ->with(['assigned_classes' => function($query) {
+                    $query->with(['schoolClass', 'section', 'course']);
+                }])->first();
         } catch (\Exception $e) {
             throw new \Exception('Failed to get Teacher. '.$e->getMessage());
         }
     }
 
-    public function getAllTeachers() {
+    public function getAllTeachers($session_id = null) {
         try {
+            if ($session_id) {
+                return User::where('role', 'teacher')
+                    ->with(['assigned_classes' => function($query) use ($session_id) {
+                        $query->where('session_id', $session_id)->with('schoolClass');
+                    }])->get();
+            }
             return User::where('role', 'teacher')->get();
         } catch (\Exception $e) {
             throw new \Exception('Failed to get all Teachers. '.$e->getMessage());

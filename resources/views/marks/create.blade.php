@@ -38,12 +38,44 @@
 </div>
 
 @if (!$final_marks_submitted && count($exams) > 0 && $academic_setting['marks_submission_status'] == "on")
-    <div class="mb-4">
+    <div class="mb-4 flex flex-wrap gap-2">
         <a href="{{route('course.final.mark.submit.show', ['class_id' => $class_id, 'class_name' => request()->query('class_name'), 'section_id' => $section_id, 'section_name' => request()->query('section_name'), 'course_id' => $course_id, 'course_name' => request()->query('course_name'), 'semester_id' => $semester_id])}}"
            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors"
            onclick="return confirm('Are you sure, you want to submit final marks?')">
             <i data-lucide="check" class="w-4 h-4"></i> Submit Final Marks
         </a>
+
+        <a href="{{route('course.mark.template.download', ['class_id' => $class_id, 'section_id' => $section_id, 'course_id' => $course_id, 'semester_id' => $semester_id])}}"
+           class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 font-medium text-sm px-4 py-2.5 rounded-lg transition-colors">
+            <i data-lucide="download" class="w-4 h-4"></i> Download Template
+        </a>
+
+        <button type="button" onclick="document.getElementById('import-form-container').classList.toggle('hidden')"
+                class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 font-medium text-sm px-4 py-2.5 rounded-lg transition-colors">
+            <i data-lucide="upload" class="w-4 h-4"></i> Import Marks
+        </button>
+    </div>
+
+    <div id="import-form-container" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <form action="{{route('course.mark.import')}}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="class_id" value="{{$class_id}}">
+            <input type="hidden" name="section_id" value="{{$section_id}}">
+            <input type="hidden" name="course_id" value="{{$course_id}}">
+            <input type="hidden" name="semester_id" value="{{$semester_id}}">
+
+            <div class="flex items-end gap-4">
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Upload CSV Template</label>
+                    <input type="file" name="marks_file" accept=".csv" required
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-gray-300 rounded-lg bg-white">
+                </div>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors">
+                    Upload & Save
+                </button>
+            </div>
+            <p class="mt-2 text-xs text-gray-500">Only .csv files are supported. Please use the downloaded template for best results.</p>
+        </form>
     </div>
 @endif
 

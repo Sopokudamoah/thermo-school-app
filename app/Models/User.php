@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Mark;
+use App\Models\AssignedTeacher;
 use App\Models\StudentParentInfo;
 use App\Models\StudentAcademicInfo;
 use Spatie\Permission\Traits\HasRoles;
@@ -80,5 +81,13 @@ class User extends Authenticatable
     public function marks()
     {
         return $this->hasMany(Mark::class, 'student_id', 'id');
+    }
+
+    /**
+     * Get the assigned classes.
+     */
+    public function assigned_classes()
+    {
+        return $this->hasMany(AssignedTeacher::class, 'teacher_id', 'id');
     }
 }

@@ -21,9 +21,7 @@ class DatabaseSeeder extends Seeder
             SchoolClassSeeder::class,
             SectionSeeder::class,
             CourseSeeder::class,
-            NoticeSeeder::class,
-            EventSeeder::class,
-            DemoUserSeeder::class,
+            DemoSeeder::class,
         ]);
     }
 }

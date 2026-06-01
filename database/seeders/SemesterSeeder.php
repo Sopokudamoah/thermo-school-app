@@ -13,20 +13,24 @@ class SemesterSeeder extends Seeder
      */
     public function run()
     {
-        $session = \App\Models\SchoolSession::first() ?? \App\Models\SchoolSession::factory()->create();
+        $sessions = \App\Models\SchoolSession::all();
 
-        \App\Models\Semester::factory()->create([
-            'semester_name' => 'First Semester',
-            'session_id' => $session->id,
-            'start_date' => '2024-09-01',
-            'end_date' => '2025-01-31',
-        ]);
+        foreach ($sessions as $session) {
+            $year = explode('-', $session->session_name)[0];
 
-        \App\Models\Semester::factory()->create([
-            'semester_name' => 'Second Semester',
-            'session_id' => $session->id,
-            'start_date' => '2025-02-01',
-            'end_date' => '2025-06-30',
-        ]);
+            \App\Models\Semester::factory()->create([
+                'semester_name' => 'First Semester',
+                'session_id' => $session->id,
+                'start_date' => "$year-09-01",
+                'end_date' => ($year + 1) . "-01-31",
+            ]);
+
+            \App\Models\Semester::factory()->create([
+                'semester_name' => 'Second Semester',
+                'session_id' => $session->id,
+                'start_date' => ($year + 1) . "-02-01",
+                'end_date' => ($year + 1) . "-06-30",
+            ]);
+        }
     }
 }

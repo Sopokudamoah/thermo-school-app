@@ -210,7 +210,7 @@
         {{-- SYSTEM group label (admin only) --}}
         <p class="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">System</p>
 
-        <a href="{{ url('academics/settings') }}"
+        <a href="{{ route('academic.settings.show') }}"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('academics*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="settings" class="w-4 h-4 shrink-0 {{ request()->is('academics*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
             <span>Academic Settings</span>

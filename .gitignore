@@ -15,3 +15,6 @@ yarn-error.log
 /.vscode
 CLAUDE.md
 .claude
+storage
+public/build/*
+.junie

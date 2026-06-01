@@ -21,91 +21,135 @@ class DemoUserSeeder extends Seeder
      */
     public function run()
     {
+        $sessions = SchoolSession::all();
+        if ($sessions->isEmpty()) {
+            $sessions = collect([SchoolSession::factory()->create(['session_name' => '2024-2025'])]);
+        }
+
+        $latestSession = $sessions->sortByDesc('id')->first();
+        $previousSession = $sessions->count() > 1 ? $sessions->sortByDesc('id')->skip(1)->first() : null;
+
         // 1. Create Teachers
         if (User::where('role', 'teacher')->count() == 0) {
             $teachers = User::factory()->count(20)->create(['role' => 'teacher']);
             foreach ($teachers as $teacher) {
                 $teacher->givePermissionTo([
-                    'view courses',
-                    'view classes',
-                    'view sections',
-                    'view routines',
-                    'take attendances',
-                    'view attendances',
-                    'save marks',
-                    'view marks',
-                    'create assignments',
-                    'view assignments',
-                    'view notices',
-                    'view events',
-                    'view syllabi',
+                    'view courses', 'view classes', 'view sections', 'view routines', 'take attendances', 'view attendances', 'save marks', 'view marks', 'create assignments', 'view assignments', 'view notices', 'view events', 'view syllabi'
                 ]);
             }
         }
+        $allTeachers = User::where('role', 'teacher')->get();
 
-        // 2. Create Students
+        // 2. Create Students and Promote
         if (User::where('role', 'student')->count() == 0) {
             $students = User::factory()->count(100)->create(['role' => 'student']);
-            $session = SchoolSession::first() ?? SchoolSession::factory()->create();
-            $classes = SchoolClass::where('session_id', $session->id)->get();
-            $sections = Section::where('session_id', $session->id)->get();
 
             foreach ($students as $student) {
                 $student->givePermissionTo([
-                    'view courses',
-                    'view routines',
-                    'view attendances',
-                    'view marks',
-                    'submit assignments',
-                    'view assignments',
-                    'view notices',
-                    'view events',
-                    'view syllabi',
+                    'view courses', 'view routines', 'view attendances', 'view marks', 'submit assignments', 'view assignments', 'view notices', 'view events', 'view syllabi'
                 ]);
 
-                // Create related student info
                 StudentParentInfo::factory()->create(['student_id' => $student->id]);
                 StudentAcademicInfo::factory()->create(['student_id' => $student->id]);
 
-                // Promote student to a random class and section
-                if ($classes->isNotEmpty() && $sections->isNotEmpty()) {
+                // Promote to previous session if available
+                if ($previousSession) {
+                    $classes = SchoolClass::where('session_id', $previousSession->id)->get();
+                    if ($classes->isNotEmpty()) {
+                        $class = $classes->random();
+                        $sections = Section::where('class_id', $class->id)->get();
+                        if ($sections->isNotEmpty()) {
+                            $section = $sections->random();
+                            Promotion::factory()->create([
+                                'student_id' => $student->id,
+                                'class_id'   => $class->id,
+                                'section_id' => $section->id,
+                                'session_id' => $previousSession->id,
+                            ]);
+                        }
+                    }
+                }
+
+                // Promote to latest session
+                $classes = SchoolClass::where('session_id', $latestSession->id)->get();
+                if ($classes->isNotEmpty()) {
                     $class = $classes->random();
-                    $section = $sections->where('class_id', $class->id)->random() ?? $sections->random();
-                    Promotion::factory()->create([
-                        'student_id' => $student->id,
-                        'class_id'   => $class->id,
-                        'section_id' => $section->id,
-                        'session_id' => $session->id,
-                    ]);
+                    $sections = Section::where('class_id', $class->id)->get();
+                    if ($sections->isNotEmpty()) {
+                        $section = $sections->random();
+                        Promotion::factory()->create([
+                            'student_id' => $student->id,
+                            'class_id'   => $class->id,
+                            'section_id' => $section->id,
+                            'session_id' => $latestSession->id,
+                        ]);
+                    }
                 }
             }
         }
 
-        // 3. Create Parents
-        if (User::where('role', 'parent')->count() == 0) {
-            $parents = User::factory()->count(50)->create(['role' => 'parent']);
-            foreach ($parents as $parent) {
-                $parent->givePermissionTo([
-                    'view attendances',
-                    'view marks',
-                    'view notices',
-                    'view events',
-                ]);
-            }
-        }
-
-        // Ensure there is at least one known teacher and student for demo login
-        if (!User::where('email', 'teacher@ut.com')->exists()) {
-            User::factory()->create([
+        // 3. Create Demo Teacher and Assign Courses
+        $demoTeacher = User::where('email', 'teacher@ut.com')->first();
+        if (!$demoTeacher) {
+            $demoTeacher = User::factory()->create([
                 'first_name' => 'John',
                 'last_name' => 'Teacher',
                 'email' => 'teacher@ut.com',
                 'role' => 'teacher',
-            ])->givePermissionTo([
+            ]);
+            $demoTeacher->givePermissionTo([
                 'view courses', 'view classes', 'view sections', 'view routines', 'take attendances', 'view attendances', 'save marks', 'view marks', 'create assignments', 'view assignments', 'view notices', 'view events', 'view syllabi'
             ]);
         }
 
+        // Assign demo teacher to some courses in the latest session
+        $semesters = \App\Models\Semester::where('session_id', $latestSession->id)->get();
+        $classes = SchoolClass::where('session_id', $latestSession->id)->get();
+
+        foreach ($classes as $index => $class) {
+            // Assign a unique teacher to this class for demo variety
+            $classTeacher = $allTeachers->get($index % $allTeachers->count());
+
+            $sections = Section::where('class_id', $class->id)->get();
+            foreach ($sections as $section) {
+                foreach ($semesters as $semester) {
+                    // Assign the specific class teacher to at least one course in each section/semester
+                    $firstCourse = \App\Models\Course::where('class_id', $class->id)
+                        ->where('semester_id', $semester->id)
+                        ->first();
+
+                    if ($firstCourse) {
+                        \App\Models\AssignedTeacher::updateOrCreate([
+                            'teacher_id' => $classTeacher->id,
+                            'semester_id' => $semester->id,
+                            'class_id' => $class->id,
+                            'section_id' => $section->id,
+                            'course_id' => $firstCourse->id,
+                            'session_id' => $latestSession->id,
+                        ]);
+                    }
+
+                    // Also assign the main demo teacher to some courses to ensure the demo login works as expected
+                    $courses = \App\Models\Course::where('class_id', $class->id)
+                        ->where('semester_id', $semester->id)
+                        ->limit(3)
+                        ->get();
+
+                    foreach ($courses as $course) {
+                        \App\Models\AssignedTeacher::updateOrCreate([
+                            'teacher_id' => $demoTeacher->id,
+                            'semester_id' => $semester->id,
+                            'class_id' => $class->id,
+                            'section_id' => $section->id,
+                            'course_id' => $course->id,
+                            'session_id' => $latestSession->id,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        // 4. Create Demo Student
         if (!User::where('email', 'student@ut.com')->exists()) {
             User::factory()->create([
                 'first_name' => 'Jane',

@@ -23,7 +23,7 @@ class AcademicSettingFactory extends Factory
     {
         return [
             'attendance_type' => 'section',
-            'marks_submission_status' => 'off',
+            'marks_submission_status' => 'on',
         ];
     }
 }

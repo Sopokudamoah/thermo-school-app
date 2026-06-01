@@ -13,9 +13,7 @@ class CourseSeeder extends Seeder
      */
     public function run()
     {
-        $session = \App\Models\SchoolSession::first() ?? \App\Models\SchoolSession::factory()->create();
-        $semesters = \App\Models\Semester::where('session_id', $session->id)->get();
-        $classes = \App\Models\SchoolClass::where('session_id', $session->id)->get();
+        $sessions = \App\Models\SchoolSession::all();
 
         $courseNames = [
             'Mathematics', 'English Language', 'Integrated Science', 'Social Studies',
@@ -25,15 +23,20 @@ class CourseSeeder extends Seeder
             'Physical Education'
         ];
 
-        foreach ($classes as $class) {
-            foreach ($semesters as $semester) {
-                foreach ($courseNames as $courseName) {
-                    \App\Models\Course::factory()->create([
-                        'course_name' => $courseName,
-                        'class_id' => $class->id,
-                        'semester_id' => $semester->id,
-                        'session_id' => $session->id,
-                    ]);
+        foreach ($sessions as $session) {
+            $semesters = \App\Models\Semester::where('session_id', $session->id)->get();
+            $classes = \App\Models\SchoolClass::where('session_id', $session->id)->get();
+
+            foreach ($classes as $class) {
+                foreach ($semesters as $semester) {
+                    foreach ($courseNames as $courseName) {
+                        \App\Models\Course::factory()->create([
+                            'course_name' => $courseName,
+                            'class_id' => $class->id,
+                            'semester_id' => $semester->id,
+                            'session_id' => $session->id,
+                        ]);
+                    }
                 }
             }
         }

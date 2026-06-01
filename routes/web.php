@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MarkController;
+use App\Http\Controllers\MarkImportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CourseController;
@@ -96,6 +97,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('teacher.create.show');
     Route::get('/teachers/edit/{id}', [UserController::class, 'editTeacher'])->name('teacher.edit.show');
     Route::get('/teachers/view/list', [UserController::class, 'getTeacherList'])->name('teacher.list.show');
+    Route::get('/ajax/courses-by-class-semester', [UserController::class, 'getCoursesByClassAndSemester'])->name('ajax.courses.by.class.semester');
     Route::get('/teachers/view/profile/{id}', [UserController::class, 'showTeacherProfile'])->name('teacher.profile.show');
 
     //Students
@@ -109,6 +111,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/marks/create', [MarkController::class, 'create'])->name('course.mark.create');
     Route::post('/marks/store', [MarkController::class, 'store'])->name('course.mark.store');
     Route::get('/marks/results', [MarkController::class, 'index'])->name('course.mark.list.show');
+    Route::get('/marks/template/download', [MarkImportController::class, 'downloadTemplate'])->name('course.mark.template.download');
+    Route::post('/marks/import', [MarkImportController::class, 'import'])->name('course.mark.import');
     // Route::get('/marks/view', function () {
     //     return view('marks.view');
     // });
@@ -143,13 +147,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/promotions/promote', [PromotionController::class, 'store'])->name('promotions.store');
 
     // Academic settings
-    Route::get('/academics/settings', [AcademicSettingController::class, 'index']);
+    Route::get('/academics/settings', [AcademicSettingController::class, 'index'])->name('academic.settings.show');
 
     // Calendar events
     Route::get('calendar-event', [EventController::class, 'index'])->name('events.show');
     Route::post('calendar-crud-ajax', [EventController::class, 'calendarEvents'])->name('events.crud');
 
     // Routines
+    Route::get('/routine', [RoutineController::class, 'index'])->name('routine.index');
     Route::get('/routine/create', [RoutineController::class, 'create'])->name('section.routine.create');
     Route::get('/routine/view', [RoutineController::class, 'show'])->name('section.routine.show');
     Route::post('/routine/store', [RoutineController::class, 'store'])->name('section.routine.store');

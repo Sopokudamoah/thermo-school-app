@@ -52,11 +52,11 @@
         </div>
         <div class="mb-4">
             <label for="inputStarts" class="block text-sm font-medium text-gray-700 mb-1.5">Starts <sup class="text-indigo-500">*</sup></label>
-            <input type="text" class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" id="inputStarts" name="start" placeholder="09:00am" required>
+            <input type="time" class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" id="inputStarts" name="start" required>
         </div>
         <div class="mb-6">
             <label for="inputEnds" class="block text-sm font-medium text-gray-700 mb-1.5">Ends <sup class="text-indigo-500">*</sup></label>
-            <input type="text" class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" id="inputEnds" name="end" placeholder="09:50am" required>
+            <input type="time" class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" id="inputEnds" name="end" required>
         </div>
         <button type="submit" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors">
             <i data-lucide="check" class="w-4 h-4"></i> Create

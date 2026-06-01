@@ -22,7 +22,10 @@ class GradingSystemFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'system_name' => $this->faker->randomElement(['Standard Grading System', 'GCSE Grading', 'University Grading']),
+            'class_id' => \App\Models\SchoolClass::factory(),
+            'semester_id' => \App\Models\Semester::factory(),
+            'session_id' => \App\Models\SchoolSession::factory(),
         ];
     }
 }

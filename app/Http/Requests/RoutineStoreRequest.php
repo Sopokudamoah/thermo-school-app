@@ -24,9 +24,9 @@ class RoutineStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'start'                 => 'required',
-            'end'                   => 'required',
-            'weekday'               => 'required|integer',
+            'start'                 => 'required|date_format:H:i',
+            'end'                   => 'required|date_format:H:i|after:start',
+            'weekday'               => 'required|integer|between:1,7',
             'class_id'              => 'required|integer',
             'section_id'            => 'required|integer',
             'course_id'             => 'required|integer',

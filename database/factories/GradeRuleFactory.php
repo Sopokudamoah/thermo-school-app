@@ -22,7 +22,12 @@ class GradeRuleFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'point' => $this->faker->randomFloat(2, 0, 4),
+            'grade' => $this->faker->randomElement(['A', 'B', 'C', 'D', 'F']),
+            'start_at' => 0,
+            'end_at' => 100,
+            'grading_system_id' => \App\Models\GradingSystem::factory(),
+            'session_id' => \App\Models\SchoolSession::factory(),
         ];
     }
 }

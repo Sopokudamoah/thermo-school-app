@@ -28,9 +28,36 @@ class RoutineController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $current_school_session_id = $this->getSchoolCurrentSession();
+        $classes = $this->schoolClassRepository->getAllBySession($current_school_session_id);
+
+        $class_id   = (int) $request->query('class_id', 0);
+        $section_id = (int) $request->query('section_id', 0);
+
+        $routines         = collect();
+        $selected_class   = null;
+        $selected_section = null;
+
+        if ($class_id && $section_id) {
+            $routineRepository = new RoutineRepository();
+            $raw = $routineRepository->getAll($class_id, $section_id, $current_school_session_id);
+            $routines = $raw->sortBy('start')->groupBy('weekday');
+
+            $selected_class   = $classes->firstWhere('id', $class_id);
+            $selected_section = \App\Models\Section::find($section_id);
+        }
+
+        return view('routines.index', [
+            'current_school_session_id' => $current_school_session_id,
+            'classes'                   => $classes,
+            'routines'                  => $routines,
+            'selected_class_id'         => $class_id,
+            'selected_section_id'       => $section_id,
+            'selected_class'            => $selected_class,
+            'selected_section'          => $selected_section,
+        ]);
     }
 
     /**

@@ -9,5 +9,5 @@
 
 <script>
     // Re-render Lucide icons (footer may be added after initial DOMContentLoaded)
-    if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+    if (typeof lucide !== 'undefined') { lucide.createIcons(lucide.icons); }
 </script>

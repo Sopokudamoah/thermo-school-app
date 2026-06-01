@@ -13,6 +13,7 @@ class SchoolSessionSeeder extends Seeder
      */
     public function run()
     {
+        \App\Models\SchoolSession::factory()->create(['session_name' => '2023-2024']);
         \App\Models\SchoolSession::factory()->create(['session_name' => '2024-2025']);
     }
 }

@@ -20,45 +20,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS v3 Play CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        heading: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-                        mono: ['"JetBrains Mono"', 'monospace'],
-                    },
-                    colors: {
-                        indigo: {
-                            50:  '#EEF2FF',
-                            100: '#E0E7FF',
-                            200: '#C7D2FE',
-                            500: '#6366F1',
-                            600: '#4F46E5',
-                            700: '#4338CA',
-                            800: '#3730A3',
-                        },
-                    },
-                    boxShadow: {
-                        'card': '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
-                    },
-                    borderRadius: {
-                        'card': '10px',
-                        'modal': '14px',
-                    },
-                }
-            }
-        }
-    </script>
-
-    <!-- Alpine.js v3 -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Custom component overrides (FullCalendar, CKEditor, sidebar) -->
     <link rel="stylesheet" href="{{ asset('css/app-custom.css') }}">
@@ -220,20 +182,6 @@
 
 </div>
 
-{{-- Initialize Lucide icons --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        lucide.createIcons();
-    });
-</script>
-
-{{-- Axios CSRF setup (preserved from original) --}}
-<script>
-    window.axios = window.axios || {};
-    if (typeof axios !== 'undefined') {
-        axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-    }
-</script>
 
 @stack('scripts')
 </body>

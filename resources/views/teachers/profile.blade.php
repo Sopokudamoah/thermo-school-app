@@ -85,4 +85,37 @@
         </div>
     </div>
 </div>
+
+{{-- Assigned Classes Section --}}
+<div class="mt-6">
+    <div class="bg-white rounded-card shadow-card border border-gray-200 p-6">
+        <h3 class="font-heading text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">
+            <i data-lucide="book-open" class="inline w-4 h-4 mr-1"></i> Assigned Classes
+        </h3>
+        @if ($teacher->assigned_classes->isEmpty())
+            <p class="text-sm text-gray-500">No classes assigned to this teacher.</p>
+        @else
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200">
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Class</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Section</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Course</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @foreach ($teacher->assigned_classes as $assign)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-3 text-gray-900 font-medium">{{ $assign->schoolClass->class_name ?? '—' }}</td>
+                            <td class="px-4 py-3 text-gray-600">{{ $assign->section->section_name ?? '—' }}</td>
+                            <td class="px-4 py-3 text-gray-600">{{ $assign->course->course_name ?? '—' }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
+</div>
 @endsection

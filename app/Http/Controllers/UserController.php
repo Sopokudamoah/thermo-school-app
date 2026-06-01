@@ -33,7 +33,7 @@ class UserController extends Controller
         $this->schoolClassRepository = $schoolClassRepository;
         $this->schoolSectionRepository = $schoolSectionRepository;
     }
-    
+
     /**
      * Store a newly created resource in storage.
      *
@@ -175,12 +175,36 @@ class UserController extends Controller
     }
 
     public function getTeacherList(){
-        $teachers = $this->userRepository->getAllTeachers();
+        $current_school_session_id = $this->getSchoolCurrentSession();
+        $teachers = $this->userRepository->getAllTeachers($current_school_session_id);
+
+        $semesterRepository = new \App\Repositories\SemesterRepository();
+        $classRepository = new \App\Repositories\SchoolClassRepository();
+        $sectionRepository = new \App\Repositories\SectionRepository();
+
+        $semesters = $semesterRepository->getAll($current_school_session_id);
+        $classes = $classRepository->getAllBySession($current_school_session_id);
+        $sections = $sectionRepository->getAllBySession($current_school_session_id);
 
         $data = [
-            'teachers' => $teachers,
+            'teachers'                  => $teachers,
+            'semesters'                 => $semesters,
+            'classes'                   => $classes,
+            'sections'                  => $sections,
+            'current_session_id'        => $current_school_session_id,
         ];
-
         return view('teachers.list', $data);
+    }
+
+    public function getCoursesByClassAndSemester(Request $request)
+    {
+        $class_id = $request->query('class_id');
+        $semester_id = $request->query('semester_id');
+
+        $courses = \App\Models\Course::where('class_id', $class_id)
+            ->where('semester_id', $semester_id)
+            ->get();
+
+        return response()->json($courses);
     }
 }
