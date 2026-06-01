@@ -6,6 +6,7 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@rollup/plugin-inject": "^5.0.5",
         "autoprefixer": "^10.4.19",
         "axios": "^1.6.8",
         "laravel-vite-plugin": "^1.0.2",
@@ -14,7 +15,20 @@
         "vite": "^5.2.11"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^41.4.2",
+        "@fullcalendar/core": "^6.1.20",
+        "@fullcalendar/daygrid": "^6.1.20",
+        "@fullcalendar/interaction": "^6.1.20",
+        "@fullcalendar/list": "^6.1.20",
+        "@fullcalendar/timegrid": "^6.1.20",
         "alpinejs": "^3.13.10",
-        "lucide": "^0.378.0"
+        "datatables.net-dt": "^2.3.8",
+        "datatables.net-responsive-dt": "^3.0.8",
+        "html2canvas": "^1.4.1",
+        "jquery": "^4.0.0",
+        "jspdf": "^4.2.1",
+        "lucide": "^0.378.0",
+        "moment": "^2.30.1",
+        "toastr": "^2.1.4"
     }
 }

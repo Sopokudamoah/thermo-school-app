@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Traits\SchoolSession;
-use App\Interfaces\SemesterInterface;
-use App\Interfaces\SchoolSessionInterface;
 use App\Http\Requests\TeacherAssignRequest;
+use App\Interfaces\SchoolSessionInterface;
+use App\Interfaces\SemesterInterface;
 use App\Repositories\AssignedTeacherRepository;
+use App\Traits\SchoolSession;
+use Illuminate\Http\Request;
 
 class AssignedTeacherController extends Controller
 {
@@ -16,16 +15,21 @@ class AssignedTeacherController extends Controller
     protected $schoolSessionRepository;
     protected $semesterRepository;
 
+    protected $academicSettingRepository;
+
     /**
     * Create a new Controller instance
-    * 
+     *
     * @param SchoolSessionInterface $schoolSessionRepository
     * @return void
     */
     public function __construct(SchoolSessionInterface $schoolSessionRepository,
-    SemesterInterface $semesterRepository) {
+        SemesterInterface $semesterRepository,
+        \App\Interfaces\AcademicSettingInterface $academicSettingRepository
+    ) {
         $this->schoolSessionRepository = $schoolSessionRepository;
         $this->semesterRepository = $semesterRepository;
+        $this->academicSettingRepository = $academicSettingRepository;
     }
     /**
      * Display a listing of the resource.
@@ -51,19 +55,26 @@ class AssignedTeacherController extends Controller
         if($teacher_id == null) {
             abort(404);
         }
-        
+
         $current_school_session_id = $this->getSchoolCurrentSession();
 
         $semesters = $this->semesterRepository->getAll($current_school_session_id);
 
         $assignedTeacherRepository = new AssignedTeacherRepository();
 
+        if ($semester_id == null) {
+            $academic_setting = $this->academicSettingRepository->getAcademicSetting();
+            if ($academic_setting && $academic_setting->active_semester_id) {
+                $semester_id = $academic_setting->active_semester_id;
+            }
+        }
+
         if($semester_id == null) {
             $courses = [];
         } else {
             $courses = $assignedTeacherRepository->getTeacherCourses($current_school_session_id, $teacher_id, $semester_id);
         }
-        
+
         $data = [
             'courses'               => $courses,
             'semesters'             => $semesters,

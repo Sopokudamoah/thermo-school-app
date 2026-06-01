@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Traits\SchoolSession;
-use App\Interfaces\UserInterface;
+use App\Http\Requests\AttendanceTypeUpdateRequest;
+use App\Interfaces\AcademicSettingInterface;
 use App\Interfaces\CourseInterface;
-use App\Interfaces\SectionInterface;
-use App\Interfaces\SemesterInterface;
 use App\Interfaces\SchoolClassInterface;
 use App\Interfaces\SchoolSessionInterface;
-use App\Interfaces\AcademicSettingInterface;
-use App\Http\Requests\AttendanceTypeUpdateRequest;
+use App\Interfaces\SectionInterface;
+use App\Interfaces\SemesterInterface;
+use App\Interfaces\UserInterface;
+use App\Traits\SchoolSession;
+use Illuminate\Http\Request;
 
 class AcademicSettingController extends Controller
 {
@@ -107,6 +106,17 @@ class AcademicSettingController extends Controller
             $this->academicSettingRepository->updateFinalMarksSubmissionStatus($request);
 
             return back()->with('status', 'Final marks submission status update was successful!');
+        } catch (\Exception $e) {
+            return back()->withError($e->getMessage());
+        }
+    }
+
+    public function updateActiveSemester(Request $request)
+    {
+        try {
+            $this->academicSettingRepository->updateActiveSemester($request);
+
+            return back()->with('status', 'Active semester update was successful!');
         } catch (\Exception $e) {
             return back()->withError($e->getMessage());
         }

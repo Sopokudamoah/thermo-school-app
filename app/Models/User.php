@@ -2,15 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\Mark;
-use App\Models\AssignedTeacher;
-use App\Models\StudentParentInfo;
-use App\Models\StudentAcademicInfo;
-use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
@@ -89,5 +84,21 @@ class User extends Authenticatable
     public function assigned_classes()
     {
         return $this->hasMany(AssignedTeacher::class, 'teacher_id', 'id');
+    }
+
+    /**
+     * Get the promotions.
+     */
+    public function promotions()
+    {
+        return $this->hasMany(Promotion::class, 'student_id', 'id');
+    }
+
+    /**
+     * Check if the user is a teacher.
+     */
+    public function isTeacher()
+    {
+        return $this->role === 'teacher';
     }
 }

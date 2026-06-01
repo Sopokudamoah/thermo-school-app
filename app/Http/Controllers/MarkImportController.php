@@ -2,26 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Exam;
-use App\Models\User;
+use App\Interfaces\SchoolSessionInterface;
+use App\Models\Course;
 use App\Models\SchoolClass;
 use App\Models\Section;
-use App\Models\Course;
-use App\Models\GradingSystem;
-use App\Models\GradeRule;
-use App\Models\Mark;
+use App\Models\User;
+use App\Repositories\ExamRepository;
 use App\Repositories\MarkRepository;
-use App\Repositories\GradingSystemRepository;
-use App\Repositories\GradeRuleRepository;
-use App\Traits\SchoolSession;
 use App\Traits\AssignedTeacherCheck;
+use App\Traits\SchoolSession;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
 
 class MarkImportController extends Controller
 {
     use SchoolSession, AssignedTeacherCheck;
+
+    protected $schoolSessionRepository;
+
+    public function __construct(SchoolSessionInterface $schoolSessionRepository)
+    {
+        $this->schoolSessionRepository = $schoolSessionRepository;
+    }
 
     public function downloadTemplate(Request $request)
     {
@@ -32,13 +34,16 @@ class MarkImportController extends Controller
         $section = Section::findOrFail($request->section_id);
         $course = Course::findOrFail($request->course_id);
         $semester_id = $request->semester_id;
+        $class_id = $request->class_id;
 
-        $exams = Exam::where('semester_id', $semester_id)
-            ->where('class_id', $request->class_id)
-            ->where('course_id', $request->course_id)
-            ->get();
+        $examRepository = new ExamRepository();
+        $exams = $examRepository->getAll($current_school_session_id, $semester_id, $class_id, $request->course_id);
 
-        $students = User::whereHas('promotions', function ($query) use ($request, $current_school_session_id) {
+        $students = User::with([
+            'marks' => function ($query) use ($exams) {
+                $query->whereIn('exam_id', $exams->pluck('id'));
+            }
+        ])->whereHas('promotions', function ($query) use ($request, $current_school_session_id) {
             $query->where('class_id', $request->class_id)
                 ->where('section_id', $request->section_id)
                 ->where('session_id', $current_school_session_id);
@@ -65,7 +70,8 @@ class MarkImportController extends Controller
             foreach ($students as $student) {
                 $row = [$student->id, "{$student->first_name} {$student->last_name}"];
                 foreach ($exams as $exam) {
-                    $row[] = ''; // Empty for teacher to fill
+                    $mark = $student->marks->where('exam_id', $exam->id)->first();
+                    $row[] = $mark ? $mark->marks : '';
                 }
                 fputcsv($file, $row);
             }
@@ -98,9 +104,13 @@ class MarkImportController extends Controller
         }
 
         $header = array_shift($data);
+        if (!$header) {
+            return back()->withError('Invalid CSV file format.');
+        }
+
         $examIds = [];
-        for ($i = 2; $i < count($header); $i++) {
-            if (preg_match('/\(ID:(\d+)\)/', $header[$i], $matches)) {
+        foreach ($header as $i => $column) {
+            if (preg_match('/\(ID:(\d+)\)/', $column, $matches)) {
                 $examIds[$i] = $matches[1];
             }
         }
@@ -111,11 +121,14 @@ class MarkImportController extends Controller
 
         $rows = [];
         foreach ($data as $line) {
+            if (empty($line) || count($line) < 2) {
+                continue;
+            }
             $studentId = $line[0];
-            for ($i = 2; $i < count($line); $i++) {
-                if (isset($examIds[$i]) && $line[$i] !== '') {
+            foreach ($examIds as $i => $examId) {
+                if (isset($line[$i]) && $line[$i] !== '') {
                     $rows[] = [
-                        'exam_id'    => $examIds[$i],
+                        'exam_id' => $examId,
                         'student_id' => $studentId,
                         'session_id' => $current_school_session_id,
                         'class_id'   => $request->class_id,

@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Attendance;
-use Illuminate\Http\Request;
-use App\Interfaces\UserInterface;
+use App\Http\Requests\AttendanceStoreRequest;
+use App\Interfaces\AcademicSettingInterface;
 use App\Interfaces\SchoolClassInterface;
 use App\Interfaces\SchoolSessionInterface;
-use App\Interfaces\AcademicSettingInterface;
-use App\Http\Requests\AttendanceStoreRequest;
 use App\Interfaces\SectionInterface;
+use App\Interfaces\UserInterface;
 use App\Repositories\AttendanceRepository;
-use App\Repositories\CourseRepository;
+use App\Traits\AssignedTeacherCheck;
 use App\Traits\SchoolSession;
+use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    use SchoolSession;
+    use SchoolSession, AssignedTeacherCheck;
     protected $academicSettingRepository;
     protected $schoolSessionRepository;
     protected $schoolClassRepository;
@@ -66,7 +64,7 @@ class AttendanceController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -78,6 +76,10 @@ class AttendanceController extends Controller
         try{
             $academic_setting = $this->academicSettingRepository->getAcademicSetting();
             $current_school_session_id = $this->getSchoolCurrentSession();
+
+            if (auth()->user()->isTeacher()) {
+                $this->checkIfLoggedInUserIsAssignedTeacher($request, $current_school_session_id);
+            }
 
             $class_id = $request->query('class_id');
             $section_id = $request->query('section_id', 0);
@@ -120,6 +122,12 @@ class AttendanceController extends Controller
     public function store(AttendanceStoreRequest $request)
     {
         try {
+            $current_school_session_id = $this->getSchoolCurrentSession();
+
+            if (auth()->user()->isTeacher()) {
+                $this->checkIfLoggedInUserIsAssignedTeacher($request, $current_school_session_id);
+            }
+
             $attendanceRepository = new AttendanceRepository();
             $attendanceRepository->saveAttendance($request->validated());
 
@@ -143,6 +151,10 @@ class AttendanceController extends Controller
 
         $current_school_session_id = $this->getSchoolCurrentSession();
 
+        if (auth()->user()->isTeacher()) {
+            $this->checkIfLoggedInUserIsAssignedTeacher($request, $current_school_session_id);
+        }
+
         $class_id = $request->query('class_id');
         $section_id = $request->query('section_id');
         $course_id = $request->query('course_id');
@@ -157,7 +169,7 @@ class AttendanceController extends Controller
                 $attendances = $attendanceRepository->getCourseAttendance($class_id, $course_id, $current_school_session_id);
             }
             $data = ['attendances' => $attendances];
-            
+
             return view('attendances.view', $data);
         } catch (\Exception $e) {
             return back()->withError($e->getMessage());

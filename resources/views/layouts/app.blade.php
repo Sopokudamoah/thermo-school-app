@@ -20,13 +20,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+    <!-- jQuery must load before everything else (FullCalendar, DataTables inline scripts) -->
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Custom component overrides (FullCalendar, CKEditor, sidebar) -->
     <link rel="stylesheet" href="{{ asset('css/app-custom.css') }}">
-
-    <!-- jQuery (required by FullCalendar v3 + toastr) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <!-- Page-specific head injections (FullCalendar CDN links etc.) -->
     @stack('head-scripts')
@@ -58,6 +58,9 @@
             @php
                 $latest_school_session = \App\Models\SchoolSession::latest()->first();
                 $current_school_session_name = $latest_school_session?->session_name;
+
+                $academic_setting = \App\Models\AcademicSetting::first();
+                $active_semester = $academic_setting?->active_semester_id ? \App\Models\Semester::find($academic_setting->active_semester_id) : null;
             @endphp
             <header class="h-16 sticky top-0 z-30 bg-white border-b border-gray-200 flex items-center px-4 lg:px-6 gap-3 shrink-0">
 
@@ -76,7 +79,7 @@
                 </div>
 
                 {{-- Academic session banner --}}
-                <div class="hidden md:flex items-center">
+                <div class="hidden md:flex items-center gap-2">
                     @if (session()->has('browse_session_name') && session('browse_session_name') !== $current_school_session_name)
                         <span class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-3 py-1">
                             <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
@@ -91,6 +94,14 @@
                         <span class="inline-flex items-center gap-1.5 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-full px-3 py-1">
                             <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
                             No Academic Session
+                        </span>
+                    @endif
+
+                    @if($active_semester)
+                        <span
+                            class="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-full px-3 py-1">
+                            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                            {{ $active_semester->semester_name }}
                         </span>
                     @endif
                 </div>

@@ -26,9 +26,14 @@
             </div>
             <div>
                 <select class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 bg-white" aria-label="Status" name="semester_id">
+                    <option value=""
+                            disabled {{ (!isset($semester_id) || $semester_id == 0) && !isset($academic_setting->active_semester_id) ? 'selected' : '' }}>
+                        Select Semester
+                    </option>
                     @isset($semesters)
                         @foreach ($semesters as $semester)
-                            <option value="{{$semester->id}}">{{$semester->semester_name}}</option>
+                            <option
+                                value="{{$semester->id}}" {{ (isset($semester_id) && $semester_id == $semester->id) || (!isset($semester_id) || $semester_id == 0) && isset($academic_setting->active_semester_id) && $academic_setting->active_semester_id == $semester->id ? 'selected' : '' }}>{{$semester->semester_name}}</option>
                         @endforeach
                     @endisset
                 </select>

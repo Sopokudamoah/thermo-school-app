@@ -4,13 +4,36 @@
 @section('content')
 <div class="mb-6">
     <h1 class="font-heading text-xl font-bold text-gray-900"><i data-lucide="table" class="inline w-5 h-5 mr-2"></i> Give Final Marks</h1>
+    <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+        <a href="{{route('home')}}" class="hover:text-indigo-600">Home</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="{{route('course.mark.create')}}" class="hover:text-indigo-600">Give marks</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span>Final Marks</span>
+    </nav>
 </div>
 
 @include('session-messages')
 
-<div class="mb-4">
-    <h5 class="text-sm font-semibold text-gray-700">Class {{$class_name}}, Section #{{$section_name}}</h5>
-    <h5 class="text-sm font-semibold text-gray-700">Course: {{$course_name}}</h5>
+<div class="mb-4 bg-white rounded-card shadow-card border border-gray-200 p-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+            <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Semester</span>
+            <span class="text-sm font-medium text-gray-900">{{$semester_name}}</span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Class</span>
+            <span class="text-sm font-medium text-gray-900">{{$class_name}}</span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Section</span>
+            <span class="text-sm font-medium text-gray-900">{{$section_name}}</span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Course</span>
+            <span class="text-sm font-medium text-gray-900">{{$course_name}}</span>
+        </div>
+    </div>
 </div>
 
 <form action="{{route('course.final.mark.submit.store')}}" method="POST">

@@ -10,7 +10,8 @@
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
         "spatie/laravel-permission": "^6.0",
-        "stevebauman/purify": "^6.0"
+        "stevebauman/purify": "^6.0",
+        "yajra/laravel-datatables": "^11.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.10",

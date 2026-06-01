@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\ExamStoreRequest;
-use App\Models\Exam;
-use Illuminate\Http\Request;
-use App\Traits\SchoolSession;
-use App\Interfaces\SemesterInterface;
+use App\Interfaces\AcademicSettingInterface;
 use App\Interfaces\SchoolClassInterface;
 use App\Interfaces\SchoolSessionInterface;
+use App\Interfaces\SemesterInterface;
+use App\Models\Exam;
 use App\Repositories\AssignedTeacherRepository;
 use App\Repositories\ExamRepository;
+use App\Traits\SchoolSession;
+use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {
@@ -20,12 +20,18 @@ class ExamController extends Controller
     protected $schoolClassRepository;
     protected $semesterRepository;
     protected $schoolSessionRepository;
+    protected $academicSettingRepository;
 
-    public function __construct(SchoolSessionInterface $schoolSessionRepository, SchoolClassInterface $schoolClassRepository, SemesterInterface $semesterRepository)
-    {
+    public function __construct(
+        SchoolSessionInterface $schoolSessionRepository,
+        SchoolClassInterface $schoolClassRepository,
+        SemesterInterface $semesterRepository,
+        AcademicSettingInterface $academicSettingRepository
+    ) {
         $this->schoolSessionRepository = $schoolSessionRepository;
         $this->schoolClassRepository = $schoolClassRepository;
         $this->semesterRepository = $semesterRepository;
+        $this->academicSettingRepository = $academicSettingRepository;
     }
     /**
      * Display a listing of the resource.
@@ -38,6 +44,14 @@ class ExamController extends Controller
         $class_id = $request->query('class_id', 0);
         $semester_id = $request->query('semester_id', 0);
 
+        $academic_setting = $this->academicSettingRepository->getAcademicSetting();
+
+        if ($semester_id == 0) {
+            if ($academic_setting && $academic_setting->active_semester_id) {
+                $semester_id = $academic_setting->active_semester_id;
+            }
+        }
+
         $current_school_session_id = $this->getSchoolCurrentSession();
 
         $semesters = $this->semesterRepository->getAll($current_school_session_id);
@@ -46,7 +60,8 @@ class ExamController extends Controller
 
         $examRepository = new ExamRepository();
 
-        $exams = $examRepository->getAll($current_school_session_id, $semester_id, $class_id);
+        $course_id = $request->query('course_id', 0);
+        $exams = $examRepository->getAll($current_school_session_id, $semester_id, $class_id, $course_id);
 
         $assignedTeacherRepository = new AssignedTeacherRepository();
 
@@ -60,6 +75,8 @@ class ExamController extends Controller
             'classes'                   => $school_classes,
             'exams'                     => $exams,
             'teacher_courses'           => $teacherCourses,
+            'academic_setting' => $academic_setting,
+            'semester_id' => $semester_id,
         ];
 
         return view('exams.index', $data);
@@ -91,10 +108,13 @@ class ExamController extends Controller
             $school_classes = $this->schoolClassRepository->getAllBySession($current_school_session_id);
         }
 
+        $academic_setting = $this->academicSettingRepository->getAcademicSetting();
+
         $data = [
             'current_school_session_id' => $current_school_session_id,
             'semesters'                 => $semesters,
             'classes'                   => $school_classes,
+            'academic_setting' => $academic_setting,
         ];
 
         return view('exams.create', $data);

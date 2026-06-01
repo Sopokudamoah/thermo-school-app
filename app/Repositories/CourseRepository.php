@@ -2,9 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Models\Course;
-use App\Models\Semester;
 use App\Interfaces\CourseInterface;
+use App\Models\Course;
 
 class CourseRepository implements CourseInterface {
     public function create($request) {
@@ -19,8 +18,17 @@ class CourseRepository implements CourseInterface {
         return Course::where('session_id', $session_id)->get();
     }
 
-    public function getByClassId($class_id) {
-        return Course::where('class_id', $class_id)->get();
+    public function getByClassId($class_id, $teacher_id = null)
+    {
+        $query = Course::where('class_id', $class_id);
+
+        if ($teacher_id) {
+            $query->whereHas('assignedTeachers', function ($q) use ($teacher_id) {
+                $q->where('teacher_id', $teacher_id);
+            });
+        }
+
+        return $query->get();
     }
 
     public function findById($course_id) {

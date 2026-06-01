@@ -175,6 +175,11 @@
                     <i data-lucide="table" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
                     Grade Systems
                 </a>
+                <a href="{{ route('course.mark.create') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('course.mark.create') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                    Give Marks
+                </a>
             </div>
         </div>
         @endif

@@ -66,7 +66,41 @@
             </form>
         </div>
 
-        @if ($latest_school_session_id == $current_school_session_id)
+            <div class="break-inside-avoid bg-white rounded-card shadow-card border border-gray-200 p-5 mb-4">
+                <h3 class="font-heading text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">
+                    Set Active Semester</h3>
+                <div
+                    class="flex items-start gap-2.5 bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-lg px-4 py-3 mb-4 text-sm">
+                    <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 mt-0.5"></i>
+                    <span>Setting an active semester will pre-select it in all related forms.</span>
+                </div>
+                <form action="{{route('school.active.semester.update')}}" method="POST" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Select Active Semester:</label>
+                        <select
+                            class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                            name="active_semester_id" required>
+                            <option value="" disabled {{!$academic_setting->active_semester_id ? 'selected' : ''}}>
+                                Select Semester
+                            </option>
+                            @isset($semesters)
+                                @foreach ($semesters as $semester)
+                                    <option
+                                        value="{{$semester->id}}" {{$academic_setting->active_semester_id == $semester->id ? 'selected' : ''}}>{{$semester->semester_name}}</option>
+                                @endforeach
+                            @endisset
+                        </select>
+                    </div>
+                    <button
+                        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors"
+                        type="submit">
+                        <i data-lucide="check" class="w-4 h-4"></i> Set Active
+                    </button>
+                </form>
+            </div>
+
+            @if ($latest_school_session_id == $current_school_session_id)
         <div class="break-inside-avoid bg-white rounded-card shadow-card border border-gray-200 p-5 mb-4">
             <h3 class="font-heading text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">Create Semester for Current Session</h3>
             <form action="{{route('school.semester.create')}}" method="POST" class="space-y-4">
@@ -196,7 +230,8 @@
                             name="semester_id" required>
                         @isset($semesters)
                             @foreach ($semesters as $semester)
-                            <option value="{{$semester->id}}">{{$semester->semester_name}}</option>
+                                <option
+                                    value="{{$semester->id}}" {{$academic_setting->active_semester_id == $semester->id ? 'selected' : ''}}>{{$semester->semester_name}}</option>
                             @endforeach
                         @endisset
                     </select>
@@ -240,7 +275,8 @@
                             name="semester_id" required>
                         @isset($semesters)
                             @foreach ($semesters as $semester)
-                            <option value="{{$semester->id}}">{{$semester->semester_name}}</option>
+                                <option
+                                    value="{{$semester->id}}" {{$academic_setting->active_semester_id == $semester->id ? 'selected' : ''}}>{{$semester->semester_name}}</option>
                             @endforeach
                         @endisset
                     </select>

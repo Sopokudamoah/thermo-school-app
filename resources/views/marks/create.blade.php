@@ -7,9 +7,9 @@
     <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
         <a href="{{route('home')}}" class="hover:text-indigo-600">Home</a>
         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        <a href="{{url()->previous()}}" class="hover:text-indigo-600">My courses</a>
+        <a href="{{route('course.mark.create')}}" class="hover:text-indigo-600">Give marks</a>
         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        <span>Give Marks</span>
+        <span>Details</span>
     </nav>
 </div>
 
@@ -32,14 +32,30 @@
 </div>
 @endif
 
-<div class="mb-4">
-    <h3 class="text-base font-semibold text-gray-800">Class #{{request()->query('class_name')}}, Section #{{request()->query('section_name')}}</h3>
-    <h3 class="text-base font-semibold text-gray-800">Course: {{request()->query('course_name')}}</h3>
+<div class="mb-4 bg-white rounded-card shadow-card border border-gray-200 p-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+            <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Semester</span>
+            <span class="text-sm font-medium text-gray-900">{{$semester_name}}</span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Class</span>
+            <span class="text-sm font-medium text-gray-900">{{$class_name}}</span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Section</span>
+            <span class="text-sm font-medium text-gray-900">{{$section_name}}</span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Course</span>
+            <span class="text-sm font-medium text-gray-900">{{$course_name}}</span>
+        </div>
+    </div>
 </div>
 
 @if (!$final_marks_submitted && count($exams) > 0 && $academic_setting['marks_submission_status'] == "on")
     <div class="mb-4 flex flex-wrap gap-2">
-        <a href="{{route('course.final.mark.submit.show', ['class_id' => $class_id, 'class_name' => request()->query('class_name'), 'section_id' => $section_id, 'section_name' => request()->query('section_name'), 'course_id' => $course_id, 'course_name' => request()->query('course_name'), 'semester_id' => $semester_id])}}"
+        <a href="{{route('course.final.mark.submit.show', ['class_id' => $class_id, 'section_id' => $section_id, 'course_id' => $course_id, 'semester_id' => $semester_id])}}"
            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors"
            onclick="return confirm('Are you sure, you want to submit final marks?')">
             <i data-lucide="check" class="w-4 h-4"></i> Submit Final Marks

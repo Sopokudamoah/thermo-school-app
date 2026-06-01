@@ -27,7 +27,8 @@
             <select class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 bg-white" name="semester_id" required>
                 @isset($semesters)
                     @foreach ($semesters as $semester)
-                    <option value="{{$semester->id}}" {{($semester->id === request()->query('semester_id'))?'selected':''}}>{{$semester->semester_name}}</option>
+                        <option
+                            value="{{$semester->id}}" {{ (isset($academic_setting->active_semester_id) && $academic_setting->active_semester_id == $semester->id) || ($semester->id === request()->query('semester_id')) ? 'selected' : '' }}>{{$semester->semester_name}}</option>
                     @endforeach
                 @endisset
             </select>

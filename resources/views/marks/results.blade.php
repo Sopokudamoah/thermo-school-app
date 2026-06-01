@@ -4,7 +4,35 @@
 @section('content')
 <div class="mb-6">
     <h1 class="font-heading text-xl font-bold text-gray-900"><i data-lucide="table" class="inline w-5 h-5 mr-2"></i> View Results</h1>
+    <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+        <a href="{{route('home')}}" class="hover:text-indigo-600">Home</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span>View Results</span>
+    </nav>
 </div>
+
+@if($selected_semester || $selected_class || $selected_section || $selected_course)
+    <div class="mb-4 bg-white rounded-card shadow-card border border-gray-200 p-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+                <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Semester</span>
+                <span class="text-sm font-medium text-gray-900">{{$selected_semester->semester_name ?? 'N/A'}}</span>
+            </div>
+            <div>
+                <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Class</span>
+                <span class="text-sm font-medium text-gray-900">{{$selected_class->class_name ?? 'N/A'}}</span>
+            </div>
+            <div>
+                <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Section</span>
+                <span class="text-sm font-medium text-gray-900">{{$selected_section->section_name ?? 'N/A'}}</span>
+            </div>
+            <div>
+                <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Course</span>
+                <span class="text-sm font-medium text-gray-900">{{$selected_course->course_name ?? 'N/A'}}</span>
+            </div>
+        </div>
+    </div>
+@endif
 
 <div class="bg-white rounded-card shadow-card border border-gray-200 p-4 mb-5">
     <p class="text-sm font-medium text-gray-600 mb-3">Filter list by:</p>
@@ -12,19 +40,29 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
                 <select class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 bg-white" name="semester_id" required>
+                    <option value=""
+                            disabled {{ (!isset($semester_id) || $semester_id == 0) && !isset($academic_setting->active_semester_id) ? 'selected' : '' }}>
+                        Select Semester
+                    </option>
                     @isset($semesters)
                         @foreach ($semesters as $semester)
-                        <option value="{{$semester->id}}">{{$semester->semester_name}}</option>
+                            <option
+                                value="{{$semester->id}}" {{ (isset($semester_id) && $semester_id == $semester->id) || (!isset($semester_id) || $semester_id == 0) && isset($academic_setting->active_semester_id) && $academic_setting->active_semester_id == $semester->id ? 'selected' : '' }}>{{$semester->semester_name}}</option>
                         @endforeach
                     @endisset
                 </select>
             </div>
             <div>
-                <select onchange="getSectionsAndCourses(this);" class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 bg-white" name="class_id" aria-label="Class">
+                <select onchange="getSectionsAndCourses(this);"
+                        class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 bg-white"
+                        name="class_id" id="class_id" aria-label="Class" required>
+                    <option value="" disabled {{ !isset($class_id) || $class_id == 0 ? 'selected' : '' }}>Please select
+                        a class
+                    </option>
                     @isset($classes)
-                        <option selected disabled>Please select a class</option>
                         @foreach ($classes as $school_class)
-                            <option value="{{$school_class->id}}">{{$school_class->class_name}}</option>
+                            <option
+                                value="{{$school_class->id}}" {{ isset($class_id) && $class_id == $school_class->id ? 'selected' : '' }}>{{$school_class->class_name}}</option>
                         @endforeach
                     @endisset
                 </select>
@@ -78,8 +116,8 @@
 
 @push('scripts')
 <script>
-    function getSectionsAndCourses(obj) {
-        var class_id = obj.options[obj.selectedIndex].value;
+    function getSectionsAndCourses(obj, selectedSectionId = null, selectedCourseId = null) {
+        var class_id = typeof obj === 'object' ? obj.options[obj.selectedIndex].value : obj;
 
         var url = "{{route('get.sections.courses.by.classId')}}?class_id=" + class_id
 
@@ -90,19 +128,33 @@
             sectionSelect.options.length = 0;
             data.sections.unshift({'id': 0,'section_name': 'Please select a section'})
             data.sections.forEach(function(section, key) {
-                sectionSelect[key] = new Option(section.section_name, section.id);
+                var option = new Option(section.section_name, section.id);
+                if (selectedSectionId && section.id == selectedSectionId) {
+                    option.selected = true;
+                }
+                sectionSelect[key] = option;
             });
 
             var courseSelect = document.getElementById('course-select');
             courseSelect.options.length = 0;
             data.courses.unshift({'id': 0,'course_name': 'Please select a course'})
             data.courses.forEach(function(course, key) {
-                courseSelect[key] = new Option(course.course_name, course.id);
+                var option = new Option(course.course_name, course.id);
+                if (selectedCourseId && course.id == selectedCourseId) {
+                    option.selected = true;
+                }
+                courseSelect[key] = option;
             });
         })
         .catch(function(error) {
             console.log(error);
         });
     }
+
+    @if(isset($class_id) && $class_id > 0)
+    document.addEventListener('DOMContentLoaded', function () {
+        getSectionsAndCourses('{{$class_id}}', '{{$section_id}}', '{{$course_id}}');
+    });
+    @endif
 </script>
 @endpush

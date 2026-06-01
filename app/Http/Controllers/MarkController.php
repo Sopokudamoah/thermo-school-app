@@ -2,22 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Mark;
-use Illuminate\Http\Request;
-use App\Traits\SchoolSession;
-use App\Interfaces\UserInterface;
+use App\Interfaces\AcademicSettingInterface;
 use App\Interfaces\CourseInterface;
+use App\Interfaces\SchoolClassInterface;
+use App\Interfaces\SchoolSessionInterface;
 use App\Interfaces\SectionInterface;
+use App\Interfaces\SemesterInterface;
+use App\Interfaces\UserInterface;
+use App\Models\Course;
+use App\Models\Mark;
+use App\Models\SchoolClass;
+use App\Models\Section;
+use App\Models\Semester;
 use App\Repositories\ExamRepository;
+use App\Repositories\GradeRuleRepository;
+use App\Repositories\GradingSystemRepository;
 use App\Repositories\MarkRepository;
 use App\Traits\AssignedTeacherCheck;
-use App\Interfaces\SemesterInterface;
-use App\Interfaces\SchoolClassInterface;
-use App\Repositories\GradeRuleRepository;
-use App\Interfaces\SchoolSessionInterface;
-use App\Interfaces\AcademicSettingInterface;
-use App\Repositories\GradingSystemRepository;
+use App\Traits\SchoolSession;
+use Illuminate\Http\Request;
 
 class MarkController extends Controller
 {
@@ -62,11 +65,24 @@ class MarkController extends Controller
         $course_id = $request->query('course_id', 0);
         $semester_id = $request->query('semester_id', 0);
 
+        $academic_setting = $this->academicSettingRepository->getAcademicSetting();
+
+        if ($semester_id == 0) {
+            if ($academic_setting && $academic_setting->active_semester_id) {
+                $semester_id = $academic_setting->active_semester_id;
+            }
+        }
+
         $current_school_session_id = $this->getSchoolCurrentSession();
 
         $semesters = $this->semesterRepository->getAll($current_school_session_id);
 
         $school_classes = $this->schoolClassRepository->getAllBySession($current_school_session_id);
+
+        $selected_semester = $semester_id ? Semester::find($semester_id) : null;
+        $selected_class = $class_id ? SchoolClass::find($class_id) : null;
+        $selected_section = $section_id ? Section::find($section_id) : null;
+        $selected_course = $course_id ? Course::find($course_id) : null;
 
         $markRepository = new MarkRepository();
         $marks = $markRepository->getAllFinalMarks(
@@ -77,33 +93,36 @@ class MarkController extends Controller
             $course_id
         );
 
-        if (!$marks) {
+        if (!$marks && ($semester_id || $class_id || $section_id || $course_id)) {
             return abort(404);
         }
 
-        $gradingSystemRepository = new GradingSystemRepository();
-        $gradingSystem = $gradingSystemRepository->getGradingSystem(
-            $current_school_session_id,
-            $semester_id,
-            $class_id
-        );
+        $gradingSystemRules = [];
+        if ($marks) {
+            $gradingSystemRepository = new GradingSystemRepository();
+            $gradingSystem = $gradingSystemRepository->getGradingSystem(
+                $current_school_session_id,
+                $semester_id,
+                $class_id
+            );
 
-        if (!$gradingSystem) {
-            return abort(404);
-        }
+            if (!$gradingSystem) {
+                return abort(404);
+            }
 
-        $gradeRulesRepository = new GradeRuleRepository();
-        $gradingSystemRules = $gradeRulesRepository->getAll($current_school_session_id, $gradingSystem->id);
+            $gradeRulesRepository = new GradeRuleRepository();
+            $gradingSystemRules = $gradeRulesRepository->getAll($current_school_session_id, $gradingSystem->id);
 
-        if (!$gradingSystemRules) {
-            return abort(404);
-        }
+            if (!$gradingSystemRules) {
+                return abort(404);
+            }
 
-        foreach ($marks as $mark_key => $mark) {
-            foreach ($gradingSystemRules as $key => $gradingSystemRule) {
-                if ($mark->final_marks >= $gradingSystemRule->start_at && $mark->final_marks <= $gradingSystemRule->end_at) {
-                    $marks[$mark_key]['point'] = $gradingSystemRule->point;
-                    $marks[$mark_key]['grade'] = $gradingSystemRule->grade;
+            foreach ($marks as $mark_key => $mark) {
+                foreach ($gradingSystemRules as $key => $gradingSystemRule) {
+                    if ($mark->final_marks >= $gradingSystemRule->start_at && $mark->final_marks <= $gradingSystemRule->end_at) {
+                        $marks[$mark_key]['point'] = $gradingSystemRule->point;
+                        $marks[$mark_key]['grade'] = $gradingSystemRule->grade;
+                    }
                 }
             }
         }
@@ -114,6 +133,15 @@ class MarkController extends Controller
             'classes' => $school_classes,
             'marks' => $marks,
             'grading_system_rules' => $gradingSystemRules,
+            'academic_setting' => $academic_setting,
+            'semester_id' => $semester_id,
+            'class_id' => $class_id,
+            'section_id' => $section_id,
+            'course_id' => $course_id,
+            'selected_semester' => $selected_semester,
+            'selected_class' => $selected_class,
+            'selected_section' => $selected_section,
+            'selected_course' => $selected_course,
         ];
 
         return view('marks.results', $data);
@@ -132,15 +160,42 @@ class MarkController extends Controller
         $course_id = $request->query('course_id');
         $semester_id = $request->query('semester_id', 0);
 
+        $academic_setting = $this->academicSettingRepository->getAcademicSetting();
+
+        if ($semester_id == 0) {
+            if ($academic_setting && $academic_setting->active_semester_id) {
+                $semester_id = $academic_setting->active_semester_id;
+            }
+        }
+
         try {
             $current_school_session_id = $this->getSchoolCurrentSession();
-            $this->checkIfLoggedInUserIsAssignedTeacher($request, $current_school_session_id);
+
+            if (!$class_id || !$section_id || !$course_id || !$semester_id) {
+                $semesters = $this->semesterRepository->getAll($current_school_session_id);
+                $classes = $this->schoolClassRepository->getAllBySession($current_school_session_id);
+
+                return view('marks.select-course', [
+                    'semesters' => $semesters,
+                    'classes' => $classes,
+                    'academic_setting' => $academic_setting,
+                ]);
+            }
+
+            if (auth()->user()->isTeacher()) {
+                $this->checkIfLoggedInUserIsAssignedTeacher($request, $current_school_session_id);
+            }
+
+            $class = SchoolClass::findOrFail($class_id);
+            $section = Section::findOrFail($section_id);
+            $course = Course::findOrFail($course_id);
+            $semester = Semester::findOrFail($semester_id);
 
             $academic_setting = $this->academicSettingRepository->getAcademicSetting();
 
             $examRepository = new ExamRepository();
 
-            $exams = $examRepository->getAll($current_school_session_id, $semester_id, $class_id);
+            $exams = $examRepository->getAll($current_school_session_id, $semester_id, $class_id, $course_id);
 
             $markRepository = new MarkRepository();
             $studentsWithMarks = $markRepository->getAll(
@@ -177,12 +232,17 @@ class MarkController extends Controller
                 'exams' => $exams,
                 'students_with_marks' => $studentsWithMarks,
                 'class_id' => $class_id,
+                'class_name' => $class->class_name,
                 'section_id' => $section_id,
+                'section_name' => $section->section_name,
                 'course_id' => $course_id,
+                'course_name' => $course->course_name,
                 'semester_id' => $semester_id,
+                'semester_name' => $semester->semester_name,
                 'final_marks_submitted' => $final_marks_submitted,
                 'sectionStudents' => $sectionStudents,
                 'current_school_session_id' => $current_school_session_id,
+                'academic_setting' => $academic_setting,
             ];
 
             return view('marks.create', $data);
@@ -204,7 +264,24 @@ class MarkController extends Controller
         $course_id = $request->query('course_id');
         $semester_id = $request->query('semester_id', 0);
 
+        $academic_setting = $this->academicSettingRepository->getAcademicSetting();
+
+        if ($semester_id == 0) {
+            if ($academic_setting && $academic_setting->active_semester_id) {
+                $semester_id = $academic_setting->active_semester_id;
+            }
+        }
+
         $current_school_session_id = $this->getSchoolCurrentSession();
+
+        if (auth()->user()->isTeacher()) {
+            $this->checkIfLoggedInUserIsAssignedTeacher($request, $current_school_session_id);
+        }
+
+        $class = SchoolClass::findOrFail($class_id);
+        $section = Section::findOrFail($section_id);
+        $course = Course::findOrFail($course_id);
+        $semester = Semester::findOrFail($semester_id);
 
         $markRepository = new MarkRepository();
         $studentsWithMarks = $markRepository->getAll(
@@ -219,13 +296,15 @@ class MarkController extends Controller
         $data = [
             'students_with_marks' => $studentsWithMarks,
             'class_id' => $class_id,
-            'class_name' => $request->query('class_name'),
+            'class_name' => $class->class_name,
             'section_id' => $section_id,
-            'section_name' => $request->query('section_name'),
+            'section_name' => $section->section_name,
             'course_id' => $course_id,
-            'course_name' => $request->query('course_name'),
+            'course_name' => $course->course_name,
             'semester_id' => $semester_id,
+            'semester_name' => $semester->semester_name,
             'current_school_session_id' => $current_school_session_id,
+            'academic_setting' => $academic_setting,
         ];
 
         return view('marks.submit-final-marks', $data);
@@ -240,7 +319,11 @@ class MarkController extends Controller
     public function store(Request $request)
     {
         $current_school_session_id = $this->getSchoolCurrentSession();
-        $this->checkIfLoggedInUserIsAssignedTeacher($request, $current_school_session_id);
+
+        if (auth()->user()->isTeacher()) {
+            $this->checkIfLoggedInUserIsAssignedTeacher($request, $current_school_session_id);
+        }
+
         $rows = [];
         foreach ($request->student_mark as $id => $stm) {
             foreach ($stm as $exam => $mark) {
@@ -276,7 +359,10 @@ class MarkController extends Controller
     {
         $current_school_session_id = $this->getSchoolCurrentSession();
 
-        $this->checkIfLoggedInUserIsAssignedTeacher($request, $current_school_session_id);
+        if (auth()->user()->isTeacher()) {
+            $this->checkIfLoggedInUserIsAssignedTeacher($request, $current_school_session_id);
+        }
+
         $rows = [];
         foreach ($request->calculated_mark as $id => $cmark) {
             $row = [];

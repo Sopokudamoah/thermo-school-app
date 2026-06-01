@@ -1,109 +1,96 @@
-@push('head-scripts')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-@endpush
-
 <div id='full_calendar_events' class="w-full"></div>
 
+@push('scripts')
 <script>
-    // A modified version of codes from
-    // https://www.positronx.io/create-events-in-laravel-using-fullcalendar-and-jquery-ajax/
-    $(document).ready(function () {
-
+    document.addEventListener('DOMContentLoaded', function () {
         var SITEURL = "{{ url('/') }}";
+        var {Calendar, dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin} = window.FullCalendar;
 
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+        var calendarEl = document.getElementById('full_calendar_events');
 
-        var calendar = $('#full_calendar_events').fullCalendar({
-            header: {
-                left: 'prev,next',
+        var calendar = new Calendar(calendarEl, {
+            plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
                 center: 'title',
-                right: 'month,agendaWeek,agendaDay'
+                right: 'dayGridMonth,timeGridWeek,listWeek'
             },
-            height: {{($editable == 'true')?500:"parent"}},
-            groupByResource: true,
-            defaultView: 'month',
-            editable: {{$editable}},
+            height: {!! ($editable == 'true') ? 500 : "'auto'" !!},
+            editable: {{ $editable }},
+            selectable: {{ $selectable }},
             eventLimit: true,
             events: SITEURL + '/calendar-event',
             displayEventTime: true,
-            selectable: {{$selectable}},
-            selectHelper: {{$selectable}},
-            select: function (event_start, event_end) {
+
+            select: function (info) {
+                @if($selectable == 'true')
                 var event_name = prompt("Event Name:");
                 if (event_name) {
-                    var event_start = $.fullCalendar.formatDate(event_start, "Y-MM-DD HH:mm:ss");
-                    var event_end = $.fullCalendar.formatDate(event_end, "Y-MM-DD HH:mm:ss");
-                    $.ajax({
-                        url: SITEURL + "/calendar-crud-ajax",
-                        data: {
-                            title: event_name,
-                            start: event_start,
-                            end: event_end,
-                            type: 'create'
+                    fetch(SITEURL + '/calendar-crud-ajax', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         },
-                        type: "POST",
-                        success: function (data) {
-                            displayMessage("Event created.");
-                            calendar.fullCalendar('renderEvent', {
-                                id: data.id,
-                                title: event_name,
-                                start: event_start,
-                                end: event_end
-                            }, true);
-                            calendar.fullCalendar('unselect');
-                        }
-                    });
-                }
-            },
-            eventResize: function (event, delta) {
-                var event_start = $.fullCalendar.formatDate(event.start, "Y-MM-DD");
-                var event_end = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
-                $.ajax({
-                    url: SITEURL + '/calendar-crud-ajax',
-                    data: {
-                        title: event.title,
-                        start: event_start,
-                        end: event_end,
-                        id: event.id,
-                        type: 'edit'
-                    },
-                    type: "POST",
-                    success: function (response) {
-                        displayMessage("Event updated");
-                    }
-                });
-            },
-            eventClick: function (event) {
-                if({{$selectable}}){
-                    var eventDelete = confirm("Are you sure to delete?");
-                    if (eventDelete) {
-                        $.ajax({
-                            type: "POST",
-                            url: SITEURL + '/calendar-crud-ajax',
-                            data: {
-                                id: event.id,
-                                type: 'delete'
-                            },
-                            success: function (response) {
-                                calendar.fullCalendar('removeEvents', event.id);
-                                displayMessage("Event removed");
-                            }
+                        body: JSON.stringify({
+                            title: event_name,
+                            start: info.startStr,
+                            end: info.endStr,
+                            type: 'create'
+                        })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            calendar.addEvent({id: data.id, title: event_name, start: info.startStr, end: info.endStr});
+                            if (window.toastr) toastr.success('Event created.', 'Event');
                         });
-                    }
                 }
+                calendar.unselect();
+                @endif
+            },
+
+            eventResize: function (info) {
+                fetch(SITEURL + '/calendar-crud-ajax', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        title: info.event.title,
+                        start: info.event.startStr,
+                        end: info.event.endStr,
+                        id: info.event.id,
+                        type: 'edit'
+                    })
+                })
+                    .then(() => {
+                        if (window.toastr) toastr.success('Event updated.', 'Event');
+                    });
+            },
+
+            eventClick: function (info) {
+                @if($selectable == 'true')
+                if (confirm("Are you sure you want to delete this event?")) {
+                    fetch(SITEURL + '/calendar-crud-ajax', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({id: info.event.id, type: 'delete'})
+                    })
+                        .then(() => {
+                            info.event.remove();
+                            if (window.toastr) toastr.success('Event removed.', 'Event');
+                        });
+                }
+                @endif
             }
-        });
     });
 
-    function displayMessage(message) {
-        toastr.success(message, 'Event');
-    }
+        calendar.render();
+    });
 </script>
+@endpush

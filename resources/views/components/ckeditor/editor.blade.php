@@ -1,6 +1,3 @@
-@push('head-scripts')
-<script src="https://cdn.ckeditor.com/ckeditor5/30.0.0/classic/ckeditor.js"></script>
-@endpush
 
 <div class="mb-4">
     <label for="editor" class="block text-sm font-medium text-gray-700 mb-1.5">Write Note:</label>

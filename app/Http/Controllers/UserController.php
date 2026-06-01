@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Traits\SchoolSession;
-use App\Interfaces\UserInterface;
-use App\Interfaces\SectionInterface;
-use App\Interfaces\SchoolClassInterface;
-use App\Repositories\PromotionRepository;
+use App\DataTables\TeachersDataTable;
 use App\Http\Requests\StudentStoreRequest;
 use App\Http\Requests\TeacherStoreRequest;
+use App\Interfaces\SchoolClassInterface;
 use App\Interfaces\SchoolSessionInterface;
+use App\Interfaces\SectionInterface;
+use App\Interfaces\UserInterface;
+use App\Repositories\PromotionRepository;
 use App\Repositories\StudentParentInfoRepository;
+use App\Traits\SchoolSession;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -21,10 +21,13 @@ class UserController extends Controller
     protected $schoolSessionRepository;
     protected $schoolClassRepository;
     protected $schoolSectionRepository;
+    protected $academicSettingRepository;
 
     public function __construct(UserInterface $userRepository, SchoolSessionInterface $schoolSessionRepository,
     SchoolClassInterface $schoolClassRepository,
-    SectionInterface $schoolSectionRepository)
+        SectionInterface $schoolSectionRepository,
+        \App\Interfaces\AcademicSettingInterface $academicSettingRepository
+    )
     {
         $this->middleware(['can:view users']);
 
@@ -32,6 +35,7 @@ class UserController extends Controller
         $this->schoolSessionRepository = $schoolSessionRepository;
         $this->schoolClassRepository = $schoolClassRepository;
         $this->schoolSectionRepository = $schoolSectionRepository;
+        $this->academicSettingRepository = $academicSettingRepository;
     }
 
     /**
@@ -174,9 +178,9 @@ class UserController extends Controller
         }
     }
 
-    public function getTeacherList(){
+    public function getTeacherList(TeachersDataTable $dataTable)
+    {
         $current_school_session_id = $this->getSchoolCurrentSession();
-        $teachers = $this->userRepository->getAllTeachers($current_school_session_id);
 
         $semesterRepository = new \App\Repositories\SemesterRepository();
         $classRepository = new \App\Repositories\SchoolClassRepository();
@@ -186,14 +190,16 @@ class UserController extends Controller
         $classes = $classRepository->getAllBySession($current_school_session_id);
         $sections = $sectionRepository->getAllBySession($current_school_session_id);
 
+        $academic_setting = $this->academicSettingRepository->getAcademicSetting();
+
         $data = [
-            'teachers'                  => $teachers,
             'semesters'                 => $semesters,
             'classes'                   => $classes,
             'sections'                  => $sections,
             'current_session_id'        => $current_school_session_id,
+            'academic_setting' => $academic_setting,
         ];
-        return view('teachers.list', $data);
+        return $dataTable->render('teachers.list', $data);
     }
 
     public function getCoursesByClassAndSemester(Request $request)

@@ -2,26 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Section;
-use Illuminate\Http\Request;
-use App\Traits\SchoolSession;
-use App\Interfaces\CourseInterface;
-use App\Interfaces\SectionInterface;
 use App\Http\Requests\SectionStoreRequest;
+use App\Interfaces\CourseInterface;
 use App\Interfaces\SchoolSessionInterface;
+use App\Interfaces\SectionInterface;
+use App\Models\Course;
+use App\Models\Section;
+use App\Traits\SchoolSession;
+use Illuminate\Http\Request;
 
 class SectionController extends Controller
 {
     use SchoolSession;
-    
+
     protected $schoolSectionRepository;
-    protected $schoolSessionRepository;
     protected $courseRepository;
 
     /**
     * Create a new Controller instance
-    * 
+     *
     * @param SectionInterface $schoolSectionRepository
     * @return void
     */
@@ -69,8 +68,27 @@ class SectionController extends Controller
     }
 
     public function getByClassId(Request $request) {
-        $sections = $this->schoolSectionRepository->getAllByClassId($request->query('class_id', 0));
-        $courses = $this->courseRepository->getByClassId($request->query('class_id', 0));
+        $class_id = $request->query('class_id', 0);
+        $section_id = $request->query('section_id');
+        $teacher_id = auth()->user()->isTeacher() ? auth()->id() : null;
+
+        $sections = $this->schoolSectionRepository->getAllByClassId($class_id);
+
+        $coursesQuery = Course::where('class_id', $class_id);
+
+        if ($teacher_id) {
+            $coursesQuery->whereHas('assignedTeachers', function ($q) use ($teacher_id, $section_id) {
+                $q->where('teacher_id', $teacher_id);
+                if ($section_id) {
+                    $q->where('section_id', $section_id);
+                }
+            });
+        } elseif ($section_id) {
+            // If not a teacher but section is provided, maybe we should still filter?
+            // For now, let's keep it consistent with the previous logic but allow section filtering if needed.
+        }
+
+        $courses = $coursesQuery->get();
 
         return response()->json(['sections' => $sections, 'courses' => $courses]);
     }

@@ -7,7 +7,7 @@ interface CourseInterface {
 
     public function getAll($session_id);
 
-    public function getByClassId($class_id);
+    public function getByClassId($class_id, $teacher_id = null);
 
     public function findById($course_id);
 

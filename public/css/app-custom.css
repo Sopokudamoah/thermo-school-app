@@ -124,6 +124,223 @@
   white-space: nowrap;
 }
 
+/* --- DataTables wrapper theming --- */
+
+/* Wrapper layout */
+.dataTables_wrapper {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: #374151;
+}
+
+/* Top controls row (length + search) */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 0.75rem;
+}
+
+/* Length select */
+.dataTables_wrapper .dataTables_length label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 13px;
+    color: #6B7280;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+    padding: 6px 28px 6px 10px;
+    font-size: 13px;
+    color: #111827;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.dataTables_wrapper .dataTables_length select:focus {
+    outline: none;
+    border-color: #6366F1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Search input — hide the "Search:" label text, keep the input */
+.dataTables_wrapper .dataTables_filter label {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 0; /* hides "Search:" text */
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    font-size: 13px;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+    padding: 6px 12px 6px 34px;
+    color: #111827;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    width: 220px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    margin-left: 0 !important;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    outline: none;
+    border-color: #6366F1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Table header */
+table.dataTable thead th,
+table.dataTable thead td {
+    padding: 10px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6B7280;
+    background-color: #F9FAFB;
+    border-bottom: 1px solid #E5E7EB !important;
+    white-space: nowrap;
+}
+
+table.dataTable thead th.sorting,
+table.dataTable thead th.sorting_asc,
+table.dataTable thead th.sorting_desc {
+    cursor: pointer;
+}
+
+table.dataTable thead th.sorting:after,
+table.dataTable thead th.sorting_asc:after,
+table.dataTable thead th.sorting_desc:after {
+    opacity: 0.5;
+}
+
+table.dataTable thead th.sorting_asc:after {
+    opacity: 1;
+}
+
+table.dataTable thead th.sorting_desc:after {
+    opacity: 1;
+}
+
+/* Table body rows */
+table.dataTable tbody tr {
+    transition: background-color 0.1s;
+}
+
+table.dataTable tbody tr:hover {
+    background-color: #F9FAFB !important;
+}
+
+table.dataTable tbody td {
+    padding: 10px 16px;
+    font-size: 13px;
+    color: #374151;
+    border-bottom: 1px solid #F3F4F6;
+    vertical-align: middle;
+}
+
+/* Info text */
+.dataTables_wrapper .dataTables_info {
+    font-size: 12px;
+    color: #9CA3AF;
+    padding-top: 0.5rem;
+}
+
+/* Pagination */
+.dataTables_wrapper .dataTables_paginate {
+    padding-top: 0.5rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    margin: 0 2px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151 !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #EEF2FF !important;
+    color: #4F46E5 !important;
+    border-color: #C7D2FE !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background-color: #4F46E5 !important;
+    color: #fff !important;
+    border-color: #4F46E5 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+    color: #D1D5DB !important;
+    cursor: default;
+    background: transparent !important;
+    border-color: transparent !important;
+}
+
+/* DataTables Buttons (export/print) */
+.dt-buttons {
+    display: inline-flex;
+    gap: 0.375rem;
+    margin-bottom: 0.75rem;
+}
+
+.dt-button {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 6px 14px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+    border: 1px solid #D1D5DB !important;
+    background: #fff !important;
+    color: #374151 !important;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    box-shadow: none !important;
+}
+
+.dt-button:hover {
+    background-color: #EEF2FF !important;
+    border-color: #A5B4FC !important;
+    color: #4F46E5 !important;
+}
+
+/* Processing overlay */
+.dataTables_wrapper .dataTables_processing {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    color: #6B7280;
+    font-size: 13px;
+    padding: 8px 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+}
+
 /* --- Masonry grid (used in academics/settings) --- */
 [data-masonry] {
   column-gap: 1.25rem;

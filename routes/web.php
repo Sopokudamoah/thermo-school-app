@@ -1,30 +1,30 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AcademicSettingController;
+use App\Http\Controllers\AssignedTeacherController;
+use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Auth\UpdatePasswordController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\ExamRuleController;
+use App\Http\Controllers\GradeRuleController;
+use App\Http\Controllers\GradingSystemController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\MarkImportController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\CourseController;
 use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\RoutineController;
+use App\Http\Controllers\SchoolClassController;
+use App\Http\Controllers\SchoolSessionController;
 use App\Http\Controllers\SectionController;
-use App\Http\Controllers\ExamRuleController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\SyllabusController;
-use App\Http\Controllers\GradeRuleController;
-use App\Http\Controllers\PromotionController;
-use App\Http\Controllers\AssignmentController;
-use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\SchoolClassController;
-use App\Http\Controllers\GradingSystemController;
-use App\Http\Controllers\SchoolSessionController;
-use App\Http\Controllers\AcademicSettingController;
-use App\Http\Controllers\AssignedTeacherController;
-use App\Http\Controllers\Auth\UpdatePasswordController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +51,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('semester/create', [SemesterController::class, 'store'])->name('semester.create');
         Route::post('final-marks-submission-status/update', [AcademicSettingController::class, 'updateFinalMarksSubmissionStatus'])->name('final.marks.submission.status.update');
+        Route::post('active-semester/update', [AcademicSettingController::class, 'updateActiveSemester'])->name(
+            'active.semester.update'
+        );
 
         Route::post('attendance/type/update', [AcademicSettingController::class, 'updateAttendanceType'])->name('attendance.type.update');
 

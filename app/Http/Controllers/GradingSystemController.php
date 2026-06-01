@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\GradingSystem;
-use App\Traits\SchoolSession;
-use App\Interfaces\SemesterInterface;
+use App\Http\Requests\GradingSystemStoreRequest;
+use App\Interfaces\AcademicSettingInterface;
 use App\Interfaces\SchoolClassInterface;
 use App\Interfaces\SchoolSessionInterface;
-use App\Http\Requests\GradingSystemStoreRequest;
+use App\Interfaces\SemesterInterface;
+use App\Models\GradingSystem;
 use App\Repositories\GradingSystemRepository;
+use App\Traits\SchoolSession;
+use Illuminate\Http\Request;
 
 class GradingSystemController extends Controller
 {
@@ -19,15 +19,18 @@ class GradingSystemController extends Controller
     protected $schoolClassRepository;
     protected $schoolSessionRepository;
     protected $semesterRepository;
+    protected $academicSettingRepository;
 
     public function __construct(
         SchoolSessionInterface $schoolSessionRepository,
         SchoolClassInterface $schoolClassRepository,
-        SemesterInterface $semesterRepository)
-    {
+        SemesterInterface $semesterRepository,
+        AcademicSettingInterface $academicSettingRepository
+    ) {
         $this->schoolSessionRepository = $schoolSessionRepository;
         $this->schoolClassRepository = $schoolClassRepository;
         $this->semesterRepository = $semesterRepository;
+        $this->academicSettingRepository = $academicSettingRepository;
     }
     /**
      * Display a listing of the resource.
@@ -58,11 +61,13 @@ class GradingSystemController extends Controller
         $current_school_session_id = $this->getSchoolCurrentSession();
         $school_classes = $this->schoolClassRepository->getAllBySession($current_school_session_id);
         $semesters = $this->semesterRepository->getAll($current_school_session_id);
+        $academic_setting = $this->academicSettingRepository->getAcademicSetting();
 
         $data = [
             'current_school_session_id' => $current_school_session_id,
             'school_classes'            => $school_classes,
             'semesters'                 => $semesters,
+            'academic_setting' => $academic_setting,
         ];
 
         return view('exams.grade.create', $data);
