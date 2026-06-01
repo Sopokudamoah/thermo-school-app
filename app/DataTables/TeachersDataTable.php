@@ -18,6 +18,9 @@ class TeachersDataTable extends DataTable
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
+        $academic_setting = \App\Models\AcademicSetting::first();
+        $semester_id = $academic_setting->active_semester_id ?? null;
+
         return (new EloquentDataTable($query))
             ->addColumn('teacher', function ($teacher) {
                 $photo = $teacher->photo
@@ -28,15 +31,25 @@ class TeachersDataTable extends DataTable
 
                 return '<div class="flex items-center gap-3">' . $photo . '<span class="font-medium text-gray-900">' . $teacher->first_name . ' ' . $teacher->last_name . '</span></div>';
             })
-            ->addColumn('assigned_classes', function ($teacher) {
-                $assigned = $teacher->assigned_classes->unique('class_id');
+            ->addColumn('assigned_classes', function ($teacher) use ($semester_id) {
+                $assigned = $teacher->assigned_classes;
+
+                if ($semester_id) {
+                    $assigned = $assigned->where('semester_id', $semester_id);
+                }
+
+                $assigned = $assigned->unique('class_id');
+
                 if ($assigned->isEmpty()) {
                     return '<span class="text-gray-400">No classes assigned</span>';
                 }
 
                 $html = '';
                 foreach ($assigned as $assign) {
-                    $html .= '<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800 mr-1 mb-1">' . $assign->schoolClass->name . '</span>';
+                    $className = $assign->schoolClass->class_name ?? '—';
+                    $sessionName = $assign->schoolSession->session_name ?? '';
+                    $displayText = $sessionName ? "$className ($sessionName)" : $className;
+                    $html .= '<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800 mr-1 mb-1">' . $displayText . '</span>';
                 }
                 return $html;
             })
@@ -51,15 +64,20 @@ class TeachersDataTable extends DataTable
     public function query(User $model): QueryBuilder
     {
         $session_id = $this->request()->get('session_id') ?: session('browse_session_id');
+        $academic_setting = \App\Models\AcademicSetting::first();
+        $semester_id = $academic_setting->active_semester_id ?? null;
 
         return $model->newQuery()
             ->where('role', 'teacher')
             ->with([
-                'assigned_classes' => function ($query) use ($session_id) {
+                'assigned_classes' => function ($query) use ($session_id, $semester_id) {
                     if ($session_id) {
                         $query->where('session_id', $session_id);
                     }
-                    $query->with('schoolClass');
+                    if ($semester_id) {
+                        $query->where('semester_id', $semester_id);
+                    }
+                    $query->with(['schoolClass', 'schoolSession']);
                 }
             ]);
     }

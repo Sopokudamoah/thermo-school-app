@@ -23,6 +23,8 @@ class SchoolSessionFactory extends Factory
     {
         return [
             'session_name' => $this->faker->unique()->randomElement(['2023-2024', '2024-2025', '2025-2026']),
+            'start_date' => now()->startOfYear(),
+            'end_date' => now()->endOfYear(),
         ];
     }
 }

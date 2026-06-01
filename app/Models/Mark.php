@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Exam;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Mark extends Model
 {
@@ -26,7 +24,7 @@ class Mark extends Model
      */
     public function student()
     {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
     /**

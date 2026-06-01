@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\StudentsDataTable;
 use App\DataTables\TeachersDataTable;
 use App\Http\Requests\StudentStoreRequest;
 use App\Http\Requests\TeacherStoreRequest;
@@ -55,24 +56,27 @@ class UserController extends Controller
         }
     }
 
-    public function getStudentList(Request $request) {
+    public function getStudentList(StudentsDataTable $dataTable, Request $request)
+    {
         $current_school_session_id = $this->getSchoolCurrentSession();
 
         $class_id = $request->query('class_id', 0);
         $section_id = $request->query('section_id', 0);
 
         try{
-
             $school_classes = $this->schoolClassRepository->getAllBySession($current_school_session_id);
 
-            $studentList = $this->userRepository->getAllStudents($current_school_session_id, $class_id, $section_id);
-
             $data = [
-                'studentList'       => $studentList,
                 'school_classes'    => $school_classes,
+                'class_id' => $class_id,
+                'section_id' => $section_id,
             ];
 
-            return view('students.list', $data);
+            return $dataTable->with([
+                'class_id' => $class_id,
+                'section_id' => $section_id,
+                'session_id' => $current_school_session_id
+            ])->render('students.list', $data);
         } catch (\Exception $e) {
             return back()->withError($e->getMessage());
         }

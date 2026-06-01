@@ -2,12 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\Course;
-use App\Models\Section;
-use App\Models\SchoolClass;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class AssignedTeacher extends Model
 {
@@ -54,5 +50,13 @@ class AssignedTeacher extends Model
      */
     public function course() {
         return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    /**
+     * Get the session.
+     */
+    public function schoolSession()
+    {
+        return $this->belongsTo(SchoolSession::class, 'session_id');
     }
 }

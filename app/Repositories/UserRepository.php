@@ -2,16 +2,15 @@
 
 namespace App\Repositories;
 
-use App\Models\User;
-use App\Traits\Base64ToFile;
 use App\Interfaces\UserInterface;
+use App\Models\AcademicSetting;
 use App\Models\SchoolClass;
 use App\Models\Section;
+use App\Models\Student;
+use App\Models\User;
+use App\Traits\Base64ToFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Repositories\PromotionRepository;
-use App\Repositories\StudentParentInfoRepository;
-use App\Repositories\StudentAcademicInfoRepository;
 
 class UserRepository implements UserInterface {
     use Base64ToFile;
@@ -69,13 +68,13 @@ class UserRepository implements UserInterface {
     public function createStudent($request) {
         try {
             DB::transaction(function () use ($request) {
-                $student = User::create([
+                $student = Student::create([
                     'first_name'    => $request['first_name'],
                     'last_name'     => $request['last_name'],
                     'email'         => $request['email'],
                     'gender'        => $request['gender'],
                     'nationality'   => $request['nationality'],
-                    'phone'         => $request['phone'],
+                    'phone_number' => $request['phone'],
                     'address'       => $request['address'],
                     'address2'      => $request['address2'],
                     'city'          => $request['city'],
@@ -84,8 +83,6 @@ class UserRepository implements UserInterface {
                     'birthday'      => $request['birthday'],
                     'religion'      => $request['religion'],
                     'blood_type'    => $request['blood_type'],
-                    'role'          => 'student',
-                    'password'      => Hash::make($request['password']),
                 ]);
 
                 // Store Parents' information
@@ -99,19 +96,6 @@ class UserRepository implements UserInterface {
                 // Assign student to a Class and a Section
                 $promotionRepository = new PromotionRepository();
                 $promotionRepository->assignClassSection($request, $student->id);
-
-                $student->givePermissionTo(
-                    'view attendances',
-                    'view assignments',
-                    'submit assignments',
-                    'view exams',
-                    'view marks',
-                    'view users',
-                    'view routines',
-                    'view syllabi',
-                    'view events',
-                    'view notices',
-                );
             });
         } catch (\Exception $e) {
             throw new \Exception('Failed to create Student. '.$e->getMessage());
@@ -121,13 +105,13 @@ class UserRepository implements UserInterface {
     public function updateStudent($request) {
         try {
             DB::transaction(function () use ($request) {
-                User::where('id', $request['student_id'])->update([
+                Student::where('id', $request['student_id'])->update([
                     'first_name'    => $request['first_name'],
                     'last_name'     => $request['last_name'],
                     'email'         => $request['email'],
                     'gender'        => $request['gender'],
                     'nationality'   => $request['nationality'],
-                    'phone'         => $request['phone'],
+                    'phone_number' => $request['phone'],
                     'address'       => $request['address'],
                     'address2'      => $request['address2'],
                     'city'          => $request['city'],
@@ -205,7 +189,7 @@ class UserRepository implements UserInterface {
 
     public function findStudent($id) {
         try {
-            return User::with('parent_info', 'academic_info')->where('id', $id)->first();
+            return Student::with('parent_info', 'academic_info')->where('id', $id)->first();
         } catch (\Exception $e) {
             throw new \Exception('Failed to get Student. '.$e->getMessage());
         }
@@ -213,9 +197,16 @@ class UserRepository implements UserInterface {
 
     public function findTeacher($id) {
         try {
+            $academic_setting = AcademicSetting::first();
+            $semester_id = $academic_setting->active_semester_id ?? null;
+
             return User::where('id', $id)->where('role', 'teacher')
-                ->with(['assigned_classes' => function($query) {
-                    $query->with(['schoolClass', 'section', 'course']);
+                ->with([
+                    'assigned_classes' => function ($query) use ($semester_id) {
+                        if ($semester_id) {
+                            $query->where('semester_id', $semester_id);
+                        }
+                        $query->with(['schoolClass', 'section', 'course', 'schoolSession']);
                 }])->first();
         } catch (\Exception $e) {
             throw new \Exception('Failed to get Teacher. '.$e->getMessage());

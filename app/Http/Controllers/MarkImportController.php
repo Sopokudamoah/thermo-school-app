@@ -6,7 +6,7 @@ use App\Interfaces\SchoolSessionInterface;
 use App\Models\Course;
 use App\Models\SchoolClass;
 use App\Models\Section;
-use App\Models\User;
+use App\Models\Student;
 use App\Repositories\ExamRepository;
 use App\Repositories\MarkRepository;
 use App\Traits\AssignedTeacherCheck;
@@ -39,7 +39,7 @@ class MarkImportController extends Controller
         $examRepository = new ExamRepository();
         $exams = $examRepository->getAll($current_school_session_id, $semester_id, $class_id, $request->course_id);
 
-        $students = User::with([
+        $students = Student::with([
             'marks' => function ($query) use ($exams) {
                 $query->whereIn('exam_id', $exams->pluck('id'));
             }

@@ -38,4 +38,9 @@ class AcademicSettingRepository implements AcademicSettingInterface {
             throw new \Exception('Failed to update active semester. ' . $e->getMessage());
         }
     }
+
+    public function findFirst()
+    {
+        return AcademicSetting::first();
+    }
 }

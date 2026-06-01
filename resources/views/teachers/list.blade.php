@@ -28,8 +28,8 @@
     </div>
 </div>
 
+@push('modals')
 <div x-data="{
-    isOpen: false,
     teacherId: null,
     teacherName: '',
     selectedClass: '',
@@ -61,16 +61,25 @@
             });
     }
 }"
-@open-assign-modal.window="isOpen = true; teacherId = $event.detail.id; teacherName = $event.detail.name; setTimeout(() => { if(window.lucide) window.lucide.createIcons(window.lucide.icons); }, 10);"
-x-show="isOpen"
-class="fixed inset-0 z-50 overflow-y-auto"
+     @open-assign-modal.window="teacherId = $event.detail.id; teacherName = $event.detail.name; openModal('assign-teacher');"
+     x-show="activeModal === 'assign-teacher'"
+     class="fixed inset-0 overflow-y-auto"
 style="display: none;">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div x-show="isOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="isOpen = false"></div>
+        <div x-show="activeModal === 'assign-teacher'" x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+             @click="closeModal()"></div>
 
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-        <div x-show="isOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+        <div x-show="activeModal === 'assign-teacher'" x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
             <div>
                 <div class="flex items-center justify-center w-12 h-12 mx-auto bg-indigo-100 rounded-full">
                     <i data-lucide="user-plus" class="w-6 h-6 text-indigo-600"></i>
@@ -141,7 +150,8 @@ style="display: none;">
                     <button type="submit" class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm">
                         Assign Teacher
                     </button>
-                    <button type="button" @click="isOpen = false" class="mt-3 inline-flex justify-center w-full px-4 py-2 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm">
+                    <button type="button" @click="closeModal()"
+                            class="mt-3 inline-flex justify-center w-full px-4 py-2 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm">
                         Cancel
                     </button>
                 </div>
@@ -149,6 +159,7 @@ style="display: none;">
         </div>
     </div>
 </div>
+@endpush
 @push('scripts')
     {{ $dataTable->scripts() }}
 @endpush

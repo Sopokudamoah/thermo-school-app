@@ -30,9 +30,25 @@
             <form action="{{route('school.session.store')}}" method="POST" class="space-y-4">
                 @csrf
                 <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Session Name <sup
+                            class="text-indigo-500">*</sup></label>
                     <input type="text"
                            class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                            placeholder="2021 - 2022" aria-label="Current Session" name="session_name" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Starts <sup
+                            class="text-indigo-500">*</sup></label>
+                    <input type="date"
+                           class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                           name="start_date" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Ends <sup
+                            class="text-indigo-500">*</sup></label>
+                    <input type="date"
+                           class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                           name="end_date" required>
                 </div>
                 <button class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors" type="submit">
                     <i data-lucide="check" class="w-4 h-4"></i> Create

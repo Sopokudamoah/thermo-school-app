@@ -2,31 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\SchoolClass;
-use Illuminate\Http\Request;
+use App\Http\Requests\SchoolClassStoreRequest;
+use App\Interfaces\AcademicSettingInterface;
 use App\Interfaces\SchoolClassInterface;
 use App\Interfaces\SchoolSessionInterface;
-use App\Http\Requests\SchoolClassStoreRequest;
+use App\Interfaces\SemesterInterface;
+use App\Models\SchoolClass;
 use App\Traits\SchoolSession;
+use Illuminate\Http\Request;
 
 class SchoolClassController extends Controller
 {
     use SchoolSession;
     protected $schoolClassRepository;
     protected $schoolSessionRepository;
+    protected $semesterRepository;
+    protected $academicSettingRepository;
 
     /**
     * Create a new Controller instance
-    * 
+     *
     * @param SchoolClassInterface $schoolClassRepository
     * @return void
     */
-    public function __construct(SchoolSessionInterface $schoolSessionRepository, SchoolClassInterface $schoolClassRepository) {
+    public function __construct(
+        SchoolSessionInterface $schoolSessionRepository,
+        SchoolClassInterface $schoolClassRepository,
+        SemesterInterface $semesterRepository,
+        AcademicSettingInterface $academicSettingRepository
+    ) {
         $this->middleware(['can:view classes']);
 
         $this->schoolSessionRepository = $schoolSessionRepository;
         $this->schoolClassRepository = $schoolClassRepository;
+        $this->semesterRepository = $semesterRepository;
+        $this->academicSettingRepository = $academicSettingRepository;
     }
 
     /**
@@ -39,6 +49,9 @@ class SchoolClassController extends Controller
         $current_school_session_id = $this->getSchoolCurrentSession();
 
         $data = $this->schoolClassRepository->getClassesAndSections($current_school_session_id);
+        $data['current_school_session_id'] = $current_school_session_id;
+        $data['semesters'] = $this->semesterRepository->getAll($current_school_session_id);
+        $data['academic_setting'] = $this->academicSettingRepository->findFirst();
 
         return view('classes.index', $data);
     }

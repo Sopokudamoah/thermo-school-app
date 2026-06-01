@@ -30,8 +30,25 @@
 
     <!-- Page-specific head injections (FullCalendar CDN links etc.) -->
     @stack('head-scripts')
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+<body class="bg-gray-50 text-gray-900 font-sans antialiased"
+      x-data="{
+        activeModal: null,
+        openModal(id) {
+            this.activeModal = id;
+            setTimeout(() => { if(window.lucide) window.lucide.createIcons(window.lucide.icons); }, 10);
+        },
+        closeModal() {
+            this.activeModal = null;
+        }
+      }"
+      @open-modal.window="openModal($event.detail)"
+      @keydown.escape.window="closeModal()">
 
 <div x-data="{ sidebarOpen: window.innerWidth >= 1024 }" @resize.window="sidebarOpen = window.innerWidth >= 1024">
 
@@ -164,6 +181,8 @@
 
             @include('layouts.footer')
         </div>
+
+        @include('layouts.modals')
 
     @else
         {{-- Unauthenticated: centered layout (login, password reset, etc.) --}}

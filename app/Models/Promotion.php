@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Section;
-use App\Models\SchoolClass;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Promotion extends Model
 {
@@ -29,7 +27,7 @@ class Promotion extends Model
      */
     public function student()
     {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
     /**

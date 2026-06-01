@@ -4,19 +4,30 @@
 
 @section('content')
 
-<div class="mb-6">
-    <h1 class="font-heading text-xl font-bold text-gray-900">Classes</h1>
-    <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
-        <a href="{{ route('home') }}" class="hover:text-indigo-600 transition-colors">Home</a>
-        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        <span class="text-gray-900">Classes</span>
-    </nav>
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="font-heading text-xl font-bold text-gray-900">Classes</h1>
+            <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+                <a href="{{ route('home') }}" class="hover:text-indigo-600 transition-colors">Home</a>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                <span class="text-gray-900">Classes</span>
+            </nav>
+        </div>
+        @can('create classes')
+            <button @click="$dispatch('open-modal', 'add-class')"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add Class
+            </button>
+        @endcan
 </div>
 
 @isset($school_classes)
 <div class="space-y-5">
     @foreach ($school_classes as $school_class)
-    @php $total_sections = 0; @endphp
+        @php
+            $current_sections_count = isset($school_sections) ? $school_sections->where('class_id', $school_class->id)->count() : 0;
+            $total_sections = 0;
+        @endphp
 
     <div class="bg-white rounded-card shadow-card border border-gray-200 overflow-hidden"
          x-data="{ activeTab: 'sections', openSection: null }">
@@ -28,18 +39,32 @@
                     class="flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium -mb-px transition-colors">
                 <i data-lucide="git-branch" class="w-4 h-4"></i>
                 {{ $school_class->class_name }}
+                <span
+                    class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-600 ml-1">
+                    {{ $current_sections_count }}
+                </span>
             </button>
             <button @click="activeTab = 'syllabus'"
                     :class="activeTab === 'syllabus' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-800'"
                     class="flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium -mb-px transition-colors">
                 <i data-lucide="book-marked" class="w-4 h-4"></i>
                 Syllabus
+                <span
+                    class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600 ml-1"
+                    :class="activeTab === 'syllabus' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-600'">
+                    {{ count($school_class->syllabi ?? []) }}
+                </span>
             </button>
             <button @click="activeTab = 'courses'"
                     :class="activeTab === 'courses' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-800'"
                     class="flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium -mb-px transition-colors">
                 <i data-lucide="book-open" class="w-4 h-4"></i>
                 Courses
+                <span
+                    class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600 ml-1"
+                    :class="activeTab === 'courses' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-600'">
+                    {{ count($school_class->courses ?? []) }}
+                </span>
             </button>
         </div>
 
@@ -48,7 +73,17 @@
 
             {{-- Sections tab --}}
             <div x-show="activeTab === 'sections'">
-                @isset($school_sections)
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="text-sm font-semibold text-gray-700">Sections</h4>
+                    @can('create sections')
+                        <button @click="$dispatch('open-modal', 'add-section-{{ $school_class->id }}')"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Section
+                        </button>
+                    @endcan
+                </div>
+
+            @isset($school_sections)
                 <div class="space-y-2">
                     @foreach ($school_sections as $school_section)
                         @if ($school_section->class_id == $school_class->id)
@@ -103,7 +138,17 @@
 
             {{-- Syllabus tab --}}
             <div x-show="activeTab === 'syllabus'">
-                @isset($school_class->syllabi)
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="text-sm font-semibold text-gray-700">Syllabus</h4>
+                    @can('create syllabi')
+                        <button @click="$dispatch('open-modal', 'add-syllabus-{{ $school_class->id }}')"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Syllabus
+                        </button>
+                    @endcan
+                </div>
+
+            @isset($school_class->syllabi)
                 @if(count($school_class->syllabi) > 0)
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
@@ -139,7 +184,17 @@
 
             {{-- Courses tab --}}
             <div x-show="activeTab === 'courses'">
-                @isset($school_class->courses)
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="text-sm font-semibold text-gray-700">Courses</h4>
+                    @can('create courses')
+                        <button @click="$dispatch('open-modal', 'add-course-{{ $school_class->id }}')"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Course
+                        </button>
+                    @endcan
+                </div>
+
+            @isset($school_class->courses)
                 @if(count($school_class->courses) > 0)
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
@@ -195,10 +250,285 @@
             </a>
             @endcan
         </div>
+
+        @push('modals')
+            {{-- Modals for this class --}}
+            @can('create sections')
+                <div x-show="activeModal === 'add-section-{{ $school_class->id }}'"
+                     class="fixed inset-0 overflow-y-auto" style="display: none;">
+                    <div
+                        class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <div x-show="activeModal === 'add-section-{{ $school_class->id }}'"
+                             x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+                             @click="closeModal()"></div>
+                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen"
+                              aria-hidden="true">&#8203;</span>
+                        <div x-show="activeModal === 'add-section-{{ $school_class->id }}'"
+                             x-transition:enter="ease-out duration-300"
+                             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                             x-transition:leave="ease-in duration-200"
+                             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                             class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+                                <h3 class="text-lg font-semibold text-gray-900">Add Section
+                                    to {{ $school_class->class_name }}</h3>
+                                <button @click="closeModal()" class="text-gray-400 hover:text-gray-500">
+                                    <i data-lucide="x" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                            <form action="{{ route('school.section.create') }}" method="POST" class="space-y-4">
+                                @csrf
+                                <input type="hidden" name="class_id" value="{{ $school_class->id }}">
+                                <input type="hidden" name="session_id" value="{{ $current_school_session_id }}">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Section Name <sup
+                                            class="text-indigo-500">*</sup></label>
+                                    <input type="text" name="section_name" required placeholder="e.g. Section A"
+                                           class="block w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Room No <sup
+                                            class="text-indigo-500">*</sup></label>
+                                    <input type="text" name="room_no" required placeholder="e.g. Room 101"
+                                           class="block w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                                </div>
+                                <div class="mt-6 flex flex-col sm:flex-row-reverse gap-3">
+                                    <button type="submit"
+                                            class="inline-flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors">
+                                        <i data-lucide="check" class="w-4 h-4"></i> Create Section
+                                    </button>
+                                    <button type="button" @click="closeModal()"
+                                            class="inline-flex justify-center items-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold text-sm px-4 py-2 rounded-lg transition-colors">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endcan
+
+            @can('create courses')
+                <div x-show="activeModal === 'add-course-{{ $school_class->id }}'"
+                     class="fixed inset-0 overflow-y-auto" style="display: none;">
+                    <div
+                        class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <div x-show="activeModal === 'add-course-{{ $school_class->id }}'"
+                             x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+                             @click="closeModal()"></div>
+                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen"
+                              aria-hidden="true">&#8203;</span>
+                        <div x-show="activeModal === 'add-course-{{ $school_class->id }}'"
+                             x-transition:enter="ease-out duration-300"
+                             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                             x-transition:leave="ease-in duration-200"
+                             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                             class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+                                <h3 class="text-lg font-semibold text-gray-900">Add Course
+                                    to {{ $school_class->class_name }}</h3>
+                                <button @click="closeModal()" class="text-gray-400 hover:text-gray-500">
+                                    <i data-lucide="x" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                            <form action="{{ route('school.course.create') }}" method="POST" class="space-y-4">
+                                @csrf
+                                <input type="hidden" name="class_id" value="{{ $school_class->id }}">
+                                <input type="hidden" name="session_id" value="{{ $current_school_session_id }}">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Course Name <sup
+                                            class="text-indigo-500">*</sup></label>
+                                    <input type="text" name="course_name" required placeholder="e.g. Mathematics"
+                                           class="block w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Course Type <sup
+                                            class="text-indigo-500">*</sup></label>
+                                    <select name="course_type" required
+                                            class="block w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                                        <option value="Theory">Theory</option>
+                                        <option value="Practical">Practical</option>
+                                        <option value="Both">Both</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Semester <sup
+                                            class="text-indigo-500">*</sup></label>
+                                    <select name="semester_id" required
+                                            class="block w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                                        <option value="">Select Semester</option>
+                                        @isset($semesters)
+                                            @foreach($semesters as $semester)
+                                                <option
+                                                    value="{{ $semester->id }}" {{ ($academic_setting?->active_semester_id == $semester->id) ? 'selected' : '' }}>
+                                                    {{ $semester->semester_name }}
+                                                </option>
+                                            @endforeach
+                                        @endisset
+                                    </select>
+                                </div>
+                                <div class="mt-6 flex flex-col sm:flex-row-reverse gap-3">
+                                    <button type="submit"
+                                            class="inline-flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors">
+                                        <i data-lucide="check" class="w-4 h-4"></i> Create Course
+                                    </button>
+                                    <button type="button" @click="closeModal()"
+                                            class="inline-flex justify-center items-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold text-sm px-4 py-2 rounded-lg transition-colors">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endcan
+
+            @can('create syllabi')
+                <div x-show="activeModal === 'add-syllabus-{{ $school_class->id }}'"
+                     class="fixed inset-0 overflow-y-auto" style="display: none;">
+                    <div
+                        class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <div x-show="activeModal === 'add-syllabus-{{ $school_class->id }}'"
+                             x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+                             @click="closeModal()"></div>
+                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen"
+                              aria-hidden="true">&#8203;</span>
+                        <div x-show="activeModal === 'add-syllabus-{{ $school_class->id }}'"
+                             x-transition:enter="ease-out duration-300"
+                             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                             x-transition:leave="ease-in duration-200"
+                             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                             class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+                                <h3 class="text-lg font-semibold text-gray-900">Add Syllabus
+                                    to {{ $school_class->class_name }}</h3>
+                                <button @click="closeModal()" class="text-gray-400 hover:text-gray-500">
+                                    <i data-lucide="x" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                            <form action="{{ route('syllabus.store') }}" method="POST" enctype="multipart/form-data"
+                                  class="space-y-4">
+                                @csrf
+                                <input type="hidden" name="class_id" value="{{ $school_class->id }}">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Syllabus Name <sup
+                                            class="text-indigo-500">*</sup></label>
+                                    <input type="text" name="syllabus_name" required
+                                           placeholder="e.g. Mathematics Syllabus 2026"
+                                           class="block w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Course <span
+                                            class="text-gray-400 text-xs font-normal">(Optional)</span></label>
+                                    <select name="course_id"
+                                            class="block w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                                        <option value="0">General Class Syllabus</option>
+                                        @isset($school_class->courses)
+                                            @foreach($school_class->courses as $course)
+                                                <option value="{{ $course->id }}">{{ $course->course_name }}</option>
+                                            @endforeach
+                                        @endisset
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Syllabus File <sup
+                                            class="text-indigo-500">*</sup></label>
+                                    <input type="file" name="file" required
+                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                                    <p class="mt-1 text-xs text-gray-500">Supported formats: PDF, DOC, DOCX, ZIP, JPG,
+                                        PNG (Max 5MB)</p>
+                                </div>
+                                <div class="mt-6 flex flex-col sm:flex-row-reverse gap-3">
+                                    <button type="submit"
+                                            class="inline-flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors">
+                                        <i data-lucide="check" class="w-4 h-4"></i> Upload Syllabus
+                                    </button>
+                                    <button type="button" @click="closeModal()"
+                                            class="inline-flex justify-center items-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold text-sm px-4 py-2 rounded-lg transition-colors">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endcan
+        @endpush
     </div>
 
     @endforeach
 </div>
 @endisset
+
+    @push('modals')
+        @can('create classes')
+            <div x-show="activeModal === 'add-class'"
+                 class="fixed inset-0 overflow-y-auto" style="display: none;">
+                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                    <div x-show="activeModal === 'add-class'"
+                         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                         x-transition:enter-end="opacity-100"
+                         x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeModal()"></div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <div x-show="activeModal === 'add-class'"
+                         x-transition:enter="ease-out duration-300"
+                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave="ease-in duration-200"
+                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                         class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+                            <h3 class="text-lg font-semibold text-gray-900">Add New Class</h3>
+                            <button @click="closeModal()" class="text-gray-400 hover:text-gray-500">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <form action="{{ route('school.class.create') }}" method="POST" class="space-y-4">
+                            @csrf
+                            <input type="hidden" name="session_id" value="{{ $current_school_session_id }}">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Class Name <sup
+                                        class="text-indigo-500">*</sup></label>
+                                <input type="text" name="class_name" required
+                                       placeholder="e.g. Class 1, Senior Secondary 1"
+                                       class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                            </div>
+                            <div class="mt-6 flex flex-col sm:flex-row-reverse gap-3">
+                                <button type="submit"
+                                        class="inline-flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors">
+                                    <i data-lucide="check" class="w-4 h-4"></i> Create Class
+                                </button>
+                                <button type="button" @click="closeModal()"
+                                        class="inline-flex justify-center items-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endcan
+    @endpush
 
 @endsection

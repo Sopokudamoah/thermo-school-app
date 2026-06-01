@@ -57,86 +57,15 @@
     </form>
 </div>
 
-{{-- Section label --}}
-@foreach ($studentList as $student)
-    @if ($loop->first)
-    <p class="text-sm text-gray-600 mb-3">
-        <span class="font-semibold text-gray-900">Section:</span> {{ $student->section->section_name }}
-    </p>
-    @break
-    @endif
-@endforeach
-
 {{-- Table --}}
-<div class="bg-white rounded-card shadow-card border border-gray-200 overflow-hidden">
+<div class="bg-white rounded-card shadow-card border border-gray-200 p-4">
     <div class="overflow-x-auto">
-        <table class="w-full text-sm data-table">
-            <thead>
-                <tr class="bg-gray-50 border-b border-gray-200">
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ID Card</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Student</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone</th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @forelse ($studentList as $student)
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 font-mono text-xs text-gray-600">{{ $student->id_card_number }}</td>
-                    <td class="px-4 py-3">
-                        <div class="flex items-center gap-3">
-                            @if (isset($student->student->photo))
-                                <img src="{{ asset('/storage'.$student->student->photo) }}"
-                                     class="w-8 h-8 rounded-full object-cover shrink-0" alt="Profile picture">
-                            @else
-                                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
-                                    <i data-lucide="user" class="w-4 h-4 text-indigo-500"></i>
-                                </div>
-                            @endif
-                            <span class="font-medium text-gray-900">{{ $student->student->first_name }} {{ $student->student->last_name }}</span>
-                        </div>
-                    </td>
-                    <td class="px-4 py-3 text-gray-600">{{ $student->student->email }}</td>
-                    <td class="px-4 py-3 text-gray-600">{{ $student->student->phone }}</td>
-                    <td class="px-4 py-3">
-                        <div class="flex items-center justify-end gap-1">
-                            <a href="{{ route('student.attendance.show', ['id' => $student->student->id]) }}"
-                               title="Attendance"
-                               class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border border-gray-200">
-                                <i data-lucide="calendar-check" class="w-3.5 h-3.5"></i> Attendance
-                            </a>
-                            <a href="{{ url('students/view/profile/'.$student->student->id) }}"
-                               title="Profile"
-                               class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border border-gray-200">
-                                <i data-lucide="eye" class="w-3.5 h-3.5"></i> Profile
-                            </a>
-                            @can('edit users')
-                            <a href="{{ route('student.edit.show', ['id' => $student->student->id]) }}"
-                               title="Edit"
-                               class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border border-gray-200">
-                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
-                            </a>
-                            @endcan
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" class="px-4 py-12 text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <i data-lucide="users" class="w-8 h-8 text-gray-300"></i>
-                            <p class="text-sm text-gray-500">No students found for the selected class and section.</p>
-                        </div>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+        {{ $dataTable->table(['class' => 'w-full text-sm']) }}
     </div>
 </div>
 
 @push('scripts')
+    {{ $dataTable->scripts() }}
 <script>
     function getSections(obj) {
         var class_id = obj.options[obj.selectedIndex].value;

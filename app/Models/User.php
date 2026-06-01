@@ -55,43 +55,11 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the parent_info.
-     */
-    public function parent_info()
-    {
-        return $this->hasOne(StudentParentInfo::class, 'student_id', 'id');
-    }
-
-    /**
-     * Get the academic_info.
-     */
-    public function academic_info()
-    {
-        return $this->hasOne(StudentAcademicInfo::class, 'student_id', 'id');
-    }
-
-    /**
-     * Get the marks.
-     */
-    public function marks()
-    {
-        return $this->hasMany(Mark::class, 'student_id', 'id');
-    }
-
-    /**
      * Get the assigned classes.
      */
     public function assigned_classes()
     {
         return $this->hasMany(AssignedTeacher::class, 'teacher_id', 'id');
-    }
-
-    /**
-     * Get the promotions.
-     */
-    public function promotions()
-    {
-        return $this->hasMany(Promotion::class, 'student_id', 'id');
     }
 
     /**

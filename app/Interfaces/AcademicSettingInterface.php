@@ -10,4 +10,6 @@ interface AcademicSettingInterface {
     public function updateFinalMarksSubmissionStatus($request);
 
     public function updateActiveSemester($request);
+
+    public function findFirst();
 }

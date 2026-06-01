@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Models\User;
 use App\Models\Promotion;
+use App\Models\Student;
 
 class PromotionRepository {
     public function assignClassSection($request, $student_id) {
@@ -63,8 +63,7 @@ class PromotionRepository {
     public function getMaleStudentsBySessionCount($session_id) {
         $allStudents = Promotion::where('session_id', $session_id)->pluck('student_id')->toArray();
 
-        return User::where('gender', 'Male')
-                ->where('role', 'student')
+        return Student::where('gender', 'Male')
                 ->whereIn('id', $allStudents)
                 ->count();
     }

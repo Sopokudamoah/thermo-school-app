@@ -2,15 +2,15 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Promotion;
 use App\Models\SchoolClass;
-use App\Models\Section;
 use App\Models\SchoolSession;
-use App\Models\StudentParentInfo;
+use App\Models\Section;
+use App\Models\Student;
 use App\Models\StudentAcademicInfo;
-use Spatie\Permission\Models\Permission;
+use App\Models\StudentParentInfo;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class DemoUserSeeder extends Seeder
 {
@@ -41,14 +41,10 @@ class DemoUserSeeder extends Seeder
         $allTeachers = User::where('role', 'teacher')->get();
 
         // 2. Create Students and Promote
-        if (User::where('role', 'student')->count() == 0) {
-            $students = User::factory()->count(100)->create(['role' => 'student']);
+        if (Student::count() == 0) {
+            $students = Student::factory()->count(100)->create();
 
             foreach ($students as $student) {
-                $student->givePermissionTo([
-                    'view courses', 'view routines', 'view attendances', 'view marks', 'submit assignments', 'view assignments', 'view notices', 'view events', 'view syllabi'
-                ]);
-
                 StudentParentInfo::factory()->create(['student_id' => $student->id]);
                 StudentAcademicInfo::factory()->create(['student_id' => $student->id]);
 
@@ -150,14 +146,11 @@ class DemoUserSeeder extends Seeder
         }
 
         // 4. Create Demo Student
-        if (!User::where('email', 'student@ut.com')->exists()) {
-            User::factory()->create([
+        if (!Student::where('email', 'student@ut.com')->exists()) {
+            Student::factory()->create([
                 'first_name' => 'Jane',
                 'last_name' => 'Student',
                 'email' => 'student@ut.com',
-                'role' => 'student',
-            ])->givePermissionTo([
-                'view courses', 'view routines', 'view attendances', 'view marks', 'submit assignments', 'view assignments', 'view notices', 'view events', 'view syllabi'
             ]);
         }
     }

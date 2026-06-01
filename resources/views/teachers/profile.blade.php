@@ -99,6 +99,9 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-gray-50 border-b border-gray-200">
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Session
+                            </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Class</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Section</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Course</th>
@@ -107,6 +110,7 @@
                     <tbody class="divide-y divide-gray-100">
                         @foreach ($teacher->assigned_classes as $assign)
                         <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-3 text-gray-900 font-medium">{{ $assign->schoolSession->session_name ?? '—' }}</td>
                             <td class="px-4 py-3 text-gray-900 font-medium">{{ $assign->schoolClass->class_name ?? '—' }}</td>
                             <td class="px-4 py-3 text-gray-600">{{ $assign->section->section_name ?? '—' }}</td>
                             <td class="px-4 py-3 text-gray-600">{{ $assign->course->course_name ?? '—' }}</td>
