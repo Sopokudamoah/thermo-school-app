@@ -34,8 +34,8 @@ class BudgetRepository implements BudgetInterface
     {
         $budget = $this->findById($budget_id);
 
-        $currency = new \Money\Currency(\App\Models\AcademicSetting::first()->currency_code ?? 'GHS');
-        $zero = new \Money\Money(0, $currency);
+        $currency = \App\Helpers\MoneyHelper::getCurrency();
+        $zero = \App\Helpers\MoneyHelper::zero();
 
         $report = [];
         foreach ($budget->departments as $dept) {

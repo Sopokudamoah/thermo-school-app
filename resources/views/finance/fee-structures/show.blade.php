@@ -82,7 +82,7 @@
                         <tr class="bg-gray-50">
                             <td colspan="2" class="px-6 py-4 font-bold text-gray-900 text-right">Total</td>
                             <td class="px-6 py-4 text-right font-bold text-indigo-600 text-lg">
-                                @money($fee_structure->items->reduce(fn($carry, $item) => $carry->add($item->amount), new \Money\Money(0, new \Money\Currency(Cache::get('currency_code', 'GHS')))))</td>
+                                @money($fee_structure->items->reduce(fn($carry, $item) => $carry->add($item->amount), \App\Helpers\MoneyHelper::zero()))</td>
                         </tr>
                         </tfoot>
                     </table>

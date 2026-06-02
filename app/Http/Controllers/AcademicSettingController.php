@@ -79,6 +79,7 @@ class AcademicSettingController extends Controller
             'teachers'                  => $teachers,
             'courses'                   => $courses,
             'semesters'                 => $semesters,
+            'currencies' => \App\Helpers\MoneyHelper::getCurrenciesList(),
         ];
 
         return view('academics.settings', $data);
@@ -141,12 +142,21 @@ class AcademicSettingController extends Controller
             'school_phone' => 'nullable|string|max:20',
             'school_email' => 'nullable|email|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'currency_symbol' => 'required|string|max:10',
             'currency_code' => 'required|string|max:10',
         ]);
 
         try {
             $data = $request->except(['_token', 'logo']);
+
+            // Infer currency symbol
+            try {
+                $numberFormatter = new \NumberFormatter('en_GH', \NumberFormatter::CURRENCY);
+                $numberFormatter->setTextAttribute(\NumberFormatter::CURRENCY_CODE, $request->currency_code);
+                $data['currency_symbol'] = $numberFormatter->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
+            } catch (\Exception $e) {
+                // Fallback symbol
+                $data['currency_symbol'] = $request->currency_code === 'GHS' ? '₵' : '$';
+            }
 
             if ($request->hasFile('logo')) {
                 $imageName = time() . '.' . $request->logo->extension();
@@ -155,6 +165,9 @@ class AcademicSettingController extends Controller
             }
 
             $this->academicSettingRepository->updateGeneralSettings($data);
+
+            \Illuminate\Support\Facades\Cache::forget('academic_setting');
+            \Illuminate\Support\Facades\Cache::forget('currency_code');
 
             return back()->with('status', 'General settings updated successfully!');
         } catch (\Exception $e) {

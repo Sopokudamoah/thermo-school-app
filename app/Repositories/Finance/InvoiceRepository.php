@@ -88,8 +88,8 @@ class InvoiceRepository implements InvoiceInterface
         $invoice = Invoice::with(['items', 'invoice_discounts', 'student_scholarships', 'payment_allocations']
         )->findOrFail($id);
 
-        $currency = new \Money\Currency(\App\Models\AcademicSetting::first()->currency_code ?? 'GHS');
-        $zero = new \Money\Money(0, $currency);
+        $currency = \App\Helpers\MoneyHelper::getCurrency();
+        $zero = \App\Helpers\MoneyHelper::zero();
 
         $subtotal = $invoice->items->reduce(function ($carry, $item) use ($zero) {
             return $carry->add($item->amount ?? $zero);
@@ -140,7 +140,7 @@ class InvoiceRepository implements InvoiceInterface
         if ($total->isZero() || $paid_amount->greaterThanOrEqual($total)) {
             return Invoice::STATUS_PAID;
         }
-        if ($paid_amount->greaterThan(new \Money\Money(0, $total->getCurrency()))) {
+        if (!$paid_amount->isZero()) {
             return Invoice::STATUS_PARTIALLY_PAID;
         }
         if ($invoice->due_date < Carbon::today()) {

@@ -44,7 +44,7 @@ class MoneyHelper
             return $moneyFormatter->format($money);
         } catch (\Exception $e) {
             // Fallback if intl is not available or fails
-            $symbol = $setting->currency_symbol ?? '₵';
+            $symbol = ($setting && $setting->currency_symbol) ? $setting->currency_symbol : '₵';
             return $symbol . number_format((float)$money->getAmount() / 100, 2);
         }
     }
@@ -57,9 +57,26 @@ class MoneyHelper
     public static function getCurrency(): \Money\Currency
     {
         $code = Cache::remember('currency_code', 3600, function () {
-            return AcademicSetting::first()->currency_code ?? 'GHS';
+            $setting = AcademicSetting::first();
+            return $setting ? $setting->currency_code : 'GHS';
         });
         return new \Money\Currency($code);
+    }
+
+    /**
+     * Get all available currencies
+     *
+     * @return array
+     */
+    public static function getCurrenciesList(): array
+    {
+        $currencies = new ISOCurrencies();
+        $list = [];
+        foreach ($currencies as $currency) {
+            $list[] = $currency->getCode();
+        }
+        sort($list);
+        return $list;
     }
 
     /**
