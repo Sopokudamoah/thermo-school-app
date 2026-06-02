@@ -5,7 +5,7 @@
 @section('content')
 
 {{-- Stat cards --}}
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6" id="tour-stats">
 
     {{-- Students --}}
     <div class="bg-white rounded-card shadow-card border border-gray-200 p-5 flex items-start justify-between">
@@ -44,7 +44,7 @@
 
 {{-- Gender distribution bar --}}
 @if($studentCount > 0)
-<div class="bg-white rounded-card shadow-card border border-gray-200 p-5 mb-6">
+    <div class="bg-white rounded-card shadow-card border border-gray-200 p-5 mb-6" id="tour-gender">
     <div class="flex items-center justify-between mb-3">
         <p class="text-sm font-medium text-gray-700">Student Gender Distribution</p>
         <div class="flex items-center gap-3 text-xs text-gray-500">
@@ -71,7 +71,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
     {{-- Events calendar --}}
-    <div class="bg-white rounded-card shadow-card border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-card shadow-card border border-gray-200 overflow-hidden" id="tour-events-preview">
         <div class="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
             <i data-lucide="calendar-days" class="w-4 h-4 text-indigo-600"></i>
             <h3 class="text-sm font-semibold text-gray-900">Events</h3>
@@ -82,7 +82,7 @@
     </div>
 
     {{-- Notices accordion --}}
-    <div class="bg-white rounded-card shadow-card border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-card shadow-card border border-gray-200 overflow-hidden" id="tour-notices-preview">
         <div class="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <i data-lucide="megaphone" class="w-4 h-4 text-indigo-600"></i>

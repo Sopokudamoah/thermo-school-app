@@ -34,7 +34,7 @@
     <nav class="flex-1 px-3 py-3 space-y-0.5 text-sm">
 
         {{-- Dashboard --}}
-        <a href="{{ url('home') }}"
+        <a href="{{ url('home') }}" id="tour-dashboard"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('home') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0 {{ request()->is('home') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
             <span>{{ __('Dashboard') }}</span>
@@ -59,7 +59,7 @@
                 }
             }
         @endphp
-        <a href="{{ url('classes') }}"
+            <a href="{{ url('classes') }}" id="tour-classes"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('classes') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="git-branch" class="w-4 h-4 shrink-0 {{ request()->is('classes') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
             <span class="flex-1">Classes</span>
@@ -69,7 +69,7 @@
 
         {{-- Students submenu (admin/teacher only) --}}
         @if(Auth::user()->role != "student")
-        <div x-data="{ open: {{ request()->is('students*') ? 'true' : 'false' }} }">
+            <div x-data="{ open: {{ request()->is('students*') ? 'true' : 'false' }} }" id="tour-students">
             <button @click="open = !open"
                     class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('students*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i data-lucide="users" class="w-4 h-4 shrink-0 {{ request()->is('students*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
@@ -77,13 +77,13 @@
                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
             </button>
             <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="sidebar-submenu mt-0.5 space-y-0.5">
-                <a href="{{ route('student.list.show') }}"
+                <a href="{{ route('student.list.show') }}" id="tour-student-list"
                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('student.list.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
                     <i data-lucide="user-search" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
                     View Students
                 </a>
                 @if (!session()->has('browse_session_id') && Auth::user()->role == "admin")
-                <a href="{{ route('student.create.show') }}"
+                    <a href="{{ route('student.create.show') }}" id="tour-student-create"
                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('student.create.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
                     <i data-lucide="user-plus" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
                     Add Student
@@ -93,7 +93,7 @@
         </div>
 
         {{-- Teachers submenu --}}
-        <div x-data="{ open: {{ request()->is('teachers*') ? 'true' : 'false' }} }">
+            <div x-data="{ open: {{ request()->is('teachers*') ? 'true' : 'false' }} }" id="tour-teachers">
             <button @click="open = !open"
                     class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('teachers*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i data-lucide="user-check" class="w-4 h-4 shrink-0 {{ request()->is('teachers*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
@@ -101,13 +101,13 @@
                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
             </button>
             <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="sidebar-submenu mt-0.5 space-y-0.5">
-                <a href="{{ route('teacher.list.show') }}"
+                <a href="{{ route('teacher.list.show') }}" id="tour-teacher-list"
                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('teacher.list.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
                     <i data-lucide="user-search" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
                     View Teachers
                 </a>
                 @if (!session()->has('browse_session_id') && Auth::user()->role == "admin")
-                <a href="{{ route('teacher.create.show') }}"
+                    <a href="{{ route('teacher.create.show') }}" id="tour-teacher-create"
                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('teacher.create.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
                     <i data-lucide="user-plus" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
                     Add Teacher
@@ -119,7 +119,7 @@
 
         {{-- My Courses (teacher only) --}}
         @if(Auth::user()->role == "teacher")
-        <a href="{{ route('course.teacher.list.show', ['teacher_id' => Auth::user()->id]) }}"
+            <a href="{{ route('course.teacher.list.show', ['teacher_id' => Auth::user()->id]) }}" id="tour-my-courses"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ (request()->is('courses/teacher*') || request()->is('courses/assignments*')) ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="book-open" class="w-4 h-4 shrink-0{{ (request()->is('courses/teacher*') || request()->is('courses/assignments*')) ? ' text-indigo-600' : ' text-gray-400' }}"></i>
             <span>My Courses</span>
@@ -128,12 +128,13 @@
 
         {{-- Student-only nav items --}}
         @if(Auth::user()->role == "student")
-        <a href="{{ route('student.attendance.show', ['id' => Auth::user()->id]) }}"
+            <a href="{{ route('student.attendance.show', ['id' => Auth::user()->id]) }}" id="tour-student-attendance"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('student.attendance.show') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="calendar-check" class="w-4 h-4 shrink-0 {{ request()->routeIs('student.attendance.show') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
             <span>Attendance</span>
         </a>
-        <a href="{{ route('course.student.list.show', ['student_id' => Auth::user()->id]) }}"
+            <a href="{{ route('course.student.list.show', ['student_id' => Auth::user()->id]) }}"
+               id="tour-student-courses"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('course.student.list.show') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="book-open" class="w-4 h-4 shrink-0 {{ request()->routeIs('course.student.list.show') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
             <span>Courses</span>
@@ -163,7 +164,7 @@
 
         {{-- Exams / Grades submenu (non-student) --}}
         @if(Auth::user()->role != "student")
-        <div x-data="{ open: {{ request()->is('exams*') ? 'true' : 'false' }} }">
+            <div x-data="{ open: {{ request()->is('exams*') ? 'true' : 'false' }} }" id="tour-exams">
             <button @click="open = !open"
                     class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('exams*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i data-lucide="file-text" class="w-4 h-4 shrink-0 {{ request()->is('exams*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
@@ -171,13 +172,13 @@
                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
             </button>
             <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="sidebar-submenu mt-0.5 space-y-0.5">
-                <a href="{{ route('exam.list.show') }}"
+                <a href="{{ route('exam.list.show') }}" id="tour-exam-list"
                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('exam.list.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
                     <i data-lucide="list" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
                     View Exams
                 </a>
                 @if (Auth::user()->role == "admin" || Auth::user()->role == "teacher")
-                <a href="{{ route('exam.create.show') }}"
+                    <a href="{{ route('exam.create.show') }}" id="tour-exam-create"
                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('exam.create.show') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
                     <i data-lucide="file-plus" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
                     Create Exam
@@ -195,7 +196,7 @@
                     <i data-lucide="table" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
                     Grade Systems
                 </a>
-                <a href="{{ route('course.mark.create') }}"
+                <a href="{{ route('course.mark.create') }}" id="tour-exam-marks"
                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('course.mark.create') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
                     <i data-lucide="edit-3" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
                     Give Marks
@@ -208,25 +209,25 @@
         @if (Auth::user()->role == "admin")
         <p class="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Content</p>
 
-        <a href="{{ route('notice.create') }}"
+            <a href="{{ route('notice.create') }}" id="tour-notice"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('notice*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="megaphone" class="w-4 h-4 shrink-0 {{ request()->is('notice*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
             <span>Notice</span>
         </a>
 
-        <a href="{{ route('events.show') }}"
+            <a href="{{ route('events.show') }}" id="tour-events"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('calendar-event*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="calendar-days" class="w-4 h-4 shrink-0 {{ request()->is('calendar-event*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
             <span>Events</span>
         </a>
 
-        <a href="{{ route('class.syllabus.create') }}"
+            <a href="{{ route('class.syllabus.create') }}" id="tour-syllabus"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('syllabus*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="book-marked" class="w-4 h-4 shrink-0 {{ request()->is('syllabus*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
             <span>Syllabus</span>
         </a>
 
-        <a href="{{ route('section.routine.create') }}"
+            <a href="{{ route('section.routine.create') }}" id="tour-routine"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('routine*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="clock-4" class="w-4 h-4 shrink-0 {{ request()->is('routine*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
             <span>Routine</span>
@@ -235,14 +236,14 @@
         {{-- SYSTEM group label (admin only) --}}
         <p class="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">System</p>
 
-        <a href="{{ route('academic.settings.show') }}"
+            <a href="{{ route('academic.settings.show') }}" id="tour-settings"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('academics*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="settings" class="w-4 h-4 shrink-0 {{ request()->is('academics*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
             <span>System Settings</span>
         </a>
 
             @can('manage roles')
-                <a href="{{ route('roles.index') }}"
+                <a href="{{ route('roles.index') }}" id="tour-roles"
                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('roles*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i data-lucide="shield-check"
                        class="w-4 h-4 shrink-0 {{ request()->is('roles*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
@@ -251,7 +252,7 @@
             @endcan
 
         @if (!session()->has('browse_session_id'))
-        <a href="{{ url('promotions/index') }}"
+                <a href="{{ url('promotions/index') }}" id="tour-promotions"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('promotions*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="arrow-up-circle" class="w-4 h-4 shrink-0 {{ request()->is('promotions*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
             <span>Promotions</span>
@@ -264,7 +265,7 @@
             <p class="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Finance</p>
 
             {{-- Finance Dashboard --}}
-            <a href="{{ route('finance.dashboard') }}"
+            <a href="{{ route('finance.dashboard') }}" id="tour-finance"
                class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('finance.dashboard') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i data-lucide="line-chart"
                    class="w-4 h-4 shrink-0 {{ request()->routeIs('finance.dashboard') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
@@ -272,7 +273,7 @@
             </a>
 
             {{-- Fees submenu --}}
-            <div x-data="{ open: {{ request()->is('finance/fee-*') ? 'true' : 'false' }} }">
+            <div x-data="{ open: {{ request()->is('finance/fee-*') ? 'true' : 'false' }} }" id="tour-finance-fees">
                 <button @click="open = !open"
                         class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('finance/fee-*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i data-lucide="banknote"
@@ -298,7 +299,7 @@
             </div>
 
             {{-- Billing & Payments submenu --}}
-            <div
+            <div id="tour-finance-billing"
                 x-data="{ open: {{ (request()->is('finance/invoices*') || request()->is('finance/payments*')) ? 'true' : 'false' }} }">
                 <button @click="open = !open"
                         class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ (request()->is('finance/invoices*') || request()->is('finance/payments*')) ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
@@ -352,7 +353,7 @@
             </div>
 
             {{-- Expenses & Vendors submenu --}}
-            <div
+            <div id="tour-finance-expenses"
                 x-data="{ open: {{ (request()->is('finance/expenses*') || request()->is('finance/vendors*') || request()->is('finance/budgets*')) ? 'true' : 'false' }} }">
                 <button @click="open = !open"
                         class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ (request()->is('finance/expenses*') || request()->is('finance/vendors*') || request()->is('finance/budgets*')) ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
@@ -384,7 +385,7 @@
             </div>
 
             {{-- Reports --}}
-            <a href="{{ route('finance.reports.index') }}"
+            <a href="{{ route('finance.reports.index') }}" id="tour-finance-reports"
                class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('finance/reports*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i data-lucide="bar-chart-3"
                    class="w-4 h-4 shrink-0 {{ request()->is('finance/reports*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>

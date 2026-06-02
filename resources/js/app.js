@@ -15,6 +15,7 @@ import toastr from 'toastr';
 import html2canvas from 'html2canvas';
 import {jsPDF} from 'jspdf';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import './tour';
 
 window.$ = window.jQuery = jQuery;
 

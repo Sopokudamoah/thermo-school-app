@@ -88,7 +88,7 @@
             <header class="h-16 sticky top-0 z-30 bg-white border-b border-gray-200 flex items-center px-4 lg:px-6 gap-3 shrink-0">
 
                 {{-- Hamburger --}}
-                <button @click="sidebarOpen = !sidebarOpen"
+                <button @click="sidebarOpen = !sidebarOpen" id="tour-hamburger"
                         class="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
                         aria-label="Toggle sidebar">
                     <i data-lucide="menu" class="w-5 h-5"></i>
@@ -102,7 +102,7 @@
                 </div>
 
                 {{-- Academic session banner --}}
-                <div class="hidden md:flex items-center gap-2">
+                <div class="hidden md:flex items-center gap-2" id="tour-session-banner">
                     @if($current_school_session_name)
                         <span class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 bg-gray-100 rounded-full px-3 py-1">
                             <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
@@ -124,8 +124,16 @@
                     @endif
                 </div>
 
+                {{-- Tour Button --}}
+                <button id="start-tour"
+                        class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600 transition-colors text-sm font-medium"
+                        title="Take a tour">
+                    <i data-lucide="help-circle" class="w-4 h-4"></i>
+                    <span>Tour</span>
+                </button>
+
                 {{-- User dropdown --}}
-                <div x-data="{ open: false }" class="relative">
+                <div x-data="{ open: false }" class="relative" id="tour-user-dropdown">
                     <button @click="open = !open"
                             class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors text-sm"
                             aria-haspopup="true" :aria-expanded="open">

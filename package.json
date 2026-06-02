@@ -24,6 +24,7 @@
         "alpinejs": "^3.13.10",
         "datatables.net-dt": "^2.3.8",
         "datatables.net-responsive-dt": "^3.0.8",
+        "driver.js": "^1.4.0",
         "html2canvas": "^1.4.1",
         "jquery": "^4.0.0",
         "jspdf": "^4.2.1",
