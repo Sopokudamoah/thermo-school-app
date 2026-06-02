@@ -18,3 +18,5 @@ CLAUDE.md
 storage
 public/build/*
 .junie
+package-lock.json
+composer.lock
