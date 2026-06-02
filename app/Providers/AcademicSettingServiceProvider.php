@@ -25,6 +25,9 @@ class AcademicSettingServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        if (!$this->app->runningInConsole()) {
+            $setting = \App\Models\AcademicSetting::first();
+            view()->share('school_setting', $setting);
+        }
     }
 }

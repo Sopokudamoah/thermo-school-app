@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
-@section('page-title', 'Academic Settings')
+@section('page-title', 'System Settings')
 
 @section('content')
 
 <div class="mb-6">
     <h1 class="font-heading text-xl font-bold text-gray-900">
-        <i data-lucide="settings" class="w-5 h-5 inline-block mr-1.5 align-text-bottom"></i> Academic Settings
+        <i data-lucide="settings" class="w-5 h-5 inline-block mr-1.5 align-text-bottom"></i> System Settings
     </h1>
     <nav class="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
         <a href="{{ route('home') }}" class="hover:text-indigo-600 transition-colors">Home</a>
         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        <span class="text-gray-900">Academic Settings</span>
+        <span class="text-gray-900">System Settings</span>
     </nav>
 </div>
 
@@ -20,7 +20,76 @@
 <div class="mb-4">
     <div class="columns-1 md:columns-2 xl:columns-3 gap-4">
 
-        @if ($latest_school_session_id == $current_school_session_id)
+        <div class="break-inside-avoid bg-white rounded-card shadow-card border border-gray-200 p-5 mb-4">
+            <h3 class="font-heading text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">
+                General School Settings</h3>
+            <form action="{{route('school.general.settings.update')}}" method="POST" enctype="multipart/form-data"
+                  class="space-y-4">
+                @csrf
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">School Name <sup
+                            class="text-indigo-500">*</sup></label>
+                    <input type="text"
+                           class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                           name="school_name" value="{{ $academic_setting->school_name }}" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">School Logo</label>
+                    @if($academic_setting->logo)
+                        <div class="mb-2">
+                            <img src="{{ asset($academic_setting->logo) }}" alt="Logo"
+                                 class="h-12 w-auto object-contain">
+                        </div>
+                    @endif
+                    <input type="file"
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                           name="logo">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">School Address</label>
+                    <textarea
+                        class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                        name="school_address" rows="2">{{ $academic_setting->school_address }}</textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Phone</label>
+                        <input type="text"
+                               class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                               name="school_phone" value="{{ $academic_setting->school_phone }}">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+                        <input type="email"
+                               class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                               name="school_email" value="{{ $academic_setting->school_email }}">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Currency Symbol <sup
+                                class="text-indigo-500">*</sup></label>
+                        <input type="text"
+                               class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                               name="currency_symbol" value="{{ $academic_setting->currency_symbol }}" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Currency Code <sup
+                                class="text-indigo-500">*</sup></label>
+                        <input type="text"
+                               class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                               name="currency_code" value="{{ $academic_setting->currency_code }}" required>
+                    </div>
+                </div>
+                <button
+                    class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors"
+                    type="submit">
+                    <i data-lucide="save" class="w-4 h-4"></i> Save General Settings
+                </button>
+            </form>
+        </div>
+
+    @if ($latest_school_session_id == $current_school_session_id)
         <div class="break-inside-avoid bg-white rounded-card shadow-card border border-gray-200 p-5 mb-4">
             <h3 class="font-heading text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">Create Session</h3>
             <div class="flex items-start gap-2.5 bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-lg px-4 py-3 mb-4 text-sm">

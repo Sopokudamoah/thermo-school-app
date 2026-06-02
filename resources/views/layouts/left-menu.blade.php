@@ -4,8 +4,16 @@
     {{-- Logo --}}
     <div class="h-16 flex items-center px-5 border-b border-gray-200 shrink-0">
         <a href="{{ url('/') }}" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-            <img src="{{ asset('imgs/logo.png') }}" alt="{{ config('app.name', 'Unifiedtransform') }}" class="h-8 w-auto object-contain">
-            <span class="font-heading font-semibold text-base text-indigo-600 truncate">{{ config('app.name', 'Unifiedtransform') }}</span>
+            @if(isset($school_setting) && $school_setting->logo)
+                <img src="{{ asset($school_setting->logo) }}"
+                     alt="{{ $school_setting->school_name ?? config('app.name', 'Unifiedtransform') }}"
+                     class="h-8 w-auto object-contain">
+            @else
+                <img src="{{ asset('imgs/logo.png') }}" alt="{{ config('app.name', 'Unifiedtransform') }}"
+                     class="h-8 w-auto object-contain">
+            @endif
+            <span
+                class="font-heading font-semibold text-base text-indigo-600 truncate">{{ $school_setting->school_name ?? config('app.name', 'Unifiedtransform') }}</span>
         </a>
     </div>
 
@@ -230,7 +238,7 @@
         <a href="{{ route('academic.settings.show') }}"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('academics*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
             <i data-lucide="settings" class="w-4 h-4 shrink-0 {{ request()->is('academics*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
-            <span>Academic Settings</span>
+            <span>System Settings</span>
         </a>
 
         @if (!session()->has('browse_session_id'))
@@ -240,33 +248,140 @@
             <span>Promotions</span>
         </a>
         @endif
-
-            {{-- FINANCE group label --}}
-            {{--        <p class="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Finance</p>--}}
-
-            {{--        <span class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed select-none">--}}
-            {{--            <i data-lucide="credit-card" class="w-4 h-4 shrink-0"></i>--}}
-            {{--            <span>Payment <span class="text-xs ml-1 bg-gray-100 text-gray-400 rounded px-1">Soon</span></span>--}}
-            {{--        </span>--}}
-
-            {{--        <span class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed select-none">--}}
-            {{--            <i data-lucide="users-2" class="w-4 h-4 shrink-0"></i>--}}
-            {{--            <span>Staff <span class="text-xs ml-1 bg-gray-100 text-gray-400 rounded px-1">Soon</span></span>--}}
-            {{--        </span>--}}
-
-            {{--        <span class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed select-none">--}}
-            {{--            <i data-lucide="library" class="w-4 h-4 shrink-0"></i>--}}
-            {{--            <span>Library <span class="text-xs ml-1 bg-gray-100 text-gray-400 rounded px-1">Soon</span></span>--}}
-            {{--        </span>--}}
         @endif
 
-        {{-- Payment (non-admin) --}}
-        {{--        @if (Auth::user()->role != "admin")--}}
-        {{--        <span class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed select-none">--}}
-        {{--            <i data-lucide="credit-card" class="w-4 h-4 shrink-0"></i>--}}
-        {{--            <span>Payment <span class="text-xs ml-1 bg-gray-100 text-gray-400 rounded px-1">Soon</span></span>--}}
-        {{--        </span>--}}
-        {{--        @endif--}}
+        {{-- Finance group label --}}
+        @can('finance.view')
+            <p class="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Finance</p>
+
+            {{-- Finance Dashboard --}}
+            <a href="{{ route('finance.dashboard') }}"
+               class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('finance.dashboard') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+                <i data-lucide="line-chart"
+                   class="w-4 h-4 shrink-0 {{ request()->routeIs('finance.dashboard') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+                <span>Dashboard</span>
+            </a>
+
+            {{-- Fees submenu --}}
+            <div x-data="{ open: {{ request()->is('finance/fee-*') ? 'true' : 'false' }} }">
+                <button @click="open = !open"
+                        class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('finance/fee-*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+                    <i data-lucide="banknote"
+                       class="w-4 h-4 shrink-0 {{ request()->is('finance/fee-*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+                    <span class="flex-1 text-left">Fees</span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200"
+                       :class="open ? 'rotate-180' : ''"></i>
+                </button>
+                <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 -translate-y-1"
+                     x-transition:enter-end="opacity-100 translate-y-0" class="sidebar-submenu mt-0.5 space-y-0.5">
+                    <a href="{{ route('finance.fee-types.index') }}"
+                       class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('finance.fee-types.*') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                        <i data-lucide="list" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                        Fee Types
+                    </a>
+                    <a href="{{ route('finance.fee-structures.index') }}"
+                       class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('finance.fee-structures.*') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                        <i data-lucide="layers" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                        Fee Structures
+                    </a>
+                </div>
+            </div>
+
+            {{-- Billing & Payments submenu --}}
+            <div
+                x-data="{ open: {{ (request()->is('finance/invoices*') || request()->is('finance/payments*')) ? 'true' : 'false' }} }">
+                <button @click="open = !open"
+                        class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ (request()->is('finance/invoices*') || request()->is('finance/payments*')) ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+                    <i data-lucide="credit-card"
+                       class="w-4 h-4 shrink-0 {{ (request()->is('finance/invoices*') || request()->is('finance/payments*')) ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+                    <span class="flex-1 text-left">Billing & Payments</span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200"
+                       :class="open ? 'rotate-180' : ''"></i>
+                </button>
+                <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 -translate-y-1"
+                     x-transition:enter-end="opacity-100 translate-y-0" class="sidebar-submenu mt-0.5 space-y-0.5">
+                    <a href="{{ route('finance.invoices.index') }}"
+                       class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('finance.invoices.*') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                        <i data-lucide="file-text" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                        Invoices
+                    </a>
+                    <a href="{{ route('finance.payments.index') }}"
+                       class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('finance.payments.*') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                        <i data-lucide="receipt" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                        Payments
+                    </a>
+                </div>
+            </div>
+
+            {{-- Discounts & Scholarships submenu --}}
+            <div
+                x-data="{ open: {{ (request()->is('finance/discounts*') || request()->is('finance/scholarships*')) ? 'true' : 'false' }} }">
+                <button @click="open = !open"
+                        class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ (request()->is('finance/discounts*') || request()->is('finance/scholarships*')) ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+                    <i data-lucide="tags"
+                       class="w-4 h-4 shrink-0 {{ (request()->is('finance/discounts*') || request()->is('finance/scholarships*')) ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+                    <span class="flex-1 text-left">Discounts</span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200"
+                       :class="open ? 'rotate-180' : ''"></i>
+                </button>
+                <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 -translate-y-1"
+                     x-transition:enter-end="opacity-100 translate-y-0" class="sidebar-submenu mt-0.5 space-y-0.5">
+                    <a href="{{ route('finance.discounts.index') }}"
+                       class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('finance.discounts.*') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                        <i data-lucide="percent" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                        General Discounts
+                    </a>
+                    <a href="{{ route('finance.scholarships.index') }}"
+                       class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('finance.scholarships.*') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                        <i data-lucide="graduation-cap" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                        Scholarships
+                    </a>
+                </div>
+            </div>
+
+            {{-- Expenses & Vendors submenu --}}
+            <div
+                x-data="{ open: {{ (request()->is('finance/expenses*') || request()->is('finance/vendors*') || request()->is('finance/budgets*')) ? 'true' : 'false' }} }">
+                <button @click="open = !open"
+                        class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ (request()->is('finance/expenses*') || request()->is('finance/vendors*') || request()->is('finance/budgets*')) ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+                    <i data-lucide="wallet"
+                       class="w-4 h-4 shrink-0 {{ (request()->is('finance/expenses*') || request()->is('finance/vendors*') || request()->is('finance/budgets*')) ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+                    <span class="flex-1 text-left">Expenses</span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200"
+                       :class="open ? 'rotate-180' : ''"></i>
+                </button>
+                <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 -translate-y-1"
+                     x-transition:enter-end="opacity-100 translate-y-0" class="sidebar-submenu mt-0.5 space-y-0.5">
+                    <a href="{{ route('finance.expenses.index') }}"
+                       class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('finance.expenses.*') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                        <i data-lucide="minus-circle" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                        Manage Expenses
+                    </a>
+                    <a href="{{ route('finance.vendors.index') }}"
+                       class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('finance.vendors.*') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                        <i data-lucide="truck" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                        Vendors
+                    </a>
+                    <a href="{{ route('finance.budgets.index') }}"
+                       class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('finance.budgets.*') ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-50' }}">
+                        <i data-lucide="pie-chart" class="w-3.5 h-3.5 shrink-0 text-gray-400"></i>
+                        Budgets
+                    </a>
+                </div>
+            </div>
+
+            {{-- Reports --}}
+            <a href="{{ route('finance.reports.index') }}"
+               class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('finance/reports*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+                <i data-lucide="bar-chart-3"
+                   class="w-4 h-4 shrink-0 {{ request()->is('finance/reports*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+                <span>Reports</span>
+            </a>
+        @endcan
 
     </nav>
 </aside>

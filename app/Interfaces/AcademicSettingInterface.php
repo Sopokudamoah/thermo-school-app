@@ -13,5 +13,7 @@ interface AcademicSettingInterface {
 
     public function updateActiveSession($request);
 
+    public function updateGeneralSettings($request);
+
     public function findFirst();
 }

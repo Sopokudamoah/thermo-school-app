@@ -132,4 +132,33 @@ class AcademicSettingController extends Controller
             return back()->withError($e->getMessage());
         }
     }
+
+    public function updateGeneralSettings(Request $request)
+    {
+        $request->validate([
+            'school_name' => 'required|string|max:255',
+            'school_address' => 'nullable|string',
+            'school_phone' => 'nullable|string|max:20',
+            'school_email' => 'nullable|email|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'currency_symbol' => 'required|string|max:10',
+            'currency_code' => 'required|string|max:10',
+        ]);
+
+        try {
+            $data = $request->except(['_token', 'logo']);
+
+            if ($request->hasFile('logo')) {
+                $imageName = time() . '.' . $request->logo->extension();
+                $request->logo->move(public_path('images'), $imageName);
+                $data['logo'] = 'images/' . $imageName;
+            }
+
+            $this->academicSettingRepository->updateGeneralSettings($data);
+
+            return back()->with('status', 'General settings updated successfully!');
+        } catch (\Exception $e) {
+            return back()->withError($e->getMessage());
+        }
+    }
 }

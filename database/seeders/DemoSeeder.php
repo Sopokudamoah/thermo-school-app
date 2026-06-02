@@ -28,6 +28,7 @@ class DemoSeeder extends Seeder
             FinalMarkSeeder::class,
             AssignedTeacherSeeder::class,
             RoutineSeeder::class,
+            FinanceDemoSeeder::class,
         ]);
     }
 }

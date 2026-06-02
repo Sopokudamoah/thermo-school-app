@@ -25,6 +25,17 @@ use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentImportController;
 use App\Http\Controllers\SyllabusController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Finance\FinanceDashboardController;
+use App\Http\Controllers\Finance\FeeTypeController;
+use App\Http\Controllers\Finance\FeeStructureController;
+use App\Http\Controllers\Finance\InvoiceController;
+use App\Http\Controllers\Finance\PaymentController;
+use App\Http\Controllers\Finance\DiscountController;
+use App\Http\Controllers\Finance\ScholarshipController;
+use App\Http\Controllers\Finance\ExpenseController;
+use App\Http\Controllers\Finance\VendorController;
+use App\Http\Controllers\Finance\BudgetController;
+use App\Http\Controllers\Finance\ReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -61,6 +72,9 @@ Route::middleware(['auth'])->group(function () {
         );
 
         Route::post('attendance/type/update', [AcademicSettingController::class, 'updateAttendanceType'])->name('attendance.type.update');
+        Route::post('general/update', [AcademicSettingController::class, 'updateGeneralSettings'])->name(
+            'general.settings.update'
+        );
 
         // Class
         Route::post('class/create', [SchoolClassController::class, 'store'])->name('class.create');
@@ -197,4 +211,59 @@ Route::middleware(['auth'])->group(function () {
     // Update password
     Route::get('password/edit', [UpdatePasswordController::class, 'edit'])->name('password.change.edit');
     Route::post('password/edit', [UpdatePasswordController::class, 'update'])->name('password.change.update');
+
+    // Finance
+    Route::prefix('finance')->name('finance.')->group(function () {
+        Route::get('/dashboard', [FinanceDashboardController::class, 'index'])->name('dashboard');
+
+        Route::resource('fee-types', FeeTypeController::class)->except(['show', 'destroy']);
+        Route::resource('fee-structures', FeeStructureController::class)->except(['destroy']);
+
+        Route::post('invoices/{invoice}/cancel', [InvoiceController::class, 'cancel'])->name('invoices.cancel');
+        Route::post('invoices/{invoice}/apply-discount', [InvoiceController::class, 'applyDiscount'])->name(
+            'invoices.apply-discount'
+        );
+        Route::post('invoices/{invoice}/remove-discount', [InvoiceController::class, 'removeDiscount'])->name(
+            'invoices.remove-discount'
+        );
+        Route::get('invoices/{invoice}/print', [InvoiceController::class, 'print'])->name('invoices.print');
+        Route::resource('invoices', InvoiceController::class)->except(['destroy']);
+
+        Route::get('payments/{payment}/receipt', [PaymentController::class, 'receipt'])->name('payments.receipt');
+        Route::get('payments/ajax/student-invoices', [PaymentController::class, 'getStudentInvoices'])->name(
+            'payments.student-invoices'
+        );
+        Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show']);
+
+        Route::resource('discounts', DiscountController::class)->except(['show', 'destroy']);
+        Route::get('scholarships/assign', [ScholarshipController::class, 'assignCreate'])->name('scholarships.assign');
+        Route::post('scholarships/assign', [ScholarshipController::class, 'assignStore'])->name(
+            'scholarships.assign.store'
+        );
+        Route::resource('scholarships', ScholarshipController::class)->except(['show', 'destroy']);
+
+        Route::post('expenses/{expense}/approve', [ExpenseController::class, 'approve'])->name('expenses.approve');
+        Route::resource('expenses', ExpenseController::class)->except(['destroy']);
+
+        Route::resource('vendors', VendorController::class)->except(['show', 'destroy']);
+        Route::post('budgets/{budget}/department', [BudgetController::class, 'addDepartment'])->name(
+            'budgets.department.add'
+        );
+        Route::post('budgets/department/{department}/category', [BudgetController::class, 'addCategory'])->name(
+            'budgets.category.add'
+        );
+        Route::resource('budgets', BudgetController::class)->except(['destroy']);
+
+        Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('reports/fee-collection', [ReportController::class, 'feeCollection'])->name(
+            'reports.fee-collection'
+        );
+        Route::get('reports/outstanding', [ReportController::class, 'outstanding'])->name('reports.outstanding');
+        Route::get('reports/revenue', [ReportController::class, 'revenue'])->name('reports.revenue');
+        Route::get('reports/expense', [ReportController::class, 'expenseReport'])->name('reports.expense');
+        Route::get('reports/student-ledger', [ReportController::class, 'studentLedger'])->name(
+            'reports.student-ledger'
+        );
+        Route::get('reports/audit-trail', [ReportController::class, 'auditTrail'])->name('reports.audit-trail');
+    });
 });

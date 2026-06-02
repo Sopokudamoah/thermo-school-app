@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('page-title', config('app.name', 'Unifiedtransform')) — {{ config('app.name', 'Unifiedtransform') }}</title>
+    <title>@yield('page-title', $school_setting->school_name ?? config('app.name', 'Unifiedtransform'))
+        — {{ $school_setting->school_name ?? config('app.name', 'Unifiedtransform') }}</title>
 
     <!-- Favicons -->
     <link rel="shortcut icon" href="{{ asset('favicon_io/favicon.ico') }}">
@@ -190,9 +191,16 @@
             {{-- Left branding panel --}}
             <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 to-indigo-800 flex-col items-center justify-center p-12 text-white">
                 <div class="mb-6 bg-white/15 rounded-2xl p-5 backdrop-blur-sm">
-                    <img src="{{ asset('imgs/logo.png') }}" alt="{{ config('app.name', 'Unifiedtransform') }}" class="h-20 w-auto object-contain">
+                    @if(isset($school_setting) && $school_setting->logo)
+                        <img src="{{ asset($school_setting->logo) }}"
+                             alt="{{ $school_setting->school_name ?? config('app.name', 'Unifiedtransform') }}"
+                             class="h-20 w-auto object-contain">
+                    @else
+                        <img src="{{ asset('imgs/logo.png') }}" alt="{{ config('app.name', 'Unifiedtransform') }}"
+                             class="h-20 w-auto object-contain">
+                    @endif
                 </div>
-                <h1 class="font-heading text-3xl font-bold mb-3 text-center">{{ config('app.name', 'Unifiedtransform') }}</h1>
+                <h1 class="font-heading text-3xl font-bold mb-3 text-center">{{ $school_setting->school_name ?? config('app.name', 'Unifiedtransform') }}</h1>
                 <p class="text-indigo-200 text-center text-base leading-relaxed max-w-xs">
                     Modern school management — academic sessions, attendance, grading, and more.
                 </p>
@@ -201,8 +209,15 @@
             <div class="flex-1 flex items-center justify-center p-6 bg-white">
                 <div class="w-full max-w-md">
                     <div class="mb-8 lg:hidden text-center">
-                        <img src="{{ asset('imgs/logo.png') }}" alt="{{ config('app.name', 'Unifiedtransform') }}" class="h-12 w-auto object-contain mx-auto mb-2">
-                        <h2 class="font-heading text-xl font-bold text-gray-900">{{ config('app.name', 'Unifiedtransform') }}</h2>
+                        @if(isset($school_setting) && $school_setting->logo)
+                            <img src="{{ asset($school_setting->logo) }}"
+                                 alt="{{ $school_setting->school_name ?? config('app.name', 'Unifiedtransform') }}"
+                                 class="h-12 w-auto object-contain mx-auto mb-2">
+                        @else
+                            <img src="{{ asset('imgs/logo.png') }}" alt="{{ config('app.name', 'Unifiedtransform') }}"
+                                 class="h-12 w-auto object-contain mx-auto mb-2">
+                        @endif
+                        <h2 class="font-heading text-xl font-bold text-gray-900">{{ $school_setting->school_name ?? config('app.name', 'Unifiedtransform') }}</h2>
                     </div>
                     @yield('content')
                 </div>

@@ -85,4 +85,24 @@ class Student extends Model
     {
         return $this->hasMany(Attendance::class, 'student_id');
     }
+
+    public function scholarships()
+    {
+        return $this->belongsToMany(
+            \App\Models\Finance\Scholarship::class,
+            'finance_student_scholarships',
+            'student_id',
+            'scholarship_id'
+        );
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(\App\Models\Finance\Payment::class, 'student_id');
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(\App\Models\Finance\Invoice::class, 'student_id');
+    }
 }

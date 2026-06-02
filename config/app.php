@@ -184,6 +184,7 @@ return [
         App\Providers\SectionServiceProvider::class,
         App\Providers\CourseServiceProvider::class,
         App\Providers\UserServiceProvider::class,
+        App\Providers\FinanceServiceProvider::class,
     ],
 
     /*

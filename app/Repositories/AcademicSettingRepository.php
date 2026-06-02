@@ -48,6 +48,15 @@ class AcademicSettingRepository implements AcademicSettingInterface {
         }
     }
 
+    public function updateGeneralSettings($data)
+    {
+        try {
+            AcademicSetting::where('id', 1)->update($data);
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to update general settings. ' . $e->getMessage());
+        }
+    }
+
     public function findFirst()
     {
         return AcademicSetting::first();

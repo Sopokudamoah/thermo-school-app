@@ -17,6 +17,9 @@ class AcademicSetting extends Model
         'school_name',
         'school_address',
         'school_phone',
-        'school_email'
+        'school_email',
+        'logo',
+        'currency_symbol',
+        'currency_code'
     ];
 }
