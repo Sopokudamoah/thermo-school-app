@@ -33,17 +33,17 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div class="bg-white p-5 rounded-card border border-gray-200 shadow-card">
             <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Total Allocated</p>
-            <p class="text-2xl font-black text-gray-900">${{ number_format($budget->total_allocated, 2) }}</p>
+            <p class="text-2xl font-black text-gray-900">@money($budget->total_allocated)</p>
         </div>
         <div class="bg-white p-5 rounded-card border border-gray-200 shadow-card">
             <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Total Spent</p>
-            <p class="text-2xl font-black text-amber-600">${{ number_format($budget->total_spent, 2) }}</p>
+            <p class="text-2xl font-black text-amber-600">@money($budget->total_spent)</p>
         </div>
         <div class="bg-white p-5 rounded-card border border-gray-200 shadow-card">
             <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Remaining Budget</p>
-            @php $remaining = $budget->total_allocated - $budget->total_spent; @endphp
-            <p class="text-2xl font-black {{ $remaining < 0 ? 'text-red-600' : 'text-emerald-600' }}">
-                ${{ number_format($remaining, 2) }}
+            @php $remaining = $budget->total_allocated->subtract($budget->total_spent); @endphp
+            <p class="text-2xl font-black {{ $remaining->isNegative() ? 'text-red-600' : 'text-emerald-600' }}">
+                @money($remaining)
             </p>
         </div>
     </div>
@@ -55,7 +55,7 @@
                     <div class="flex items-center gap-4">
                         <h3 class="font-heading text-base font-bold text-gray-900">{{ $dept->name }}</h3>
                         <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
-                    Allocated: ${{ number_format($dept->allocated, 2) }}
+                    Allocated: @money($dept->allocated)
                 </span>
                     </div>
                     @can('finance.budget.manage')
@@ -89,18 +89,18 @@
                         <tbody class="divide-y divide-gray-100">
                         @foreach($dept->categories as $cat)
                             @php
-                                $actual = $variance[$cat->expense_category_id]['spent'] ?? 0;
-                                $var_amount = $cat->allocated - $actual;
-                                $usage_percent = $cat->allocated > 0 ? ($actual / $cat->allocated) * 100 : 0;
+                                $actual = $variance[$cat->expense_category_id]['spent'] ?? new \Money\Money(0, $cat->allocated->getCurrency());
+                                $var_amount = $cat->allocated->subtract($actual);
+                                $usage_percent = $cat->allocated->isPositive() ? (($actual->getAmount() / $cat->allocated->getAmount()) * 100) : 0;
                             @endphp
                             <tr class="hover:bg-gray-50/50 transition-colors">
                                 <td class="px-6 py-4 font-medium text-gray-900">{{ $cat->expenseCategory->name }}</td>
                                 <td class="px-6 py-4 text-right text-gray-700">
-                                    ${{ number_format($cat->allocated, 2) }}</td>
+                                    @money($cat->allocated)</td>
                                 <td class="px-6 py-4 text-right font-semibold text-gray-900">
-                                    ${{ number_format($actual, 2) }}</td>
-                                <td class="px-6 py-4 text-right font-bold {{ $var_amount < 0 ? 'text-red-600' : 'text-emerald-600' }}">
-                                    {{ $var_amount < 0 ? '-' : '+' }}${{ number_format(abs($var_amount), 2) }}
+                                    @money($actual)</td>
+                                <td class="px-6 py-4 text-right font-bold {{ $var_amount->isNegative() ? 'text-red-600' : 'text-emerald-600' }}">
+                                    {{ $var_amount->isNegative() ? '-' : '+' }}@money($var_amount->absolute())
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center gap-2">

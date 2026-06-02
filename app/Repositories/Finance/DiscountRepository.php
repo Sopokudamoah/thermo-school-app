@@ -40,10 +40,18 @@ class DiscountRepository implements DiscountInterface
         $discount = Discount::findOrFail($discount_id);
         $invoice = \App\Models\Finance\Invoice::with('items')->findOrFail($invoice_id);
 
-        $subtotal = $invoice->items->sum('amount');
-        $amount_applied = $discount->type === Discount::TYPE_PERCENTAGE
-            ? round($subtotal * $discount->value / 100, 2)
-            : $discount->value;
+        $subtotalMoney = $invoice->items->reduce(function ($carry, $item) {
+            return $carry->add($item->amount);
+        }, \App\Helpers\MoneyHelper::zero());
+
+        if ($discount->type === Discount::TYPE_PERCENTAGE) {
+            $amount_applied = $subtotalMoney->multiply($discount->value / 100);
+        } else {
+            $amount_applied = new \Money\Money(
+                (string)round($discount->value * 100),
+                \App\Helpers\MoneyHelper::getCurrency()
+            );
+        }
 
         return InvoiceDiscount::create([
             'invoice_id' => $invoice_id,

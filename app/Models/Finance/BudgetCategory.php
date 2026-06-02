@@ -18,7 +18,7 @@ class BudgetCategory extends Model
     ];
 
     protected $casts = [
-        'allocated' => 'decimal:2',
+        'allocated' => \App\Casts\MoneyCast::class,
     ];
 
     public function department()

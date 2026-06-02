@@ -23,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        \Illuminate\Support\Facades\Blade::directive('money', function ($expression) {
+            return "<?php echo \App\Helpers\MoneyHelper::format($expression); ?>";
+        });
     }
 }

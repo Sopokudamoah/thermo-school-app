@@ -45,7 +45,7 @@
                     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                         <h3 class="font-heading text-sm font-bold text-gray-900 uppercase tracking-wider">{{ $label }}</h3>
                         <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-700">
-                    Total: ${{ number_format($aging[$key]->sum('balance'), 2) }}
+                    Total: @money($aging[$key]->reduce(fn($carry, $item) => $carry->add($item->balance), \App\Helpers\MoneyHelper::zero()))
                 </span>
                     </div>
                     <div class="overflow-x-auto">
@@ -76,7 +76,7 @@
                                         <span class="font-bold text-red-600">{{ now()->diffInDays($invoice->due_date) }} days</span>
                                     </td>
                                     <td class="px-6 py-4 text-right font-black text-gray-900">
-                                        ${{ number_format($invoice->balance, 2) }}</td>
+                                        @money($invoice->balance)</td>
                                     <td class="px-6 py-4 text-right">
                                         <a href="{{ route('finance.payments.create', ['student_id' => $invoice->student_id]) }}"
                                            class="text-xs font-bold text-indigo-600 hover:underline uppercase">Collect</a>

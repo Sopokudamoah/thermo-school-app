@@ -30,7 +30,7 @@ class Expense extends Model
     protected $casts = [
         'expense_date' => 'date',
         'approved_at' => 'datetime',
-        'amount' => 'decimal:2',
+        'amount' => \App\Casts\MoneyCast::class,
     ];
 
     public const STATUS_PENDING = 'pending';

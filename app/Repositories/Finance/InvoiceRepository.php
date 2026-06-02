@@ -88,18 +88,46 @@ class InvoiceRepository implements InvoiceInterface
         $invoice = Invoice::with(['items', 'invoice_discounts', 'student_scholarships', 'payment_allocations']
         )->findOrFail($id);
 
-        $subtotal = $invoice->items->sum('amount');
-        $discount_amount = $invoice->invoice_discounts->sum('amount_applied');
-        $scholarship_amount = $invoice->student_scholarships->sum('amount_applied');
-        $total = max(0, $subtotal - $discount_amount - $scholarship_amount);
-        $paid_amount = $invoice->payment_allocations->sum('amount');
-        $balance = max(0, $total - $paid_amount);
+        $currency = new \Money\Currency(\App\Models\AcademicSetting::first()->currency_code ?? 'GHS');
+        $zero = new \Money\Money(0, $currency);
+
+        $subtotal = $invoice->items->reduce(function ($carry, $item) use ($zero) {
+            return $carry->add($item->amount ?? $zero);
+        }, $zero);
+
+        $discount_amount = $invoice->invoice_discounts->reduce(function ($carry, $discount) use ($zero) {
+            return $carry->add($discount->amount_applied ?? $zero);
+        }, $zero);
+
+        $scholarship_amount = $invoice->student_scholarships->reduce(function ($carry, $scholarship) use ($zero) {
+            return $carry->add($scholarship->amount_applied ?? $zero);
+        }, $zero);
+
+        $total = $subtotal->subtract($discount_amount)->subtract($scholarship_amount);
+        if ($total->isNegative()) {
+            $total = $zero;
+        }
+
+        $paid_amount = $invoice->payment_allocations->reduce(function ($carry, $allocation) use ($zero) {
+            return $carry->add($allocation->amount ?? $zero);
+        }, $zero);
+
+        $balance = $total->subtract($paid_amount);
+        if ($balance->isNegative()) {
+            $balance = $zero;
+        }
 
         $status = $this->computeStatus($invoice, $total, $paid_amount, $balance);
 
-        $invoice->update(
-            compact('subtotal', 'discount_amount', 'scholarship_amount', 'total', 'paid_amount', 'balance', 'status')
-        );
+        $invoice->update([
+            'subtotal' => $subtotal,
+            'discount_amount' => $discount_amount,
+            'scholarship_amount' => $scholarship_amount,
+            'total' => $total,
+            'paid_amount' => $paid_amount,
+            'balance' => $balance,
+            'status' => $status,
+        ]);
 
         return $invoice->fresh();
     }
@@ -109,10 +137,10 @@ class InvoiceRepository implements InvoiceInterface
         if ($invoice->status === Invoice::STATUS_CANCELLED) {
             return Invoice::STATUS_CANCELLED;
         }
-        if ($total == 0 || $paid_amount >= $total) {
+        if ($total->isZero() || $paid_amount->greaterThanOrEqual($total)) {
             return Invoice::STATUS_PAID;
         }
-        if ($paid_amount > 0) {
+        if ($paid_amount->greaterThan(new \Money\Money(0, $total->getCurrency()))) {
             return Invoice::STATUS_PARTIALLY_PAID;
         }
         if ($invoice->due_date < Carbon::today()) {

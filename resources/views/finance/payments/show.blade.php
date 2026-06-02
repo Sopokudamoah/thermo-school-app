@@ -40,7 +40,7 @@
                     </div>
                     <div>
                         <p class="text-xs text-gray-500 uppercase font-semibold">Amount</p>
-                        <p class="text-lg font-black text-emerald-600">${{ number_format($payment->amount, 2) }}</p>
+                        <p class="text-lg font-black text-emerald-600">@money($payment->amount)</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500 uppercase font-semibold">Date</p>
@@ -85,7 +85,7 @@
                                     <a href="{{ route('finance.invoices.show', $invoice->id) }}">{{ $invoice->invoice_number }}</a>
                                 </td>
                                 <td class="px-6 py-4 text-right text-emerald-600 font-bold">
-                                    ${{ number_format($invoice->pivot->amount, 2) }}</td>
+                                    @money($invoice->pivot->amount)</td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -93,7 +93,7 @@
                         <tr class="bg-gray-50">
                             <td class="px-6 py-4 font-bold text-gray-900 text-right">Total</td>
                             <td class="px-6 py-4 text-right font-black text-indigo-600 text-lg">
-                                ${{ number_format($payment->amount, 2) }}</td>
+                                @money($payment->amount)</td>
                         </tr>
                         </tfoot>
                     </table>

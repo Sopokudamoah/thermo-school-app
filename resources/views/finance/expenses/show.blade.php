@@ -58,7 +58,7 @@
                     </div>
                     <div>
                         <p class="text-xs text-gray-500 uppercase font-semibold">Amount</p>
-                        <p class="text-lg font-black text-gray-900">${{ number_format($expense->amount, 2) }}</p>
+                        <p class="text-lg font-black text-gray-900">@money($expense->amount)</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500 uppercase font-semibold">Date</p>

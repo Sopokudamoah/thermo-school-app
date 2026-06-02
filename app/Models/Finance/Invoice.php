@@ -36,12 +36,12 @@ class Invoice extends Model
     protected $casts = [
         'issue_date' => 'date',
         'due_date' => 'date',
-        'subtotal' => 'decimal:2',
-        'discount_amount' => 'decimal:2',
-        'scholarship_amount' => 'decimal:2',
-        'total' => 'decimal:2',
-        'paid_amount' => 'decimal:2',
-        'balance' => 'decimal:2',
+        'subtotal' => \App\Casts\MoneyCast::class,
+        'discount_amount' => \App\Casts\MoneyCast::class,
+        'scholarship_amount' => \App\Casts\MoneyCast::class,
+        'total' => \App\Casts\MoneyCast::class,
+        'paid_amount' => \App\Casts\MoneyCast::class,
+        'balance' => \App\Casts\MoneyCast::class,
     ];
 
     public const STATUS_DRAFT = 'draft';

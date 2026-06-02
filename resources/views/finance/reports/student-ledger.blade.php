@@ -58,16 +58,16 @@
                 <div class="space-y-3 pt-2">
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-500">Total Billed</span>
-                        <span class="font-bold text-gray-900">${{ number_format($invoices->sum('total'), 2) }}</span>
+                        <span class="font-bold text-gray-900">@money($invoices->sum('total'))</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-500">Total Paid</span>
                         <span
-                            class="font-bold text-emerald-600">${{ number_format($payments->sum('amount'), 2) }}</span>
+                            class="font-bold text-emerald-600">@money($payments->sum('amount'))</span>
                     </div>
                     <div class="flex justify-between text-lg font-black pt-2 border-t border-gray-100">
                         <span class="text-gray-900">Balance</span>
-                        <span class="text-red-600">${{ number_format($invoices->sum('balance'), 2) }}</span>
+                        <span class="text-red-600">@money($invoices->sum('balance'))</span>
                     </div>
                 </div>
             </div>
@@ -97,7 +97,7 @@
                                     $ledger->push([
                                         'date' => $inv->issue_date,
                                         'ref' => 'Invoice #' . $inv->invoice_number,
-                                        'debit' => $inv->total,
+                                        'debit' => (float) $inv->total->getAmount() / 100,
                                         'credit' => 0,
                                         'link' => route('finance.invoices.show', $inv->id)
                                     ]);
@@ -107,7 +107,7 @@
                                         'date' => $pay->payment_date,
                                         'ref' => 'Payment #' . $pay->receipt_number,
                                         'debit' => 0,
-                                        'credit' => $pay->amount,
+                                        'credit' => (float) $pay->amount->getAmount() / 100,
                                         'link' => route('finance.payments.show', $pay->id)
                                     ]);
                                 }
@@ -122,10 +122,10 @@
                                         <a href="{{ $row['link'] }}"
                                            class="text-indigo-600 font-medium hover:underline">{{ $row['ref'] }}</a>
                                     </td>
-                                    <td class="px-6 py-4 text-right text-gray-900">{{ $row['debit'] > 0 ? '$' . number_format($row['debit'], 2) : '-' }}</td>
-                                    <td class="px-6 py-4 text-right text-emerald-600">{{ $row['credit'] > 0 ? '-$' . number_format($row['credit'], 2) : '-' }}</td>
+                                    <td class="px-6 py-4 text-right text-gray-900">{{ $row['debit'] > 0 ? \App\Helpers\MoneyHelper::format($row['debit']) : '-' }}</td>
+                                    <td class="px-6 py-4 text-right text-emerald-600">{{ $row['credit'] > 0 ? '-' . \App\Helpers\MoneyHelper::format($row['credit']) : '-' }}</td>
                                     <td class="px-6 py-4 text-right font-bold text-gray-900">
-                                        ${{ number_format($running_balance, 2) }}</td>
+                                        @money($running_balance)</td>
                                 </tr>
                             @empty
                                 <tr>

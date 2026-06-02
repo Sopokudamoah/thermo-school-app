@@ -74,7 +74,7 @@
                                 <td class="px-6 py-4 font-medium text-gray-900">{{ $item->feeType->name }}</td>
                                 <td class="px-6 py-4 text-gray-600">{{ $item->feeType->code }}</td>
                                 <td class="px-6 py-4 text-right font-semibold text-gray-900">
-                                    ${{ number_format($item->amount, 2) }}</td>
+                                    @money($item->amount)</td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -82,7 +82,7 @@
                         <tr class="bg-gray-50">
                             <td colspan="2" class="px-6 py-4 font-bold text-gray-900 text-right">Total</td>
                             <td class="px-6 py-4 text-right font-bold text-indigo-600 text-lg">
-                                ${{ number_format($fee_structure->items->sum('amount'), 2) }}</td>
+                                @money($fee_structure->items->reduce(fn($carry, $item) => $carry->add($item->amount), new \Money\Money(0, new \Money\Currency(Cache::get('currency_code', 'GHS')))))</td>
                         </tr>
                         </tfoot>
                     </table>

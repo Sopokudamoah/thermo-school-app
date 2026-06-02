@@ -21,10 +21,12 @@ class InvoiceDataTable extends DataTable
                 return $invoice->issue_date ? $invoice->issue_date->format('M d, Y') : 'N/A';
             })
             ->editColumn('total', function ($invoice) {
-                return '$' . number_format($invoice->total, 2);
+                return \App\Helpers\MoneyHelper::format($invoice->total);
             })
             ->editColumn('balance', function ($invoice) {
-                return '<span class="text-red-600 font-semibold">$' . number_format($invoice->balance, 2) . '</span>';
+                return '<span class="text-red-600 font-semibold">' . \App\Helpers\MoneyHelper::format(
+                        $invoice->balance
+                    ) . '</span>';
             })
             ->editColumn('status', function ($invoice) {
                 $statusColors = [

@@ -24,7 +24,10 @@ class FeeStructureDataTable extends DataTable
                 return $feeStructure->school_class->class_name ?? 'All Classes';
             })
             ->addColumn('total_amount', function ($feeStructure) {
-                return '$' . number_format($feeStructure->items->sum('amount'), 2);
+                $total = $feeStructure->items->reduce(function ($carry, $item) {
+                    return $carry->add($item->amount);
+                }, \App\Helpers\MoneyHelper::zero());
+                return \App\Helpers\MoneyHelper::format($total);
             })
             ->addColumn('action', 'finance.datatables.actions.fee_structures')
             ->setRowId('id')

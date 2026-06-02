@@ -34,34 +34,44 @@ class BudgetRepository implements BudgetInterface
     {
         $budget = $this->findById($budget_id);
 
+        $currency = new \Money\Currency(\App\Models\AcademicSetting::first()->currency_code ?? 'GHS');
+        $zero = new \Money\Money(0, $currency);
+
         $report = [];
         foreach ($budget->departments as $dept) {
-            $dept_spent = 0;
+            $dept_spent = $zero;
             $categories = [];
             foreach ($dept->categories as $cat) {
-                $spent = Expense::where('category_id', $cat->expense_category_id)
+                $spentRaw = Expense::where('category_id', $cat->expense_category_id)
                     ->where('status', Expense::STATUS_APPROVED)
                     ->whereYear('expense_date', $budget->year)
                     ->sum('amount');
+
+                $spent = new \Money\Money((string)round($spentRaw * 100), $currency);
+
+                $remaining = $cat->allocated->subtract($spent);
+
+                $allocatedFloat = (float)$cat->allocated->getAmount() / 100;
+                $spentFloat = (float)$spent->getAmount() / 100;
 
                 $categories[] = [
                     'name' => $cat->expense_category?->name ?? 'Unknown',
                     'allocated' => $cat->allocated,
                     'spent' => $spent,
-                    'remaining' => $cat->allocated - $spent,
-                    'variance_pct' => $cat->allocated > 0 ? round(
-                        (($cat->allocated - $spent) / $cat->allocated) * 100,
+                    'remaining' => $remaining,
+                    'variance_pct' => $allocatedFloat > 0 ? round(
+                        (($allocatedFloat - $spentFloat) / $allocatedFloat) * 100,
                         1
                     ) : 0,
                 ];
-                $dept_spent += $spent;
+                $dept_spent = $dept_spent->add($spent);
             }
 
             $report[] = [
                 'name' => $dept->name,
                 'allocated' => $dept->allocated,
                 'spent' => $dept_spent,
-                'remaining' => $dept->allocated - $dept_spent,
+                'remaining' => $dept->allocated->subtract($dept_spent),
                 'categories' => $categories,
             ];
         }

@@ -162,7 +162,7 @@
                 <div style="font-weight: bold;">Invoice #{{ $invoice->invoice_number }}</div>
                 <div style="font-size: 12px; color: #666;">Issued: {{ $invoice->issue_date->format('M d, Y') }}</div>
             </td>
-            <td style="text-align: right; font-weight: bold;">{{ $school_setting->currency_symbol ?? '$' }}{{ number_format($invoice->pivot->amount, 2) }}</td>
+            <td style="text-align: right; font-weight: bold;">@money($invoice->pivot->amount)</td>
         </tr>
     @endforeach
     </tbody>
@@ -174,8 +174,8 @@
             <span>Total Received</span>
         </div>
         <div class="total-value">
-            <span>{{ $school_setting->currency_code ?? 'USD' }}</span>
-            <span>{{ $school_setting->currency_symbol ?? '$' }}{{ number_format($payment->amount, 2) }}</span>
+            <span>{{ $school_setting->currency_code ?? 'GHS' }}</span>
+            <span>@money($payment->amount)</span>
         </div>
     </div>
 </div>

@@ -21,7 +21,9 @@ class PaymentDataTable extends DataTable
                 return $payment->payment_date ? $payment->payment_date->format('M d, Y') : 'N/A';
             })
             ->editColumn('amount', function ($payment) {
-                return '<span class="text-emerald-600 font-bold">$' . number_format($payment->amount, 2) . '</span>';
+                return '<span class="text-emerald-600 font-bold">' . \App\Helpers\MoneyHelper::format(
+                        $payment->amount
+                    ) . '</span>';
             })
             ->editColumn('method', function ($payment) {
                 return '<span class="capitalize">' . str_replace('_', ' ', $payment->method) . '</span>';

@@ -21,7 +21,7 @@ class ScholarshipDataTable extends DataTable
                 if ($scholarship->type === 'percentage') {
                     return $scholarship->value . '%';
                 }
-                return '$' . number_format($scholarship->value, 2);
+                return \App\Helpers\MoneyHelper::format($scholarship->value);
             })
             ->addColumn('students_count', function ($scholarship) {
                 return $scholarship->students_count;

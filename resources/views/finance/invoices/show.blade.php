@@ -99,16 +99,16 @@
                     <div class="pt-4 border-t border-gray-100 space-y-2">
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-500">Total Amount</span>
-                            <span class="font-bold text-gray-900">${{ number_format($invoice->total, 2) }}</span>
+                            <span class="font-bold text-gray-900">@money($invoice->total)</span>
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-500">Paid Amount</span>
                             <span
-                                class="font-bold text-emerald-600">${{ number_format($invoice->paid_amount, 2) }}</span>
+                                class="font-bold text-emerald-600">@money($invoice->paid_amount)</span>
                         </div>
                         <div class="flex justify-between text-base">
                             <span class="text-gray-900 font-bold">Balance Due</span>
-                            <span class="font-black text-red-600">${{ number_format($invoice->balance, 2) }}</span>
+                            <span class="font-black text-red-600">@money($invoice->balance)</span>
                         </div>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                             <tr>
                                 <td class="px-6 py-4 font-medium text-gray-900">{{ $item->feeType->name }}</td>
                                 <td class="px-6 py-4 text-right text-gray-900 font-semibold">
-                                    ${{ number_format($item->amount, 2) }}</td>
+                                    @money($item->amount)</td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -161,13 +161,13 @@
                                     </form>
                                 </td>
                                 <td class="px-6 py-3 text-right text-emerald-600 font-bold">
-                                    -${{ number_format($discount->pivot->amount, 2) }}</td>
+                                    -@money($discount->pivot->amount)</td>
                             </tr>
                         @endforeach
                         <tr>
                             <td class="px-6 py-4 font-bold text-gray-900 text-right uppercase tracking-wider">Total</td>
                             <td class="px-6 py-4 text-right font-black text-indigo-600 text-lg">
-                                ${{ number_format($invoice->total, 2) }}</td>
+                                @money($invoice->total)</td>
                         </tr>
                         </tfoot>
                     </table>
@@ -201,7 +201,7 @@
                                 <td class="px-6 py-4 text-gray-600">{{ $payment->payment_date->format('M d, Y') }}</td>
                                 <td class="px-6 py-4 text-gray-600 capitalize">{{ str_replace('_', ' ', $payment->method) }}</td>
                                 <td class="px-6 py-4 text-right text-emerald-600 font-bold">
-                                    ${{ number_format($payment->pivot->amount, 2) }}</td>
+                                    @money($payment->pivot->amount)</td>
                             </tr>
                         @endforeach
 
@@ -242,8 +242,11 @@
                                 <option value="">Choose a discount...</option>
                                 @foreach($discounts as $discount)
                                     <option value="{{ $discount->id }}">{{ $discount->name }}
-                                        ({{ $discount->type == 'percentage' ? $discount->value . '%' : '$' . $discount->value }}
-                                        )
+                                        (@if($discount->type == 'percentage')
+                                            {{ $discount->value }}%
+                                        @else
+                                            @money($discount->value)
+                                        @endif)
                                     </option>
                                 @endforeach
                             </select>

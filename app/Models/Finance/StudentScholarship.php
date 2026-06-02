@@ -30,7 +30,7 @@ class StudentScholarship extends Model
         'approval_date' => 'date',
         'valid_from' => 'date',
         'valid_until' => 'date',
-        'amount_applied' => 'decimal:2',
+        'amount_applied' => \App\Casts\MoneyCast::class,
     ];
 
     public function student()

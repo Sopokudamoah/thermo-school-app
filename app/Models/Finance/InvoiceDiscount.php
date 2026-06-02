@@ -18,7 +18,7 @@ class InvoiceDiscount extends Model
     ];
 
     protected $casts = [
-        'amount_applied' => 'decimal:2',
+        'amount_applied' => \App\Casts\MoneyCast::class,
     ];
 
     public function invoice()

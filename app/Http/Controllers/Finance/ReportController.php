@@ -8,7 +8,6 @@ use App\Interfaces\Finance\InvoiceInterface;
 use App\Interfaces\Finance\PaymentInterface;
 use App\Models\Finance\Expense;
 use App\Models\Finance\ExpenseCategory;
-use App\Models\Finance\Invoice;
 use App\Models\Finance\InvoiceItem;
 use App\Models\Finance\Payment;
 use App\Models\SchoolClass;
@@ -51,7 +50,10 @@ class ReportController extends Controller
             ->when(!empty($filters['to_date']), fn($q) => $q->whereDate('payment_date', '<=', $filters['to_date']));
 
         $payments = $query->orderByDesc('payment_date')->get();
-        $total = $payments->sum('amount');
+
+        $total = $payments->reduce(function ($carry, $payment) {
+            return $carry->add($payment->amount);
+        }, \App\Helpers\MoneyHelper::zero());
 
         return view(
             'finance.reports.fee-collection',

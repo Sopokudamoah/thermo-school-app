@@ -190,7 +190,7 @@
     @foreach($invoice->items as $item)
         <tr>
             <td>{{ $item->feeType->name }}</td>
-            <td style="text-align: right; font-weight: bold;">{{ $school_setting->currency_symbol ?? '$' }}{{ number_format($item->amount, 2) }}</td>
+            <td style="text-align: right; font-weight: bold;">@money($item->amount)</td>
         </tr>
     @endforeach
     </tbody>
@@ -200,31 +200,31 @@
     <div class="totals-box">
         <div class="total-row">
             <span>Subtotal</span>
-            <span>{{ $school_setting->currency_symbol ?? '$' }}{{ number_format($invoice->subtotal, 2) }}</span>
+            <span>@money($invoice->subtotal)</span>
         </div>
         @if($invoice->discount_amount > 0)
             <div class="total-row" style="color: #059669;">
                 <span>Discounts</span>
-                <span>-{{ $school_setting->currency_symbol ?? '$' }}{{ number_format($invoice->discount_amount, 2) }}</span>
+                <span>-@money($invoice->discount_amount)</span>
             </div>
         @endif
         @if($invoice->scholarship_amount > 0)
             <div class="total-row" style="color: #4f46e5;">
                 <span>Scholarships</span>
-                <span>-{{ $school_setting->currency_symbol ?? '$' }}{{ number_format($invoice->scholarship_amount, 2) }}</span>
+                <span>-@money($invoice->scholarship_amount)</span>
             </div>
         @endif
         <div class="total-row grand-total">
             <span>Total Amount</span>
-            <span>{{ $school_setting->currency_symbol ?? '$' }}{{ number_format($invoice->total, 2) }}</span>
+            <span>@money($invoice->total)</span>
         </div>
         <div class="total-row" style="margin-top: 10px; color: #059669; font-weight: bold;">
             <span>Amount Paid</span>
-            <span>{{ $school_setting->currency_symbol ?? '$' }}{{ number_format($invoice->paid_amount, 2) }}</span>
+            <span>@money($invoice->paid_amount)</span>
         </div>
         <div class="total-row" style="color: #ef4444; font-weight: 900; font-size: 16px;">
             <span>Balance Due</span>
-            <span>{{ $school_setting->currency_symbol ?? '$' }}{{ number_format($invoice->balance, 2) }}</span>
+            <span>@money($invoice->balance)</span>
         </div>
     </div>
 </div>

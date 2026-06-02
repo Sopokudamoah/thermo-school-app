@@ -19,7 +19,7 @@ class InvoiceItem extends Model
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'amount' => \App\Casts\MoneyCast::class,
     ];
 
     public function invoice()

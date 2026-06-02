@@ -24,7 +24,7 @@ class ExpenseDataTable extends DataTable
                 return $expense->expense_date ? $expense->expense_date->format('M d, Y') : 'N/A';
             })
             ->editColumn('amount', function ($expense) {
-                return '$' . number_format($expense->amount, 2);
+                return \App\Helpers\MoneyHelper::format($expense->amount);
             })
             ->editColumn('status', function ($expense) {
                 $statusColors = [

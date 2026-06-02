@@ -65,7 +65,7 @@
                             <td class="px-6 py-4 font-medium text-gray-900">{{ $row->category->name }}</td>
                             <td class="px-6 py-4 text-right text-gray-600">{{ $row->count }}</td>
                             <td class="px-6 py-4 text-right font-black text-gray-900">
-                                ${{ number_format($row->total, 2) }}</td>
+                                @money($row->total)</td>
                         </tr>
                     @empty
                         <tr>
@@ -80,7 +80,7 @@
                         <tr>
                             <td colspan="2" class="px-6 py-4 font-bold text-gray-900 uppercase">Grand Total</td>
                             <td class="px-6 py-4 text-right font-black text-red-600 text-lg">
-                                ${{ number_format($grand_total, 2) }}</td>
+                                @money($grand_total)</td>
                         </tr>
                         </tfoot>
                     @endif
@@ -99,7 +99,7 @@
                         <div class="flex justify-between text-xs mb-1">
                             <span class="font-bold text-gray-700">{{ $row->category->name }}</span>
                             <span
-                                class="text-gray-500">${{ number_format($row->total, 2) }} ({{ round($percent) }}%)</span>
+                                class="text-gray-500">@money($row->total) ({{ round($percent) }}%)</span>
                         </div>
                         <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                             <div class="h-full bg-amber-500" style="width: {{ $percent }}%"></div>

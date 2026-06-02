@@ -43,10 +43,19 @@ class ScholarshipRepository implements ScholarshipInterface
         $amount_applied = 0;
         if (!empty($data['invoice_id'])) {
             $invoice = Invoice::with('items')->findOrFail($data['invoice_id']);
-            $subtotal = $invoice->items->sum('amount');
-            $amount_applied = $scholarship->type === Scholarship::TYPE_PERCENTAGE
-                ? round($subtotal * $scholarship->value / 100, 2)
-                : $scholarship->value;
+
+            $subtotalMoney = $invoice->items->reduce(function ($carry, $item) {
+                return $carry->add($item->amount);
+            }, \App\Helpers\MoneyHelper::zero());
+
+            if ($scholarship->type === Scholarship::TYPE_PERCENTAGE) {
+                $amount_applied = $subtotalMoney->multiply($scholarship->value / 100);
+            } else {
+                $amount_applied = new \Money\Money(
+                    (string)round($scholarship->value * 100),
+                    \App\Helpers\MoneyHelper::getCurrency()
+                );
+            }
         }
 
         $data['amount_applied'] = $amount_applied;

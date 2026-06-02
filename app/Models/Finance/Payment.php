@@ -26,7 +26,7 @@ class Payment extends Model
 
     protected $casts = [
         'payment_date' => 'date',
-        'amount' => 'decimal:2',
+        'amount' => \App\Casts\MoneyCast::class,
     ];
 
     public const METHOD_CASH = 'cash';

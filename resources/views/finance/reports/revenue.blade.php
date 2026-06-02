@@ -64,7 +64,7 @@
                             <tr class="hover:bg-gray-50/50 transition-colors">
                                 <td class="px-6 py-4 font-medium text-gray-900">{{ $row->fee_type }}</td>
                                 <td class="px-6 py-4 text-right font-black text-gray-900">
-                                    ${{ number_format($row->total, 2) }}</td>
+                                    @money($row->total)</td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center gap-2">
                                         <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -88,7 +88,7 @@
                             <tr>
                                 <td class="px-6 py-4 font-bold text-gray-900 uppercase">Grand Total</td>
                                 <td class="px-6 py-4 text-right font-black text-indigo-600 text-lg">
-                                    ${{ number_format($total_revenue, 2) }}</td>
+                                    @money($total_revenue)</td>
                                 <td></td>
                             </tr>
                             </tfoot>
@@ -105,7 +105,7 @@
                 <div class="space-y-4">
                     <div class="text-center">
                         <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Period Revenue</p>
-                        <p class="text-3xl font-black text-indigo-600">${{ number_format($total_revenue, 2) }}</p>
+                        <p class="text-3xl font-black text-indigo-600">@money($total_revenue)</p>
                     </div>
                     <div class="pt-4 border-t border-gray-100">
                         <p class="text-xs text-gray-500 text-center italic">This report represents all fees billed

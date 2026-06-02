@@ -27,24 +27,24 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         <div class="bg-white rounded-card shadow-card border border-gray-200 p-5">
             <p class="text-xs text-gray-500 font-semibold uppercase mb-1">Fees Billed</p>
-            <p class="text-2xl font-black text-gray-900">${{ number_format($fees_billed, 2) }}</p>
+            <p class="text-2xl font-black text-gray-900">@money($fees_billed)</p>
         </div>
         <div class="bg-white rounded-card shadow-card border border-gray-200 p-5">
             <p class="text-xs text-gray-500 font-semibold uppercase mb-1">Fees Collected</p>
-            <p class="text-2xl font-black text-emerald-600">${{ number_format($fees_collected, 2) }}</p>
+            <p class="text-2xl font-black text-emerald-600">@money($fees_collected)</p>
         </div>
         <div class="bg-white rounded-card shadow-card border border-gray-200 p-5">
             <p class="text-xs text-gray-500 font-semibold uppercase mb-1">Outstanding</p>
-            <p class="text-2xl font-black text-red-600">${{ number_format($outstanding, 2) }}</p>
+            <p class="text-2xl font-black text-red-600">@money($outstanding)</p>
         </div>
         <div class="bg-white rounded-card shadow-card border border-gray-200 p-5">
             <p class="text-xs text-gray-500 font-semibold uppercase mb-1">Expenses</p>
-            <p class="text-2xl font-black text-amber-600">${{ number_format($expenses, 2) }}</p>
+            <p class="text-2xl font-black text-amber-600">@money($expenses)</p>
         </div>
         <div class="bg-white rounded-card shadow-card border border-gray-200 p-5">
             <p class="text-xs text-gray-500 font-semibold uppercase mb-1">Net Position</p>
             <p class="text-2xl font-black {{ $net_position >= 0 ? 'text-indigo-600' : 'text-red-600' }}">
-                ${{ number_format($net_position, 2) }}
+                @money($net_position)
             </p>
         </div>
     </div>
@@ -151,7 +151,7 @@
                         <tr>
                             <td class="px-6 py-4 font-medium text-gray-900">{{ $rev->name }}</td>
                             <td class="px-6 py-4 text-right font-bold text-gray-900">
-                                ${{ number_format($rev->total, 2) }}</td>
+                                @money($rev->total)</td>
                         </tr>
                     @empty
                         <tr>

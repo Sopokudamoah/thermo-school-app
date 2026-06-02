@@ -15,7 +15,7 @@ class BudgetDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->editColumn('total_allocated', function ($budget) {
-                return '$' . number_format($budget->total_allocated, 2);
+                return \App\Helpers\MoneyHelper::format($budget->total_allocated);
             })
             ->editColumn('active', function ($budget) {
                 $status = $budget->active ? 'Active' : 'Inactive';

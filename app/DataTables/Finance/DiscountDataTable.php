@@ -21,7 +21,7 @@ class DiscountDataTable extends DataTable
                 if ($discount->type === 'percentage') {
                     return $discount->value . '%';
                 }
-                return '$' . number_format($discount->value, 2);
+                return \App\Helpers\MoneyHelper::format($discount->value);
             })
             ->editColumn('active', function ($discount) {
                 $status = $discount->active ? 'Active' : 'Inactive';

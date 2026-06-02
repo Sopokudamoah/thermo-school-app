@@ -19,8 +19,8 @@ class AddGeneralSettingsToAcademicSettingsTable extends Migration
             $table->string('school_phone')->nullable();
             $table->string('school_email')->nullable();
             $table->string('logo')->nullable();
-            $table->string('currency_symbol')->default('$');
-            $table->string('currency_code')->default('USD');
+            $table->string('currency_symbol')->default('₵');
+            $table->string('currency_code')->default('GHS');
         });
     }
 
