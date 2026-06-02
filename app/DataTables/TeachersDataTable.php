@@ -117,7 +117,7 @@ class TeachersDataTable extends DataTable
             Column::computed('teacher')->title('Teacher'),
             Column::make('email')->title('Email'),
             Column::computed('assigned_classes')->title('Assigned Classes'),
-            Column::make('phone')->title('Phone'),
+//            Column::make('phone')->title('Phone'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

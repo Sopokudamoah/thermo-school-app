@@ -37,24 +37,7 @@ class UserRepository implements UserInterface {
                     'role'          => 'teacher',
                     'password'      => Hash::make($request['password']),
                 ]);
-                $user->givePermissionTo(
-                    'create exams',
-                    'view exams',
-                    'create exams rule',
-                    'view exams rule',
-                    'edit exams rule',
-                    'delete exams rule',
-                    'take attendances',
-                    'view attendances',
-                    'create assignments',
-                    'view assignments',
-                    'save marks',
-                    'view users',
-                    'view routines',
-                    'view syllabi',
-                    'view events',
-                    'view notices',
-                );
+                $user->assignRole('Teacher');
             });
         } catch (\Exception $e) {
             throw new \Exception('Failed to create Teacher. '.$e->getMessage());

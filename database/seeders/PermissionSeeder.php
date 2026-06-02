@@ -35,7 +35,10 @@ class PermissionSeeder extends Seeder
             'create semesters', 'view semesters', 'edit semesters', 'assign teachers', 'create courses', 'view courses', 'edit courses',
             'view academic settings', 'update marks submission window', 'update browse by session',
             'create classes', 'view classes', 'edit classes',
-            'create sections', 'view sections', 'edit sections'
+            'create sections',
+            'view sections',
+            'edit sections',
+            'manage roles'
         ];
 
         foreach ($permissions as $permission) {

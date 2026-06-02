@@ -68,6 +68,6 @@ class User extends Authenticatable
      */
     public function isTeacher()
     {
-        return $this->role === 'teacher';
+        return $this->hasRole('Teacher');
     }
 }

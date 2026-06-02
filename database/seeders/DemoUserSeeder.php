@@ -37,9 +37,7 @@ class DemoUserSeeder extends Seeder
         if (User::where('role', 'teacher')->count() == 0) {
             $teachers = User::factory()->count(20)->create(['role' => 'teacher']);
             foreach ($teachers as $teacher) {
-                $teacher->givePermissionTo([
-                    'view courses', 'view classes', 'view sections', 'view routines', 'take attendances', 'view attendances', 'save marks', 'view marks', 'create assignments', 'view assignments', 'view notices', 'view events', 'view syllabi'
-                ]);
+                $teacher->assignRole('Teacher');
             }
         }
         $allTeachers = User::where('role', 'teacher')->get();
@@ -104,9 +102,19 @@ class DemoUserSeeder extends Seeder
                 'email' => 'teacher@ut.com',
                 'role' => 'teacher',
             ]);
-            $demoTeacher->givePermissionTo([
-                'view courses', 'view classes', 'view sections', 'view routines', 'take attendances', 'view attendances', 'save marks', 'view marks', 'create assignments', 'view assignments', 'view notices', 'view events', 'view syllabi'
+            $demoTeacher->assignRole('Teacher');
+        }
+
+        // Create Demo Finance User
+        $demoFinance = User::where('email', 'finance@ut.com')->first();
+        if (!$demoFinance) {
+            $demoFinance = User::factory()->create([
+                'first_name' => 'Sarah',
+                'last_name' => 'Finance',
+                'email' => 'finance@ut.com',
+                'role' => 'finance',
             ]);
+            $demoFinance->assignRole('Finance');
         }
 
         // Assign demo teacher to some courses in the latest session

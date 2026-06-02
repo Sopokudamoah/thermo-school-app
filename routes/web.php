@@ -9,6 +9,17 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamRuleController;
+use App\Http\Controllers\Finance\BudgetController;
+use App\Http\Controllers\Finance\DiscountController;
+use App\Http\Controllers\Finance\ExpenseController;
+use App\Http\Controllers\Finance\FeeStructureController;
+use App\Http\Controllers\Finance\FeeTypeController;
+use App\Http\Controllers\Finance\FinanceDashboardController;
+use App\Http\Controllers\Finance\InvoiceController;
+use App\Http\Controllers\Finance\PaymentController;
+use App\Http\Controllers\Finance\ReportController;
+use App\Http\Controllers\Finance\ScholarshipController;
+use App\Http\Controllers\Finance\VendorController;
 use App\Http\Controllers\GradeRuleController;
 use App\Http\Controllers\GradingSystemController;
 use App\Http\Controllers\HomeController;
@@ -16,6 +27,7 @@ use App\Http\Controllers\MarkController;
 use App\Http\Controllers\MarkImportController;
 use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoutineController;
 use App\Http\Controllers\RoutineImportController;
 use App\Http\Controllers\SchoolClassController;
@@ -25,17 +37,6 @@ use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentImportController;
 use App\Http\Controllers\SyllabusController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\Finance\FinanceDashboardController;
-use App\Http\Controllers\Finance\FeeTypeController;
-use App\Http\Controllers\Finance\FeeStructureController;
-use App\Http\Controllers\Finance\InvoiceController;
-use App\Http\Controllers\Finance\PaymentController;
-use App\Http\Controllers\Finance\DiscountController;
-use App\Http\Controllers\Finance\ScholarshipController;
-use App\Http\Controllers\Finance\ExpenseController;
-use App\Http\Controllers\Finance\VendorController;
-use App\Http\Controllers\Finance\BudgetController;
-use App\Http\Controllers\Finance\ReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -211,6 +212,9 @@ Route::middleware(['auth'])->group(function () {
     // Update password
     Route::get('password/edit', [UpdatePasswordController::class, 'edit'])->name('password.change.edit');
     Route::post('password/edit', [UpdatePasswordController::class, 'update'])->name('password.change.update');
+
+    // Roles & Permissions
+    Route::resource('roles', RoleController::class);
 
     // Finance
     Route::prefix('finance')->name('finance.')->group(function () {

@@ -241,6 +241,15 @@
             <span>System Settings</span>
         </a>
 
+            @can('manage roles')
+                <a href="{{ route('roles.index') }}"
+                   class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('roles*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
+                    <i data-lucide="shield-check"
+                       class="w-4 h-4 shrink-0 {{ request()->is('roles*') ? 'text-indigo-600' : 'text-gray-400' }}"></i>
+                    <span>Roles & Permissions</span>
+                </a>
+            @endcan
+
         @if (!session()->has('browse_session_id'))
         <a href="{{ url('promotions/index') }}"
            class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors {{ request()->is('promotions*') ? 'sidebar-link-active' : 'text-gray-700 hover:bg-gray-50' }}">
